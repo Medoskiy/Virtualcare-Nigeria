@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-NG">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a2463">
+  <meta name="description" content="Virtualcare Nigeria — MDCN-certified telemedicine across all 36 states. Book doctors online, pay with Paystack.">
+  <title>Virtualcare Nigeria — Telemedicine Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="manifest" href="/public/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/public/icons/icon.svg">
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/nav.css">
+  <link rel="stylesheet" href="/styles/auth.css">
+  <link rel="stylesheet" href="/styles/dashboard.css">
+  <link rel="stylesheet" href="/styles/doctor.css">
+  <link rel="stylesheet" href="/styles/patient.css">
+  <link rel="stylesheet" href="/styles/admin.css">
+  <link rel="stylesheet" href="/styles/video.css">
+  <link rel="stylesheet" href="/styles/components.css">
+  <link rel="stylesheet" href="/styles/phase2.css">
+</head>
+<body>
+  <header class="site-header" id="site-header">
+    <div class="container nav-inner">
+      <a href="/" class="logo" data-link>⊕ <span class="logo-text">Virtual<span class="logo-accent">care</span></span></a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu">☰</button>
+      <ul class="nav-links nav-center" id="nav-center">
+        <li><a href="/find-a-doctor" data-link>Find a Doctor</a></li>
+        <li><a href="/how-it-works" data-link>How It Works</a></li>
+        <li><a href="/blog" data-link>Blog & Health Tips</a></li>
+        <li><a href="/for-doctors" data-link>For Doctors</a></li>
+      </ul>
+      <div class="nav-auth-btns" id="nav-auth">
+        <input type="search" class="nav-search" id="nav-search" placeholder="Search doctors…">
+        <a href="/login" data-link class="btn-nav-outline">Login</a>
+        <a href="/register" data-link class="btn btn-primary btn-sm">Register</a>
+      </div>
+    </div>
+  </header>
+  <div class="nav-overlay" id="nav-overlay"></div>
+  <aside class="nav-drawer" id="nav-drawer"></aside>
+
+  <main id="app"></main>
+
+  <div id="install-prompt" class="install-prompt hidden">
+    <span>📱 Install Virtualcare Nigeria — Get the full app experience</span>
+    <button class="btn btn-primary btn-sm" id="install-btn">Install</button>
+    <button class="btn btn-secondary btn-sm" id="install-dismiss">Not now</button>
+  </div>
+
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

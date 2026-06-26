@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: virtualcare-nigeria
+    env: node
+    region: oregon
+    buildCommand: npm install
+    startCommand: node server/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: PAYSTACK_PUBLIC_KEY
+        sync: false
+      - key: DAILY_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        value: support@virtualcare.ng
+      - key: CLIENT_URL
+        sync: false

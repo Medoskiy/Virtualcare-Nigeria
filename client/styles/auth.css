@@ -1,0 +1,53 @@
+.auth-page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  background: linear-gradient(135deg, var(--sky), var(--off-white));
+}
+
+.auth-card {
+  width: min(440px, 100%);
+  padding: 40px;
+}
+
+.auth-card h1 {
+  color: var(--deep-blue);
+  margin-bottom: 8px;
+  font-size: 1.75rem;
+}
+
+.role-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: var(--off-white);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+.role-toggle button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--muted);
+}
+.role-toggle button.active {
+  background: var(--white);
+  color: var(--deep-blue);
+  box-shadow: var(--shadow);
+}
+
+.role-card { padding: 20px; border: 2px solid var(--border); border-radius: 12px; background: #fff; cursor: pointer; text-align: center; }
+.role-card.selected { border-color: var(--light-blue); background: var(--sky); }
+
+.auth-footer {
+  text-align: center;
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
