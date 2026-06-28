@@ -14,6 +14,8 @@ const appointmentSchema = new mongoose.Schema({
   },
   paymentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment' },
   videoRoomUrl: { type: String, default: '' },
+  videoRoom: { type: mongoose.Schema.Types.Mixed, default: null },
+  completedAt: { type: Date },
   notes: { type: String, default: '' },
   isReturnVisit: { type: Boolean, default: false },
   discountApplied: { type: Number, default: 0 },

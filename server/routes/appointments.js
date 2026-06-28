@@ -60,6 +60,11 @@ router.post('/book', requireRole('patient'), async (req, res) => {
     if (paystack.mock) {
       appointment.status = 'confirmed';
       await appointment.save();
+      try {
+        const videoRoom = await createVideoRoom(appointment._id.toString());
+        appointment.videoRoom = videoRoom;
+        await appointment.save();
+      } catch (e) { console.error('Video/Audio room creation failed:', e.message); }
       await completePaymentByReference(paystack.data.reference, req.app.get('io'));
       await notifyAppointmentBooked(patient, doctor, appointment, req.app.get('io'));
       const io = req.app.get('io');
@@ -74,6 +79,11 @@ router.post('/book', requireRole('patient'), async (req, res) => {
     }
 
     await appointment.save();
+    try {
+      const videoRoom = await createVideoRoom(appointment._id.toString());
+      appointment.videoRoom = videoRoom;
+      await appointment.save();
+    } catch (e) { console.error('Video/Audio room creation failed:', e.message); }
     res.status(201).json({
       success: true,
       message: 'Appointment created — complete payment via Paystack',
