@@ -18,6 +18,7 @@ const {
 } = require('../services/paystackService');
 const { sendSuccess, sendError } = require('../utils/response');
 const { notifyAppointmentBooked, notifyPaymentConfirmed, createInAppNotification } = require('../services/notificationService');
+const { sendAppointmentConfirmationEmail, sendDoctorInvoiceEmail } = require('../services/emailService');
 
 const router = express.Router();
 
@@ -33,6 +34,13 @@ async function completePaymentByReference(reference, io) {
     appointment.status = 'confirmed';
     appointment.paymentId = payment._id;
     await appointment.save();
+    try {
+      const patientUser = await User.findById(payment.patient);
+      const doctorUser = await Doctor.findById(payment.doctor);
+      if (patientUser && doctorUser) {
+        await sendAppointmentConfirmationEmail(patientUser, doctorUser, appointment, payment);
+      }
+    } catch (e) { console.error('Confirmation email failed:', e.message); }
   }
 
   await User.findByIdAndUpdate(payment.patient, {
@@ -216,6 +224,16 @@ router.post('/withdrawal-request', auth, requireRole('doctor'), async (req, res)
       accountName,
       processingDays: '1-2 business days'
     }, 'Withdrawal request submitted successfully. Admin has been notified.');
+    try {
+      if (doctor) {
+        await sendDoctorInvoiceEmail(doctor, {
+          reference: `WD-${Date.now().toString().slice(-8)}`,
+          amount,
+          bankName,
+          accountNumber
+        });
+      }
+    } catch (e) { console.error('Invoice email failed:', e.message); }
   } catch (error) {
     sendError(res, error.message, 500);
   }
