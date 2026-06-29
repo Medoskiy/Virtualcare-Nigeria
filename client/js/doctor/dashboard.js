@@ -14,6 +14,7 @@ import { setDoctorInSession, updateDoctorStatusUI } from './status.js';
 import { renderDoctorShell, bindShellEvents } from '../shared/layout.js';
 import { formatDate, formatCurrency, statusBadge, escapeHtml, formatDoctorName } from '../shared/utils.js';
 import { connectSocket, joinDoctor, emitDoctorStatus } from '../shared/socket.js';
+import { joinCall, renderCallUI } from '../shared/videoCall.js';
 import { toast } from '../shared/toast.js';
 
 const DEMO_QUEUE_PATIENTS = [
@@ -40,6 +41,39 @@ const RISK_COLORS = {
   High: { bg: '#fee2e2', color: '#991b1b' }
 };
 
+function isCallEligible(status) {
+  return status === 'confirmed' || status === 'upcoming';
+}
+
+function renderCallButtons(appointmentId) {
+  return `
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button type="button" onclick="window.startCall('${appointmentId}', 'video')" style="
+        background:#0066cc;color:#fff;border:none;border-radius:8px;
+        padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;
+        display:flex;align-items:center;gap:6px;">
+        🎥 Video Call
+      </button>
+      <button type="button" onclick="window.startCall('${appointmentId}', 'audio')" style="
+        background:#22c55e;color:#fff;border:none;border-radius:8px;
+        padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;
+        display:flex;align-items:center;gap:6px;">
+        🎙️ Audio Call
+      </button>
+    </div>`;
+}
+
+if (!window.startCall) {
+  window.startCall = async (appointmentId, mode) => {
+    document.body.insertAdjacentHTML('beforeend', renderCallUI(appointmentId, mode));
+    const result = await joinCall(appointmentId, mode);
+    if (!result.success) {
+      document.getElementById('vc-call-container')?.remove();
+      alert('Could not start call: ' + result.error);
+    }
+  };
+}
+
 function buildQueueItems(appointments) {
   const risks = ['Low', 'Medium', 'High'];
   const items = appointments.map((a, index) => ({
@@ -49,7 +83,8 @@ function buildQueueItems(appointments) {
     risk: risks[index % risks.length],
     condition: a.notes || 'General consultation',
     waitTime: index === 0 ? 'Next' : `${index}hr`,
-    id: a._id
+    id: a._id,
+    status: a.status
   }));
 
   const usedNames = new Set(items.map((i) => i.name));
@@ -73,6 +108,9 @@ function renderQueueItem(patient, index) {
   const completeBtn = isDemo
     ? `<button type="button" class="btn-queue-complete" data-demo-done>✓ Done</button>`
     : `<button type="button" class="btn-queue-complete" data-done="${patient.id}">✓ Done</button>`;
+  const callBtns = !isDemo && isCallEligible(patient.status)
+    ? renderCallButtons(patient.id)
+    : '';
 
   return `
     <div class="queue-item">
@@ -81,6 +119,7 @@ function renderQueueItem(patient, index) {
       <div class="queue-info">
         <div class="queue-name">${escapeHtml(patient.name)}</div>
         <div class="queue-details">${escapeHtml(patient.time)} · ${escapeHtml(patient.type)} · ${escapeHtml(patient.condition)}</div>
+        ${callBtns}
       </div>
       <div class="queue-wait">${escapeHtml(patient.waitTime)}</div>
       <span class="queue-risk" style="background:${risk.bg};color:${risk.color}">${patient.risk} Risk</span>

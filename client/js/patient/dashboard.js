@@ -3,10 +3,44 @@ import { patientsApi, appointmentsApi, messagesApi, prescriptionsApi, uploadApi,
 import { renderPatientShell, bindShellEvents } from '../shared/layout.js';
 import { formatDate, formatCurrency, formatShortDate, statusBadge, escapeHtml, initials, isJoinable, initMessageInput, MAX_RECORD_FILE_SIZE, formatDoctorName } from '../shared/utils.js';
 import { joinAppointment, onMessageNew, emitTypingStart, emitTypingStop, onTypingStart, onTypingStop } from '../shared/socket.js';
+import { joinCall, renderCallUI } from '../shared/videoCall.js';
 import { toast } from '../shared/toast.js';
 import { bindBookFlow } from '../shared/bookingFlow.js';
 import { renderAiChat } from './aiChat.js';
 import { getAvatarSectionHTML, initAvatarSelector } from './avatarSelector.js';
+
+function isCallEligible(status) {
+  return status === 'confirmed' || status === 'upcoming';
+}
+
+function renderCallButtons(appointmentId) {
+  return `
+    <div style="display:flex;gap:8px;margin-top:12px;width:100%;">
+      <button type="button" onclick="window.startCall('${appointmentId}', 'video')" style="
+        background:#0066cc;color:#fff;border:none;border-radius:8px;
+        padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;
+        display:flex;align-items:center;gap:6px;">
+        🎥 Video Call
+      </button>
+      <button type="button" onclick="window.startCall('${appointmentId}', 'audio')" style="
+        background:#22c55e;color:#fff;border:none;border-radius:8px;
+        padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;
+        display:flex;align-items:center;gap:6px;">
+        🎙️ Audio Call
+      </button>
+    </div>`;
+}
+
+if (!window.startCall) {
+  window.startCall = async (appointmentId, mode) => {
+    document.body.insertAdjacentHTML('beforeend', renderCallUI(appointmentId, mode));
+    const result = await joinCall(appointmentId, mode);
+    if (!result.success) {
+      document.getElementById('vc-call-container')?.remove();
+      alert('Could not start call: ' + result.error);
+    }
+  };
+}
 
 export async function renderPatientPage(container, path) {
   const user = getUser();
@@ -103,6 +137,7 @@ function renderApptCard(a) {
     ${statusBadge(a.status)}
     ${joinBtn}
     <a href="/patient/messages" data-link class="btn btn-secondary btn-sm">Message</a>
+    ${isCallEligible(a.status) ? renderCallButtons(a._id) : ''}
   </div>`;
 }
 
