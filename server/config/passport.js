@@ -47,136 +47,140 @@ passport.deserializeUser(async ({ id, role }, done) => {
   }
 });
 
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: oauthCallbackUrl('/google/callback'),
-  scope: ['profile', 'email']
-}, async (_accessToken, _refreshToken, profile, done) => {
-  try {
-    const email = profile.emails?.[0]?.value?.toLowerCase();
-    if (!email) {
-      return done(new Error('Google account has no email address'));
-    }
-
-    const name = profile.name?.givenName ||
-      profile.displayName?.split(' ')[0] || 'User';
-    const surname = profile.name?.familyName ||
-      profile.displayName?.split(' ').slice(1).join(' ') || '';
-    const avatar = profile.photos?.[0]?.value || '';
-
-    let patient = await User.findOne({
-      role: { $ne: 'admin' },
-      $or: [{ googleId: profile.id }, { email }]
-    });
-
-    if (patient) {
-      if (!patient.googleId) {
-        patient.googleId = profile.id;
-        patient.authProvider = patient.authProvider || 'google';
-        if (avatar && !patient.avatar) patient.avatar = avatar;
-        await patient.save();
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: oauthCallbackUrl('/google/callback'),
+    scope: ['profile', 'email']
+  }, async (_accessToken, _refreshToken, profile, done) => {
+    try {
+      const email = profile.emails?.[0]?.value?.toLowerCase();
+      if (!email) {
+        return done(new Error('Google account has no email address'));
       }
-      return done(null, attachRole(patient, 'patient'));
-    }
 
-    const doctor = await Doctor.findOne({
-      $or: [{ googleId: profile.id }, { email }]
-    });
+      const name = profile.name?.givenName ||
+        profile.displayName?.split(' ')[0] || 'User';
+      const surname = profile.name?.familyName ||
+        profile.displayName?.split(' ').slice(1).join(' ') || '';
+      const avatar = profile.photos?.[0]?.value || '';
 
-    if (doctor) {
-      if (!doctor.googleId) {
-        doctor.googleId = profile.id;
-        doctor.authProvider = doctor.authProvider || 'google';
-        if (avatar && !doctor.avatar) doctor.avatar = avatar;
-        await doctor.save();
+      let patient = await User.findOne({
+        role: { $ne: 'admin' },
+        $or: [{ googleId: profile.id }, { email }]
+      });
+
+      if (patient) {
+        if (!patient.googleId) {
+          patient.googleId = profile.id;
+          patient.authProvider = patient.authProvider || 'google';
+          if (avatar && !patient.avatar) patient.avatar = avatar;
+          await patient.save();
+        }
+        return done(null, attachRole(patient, 'patient'));
       }
-      return done(null, attachRole(doctor, 'doctor'));
-    }
 
-    const username = await generateUsername(email, `google_${profile.id.slice(0, 8)}`);
-    const newPatient = await User.create({
-      username,
-      name,
-      surname,
-      email,
-      googleId: profile.id,
-      avatar,
-      isVerified: true,
-      authProvider: 'google',
-      state: 'Lagos',
-      phone: '',
-      password: crypto.randomBytes(32).toString('hex')
-    });
+      const doctor = await Doctor.findOne({
+        $or: [{ googleId: profile.id }, { email }]
+      });
 
-    return done(null, attachRole(newPatient, 'patient', { isNewUser: true }));
-  } catch (err) {
-    return done(err);
-  }
-}));
-
-passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_APP_ID,
-  clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: oauthCallbackUrl('/facebook/callback'),
-  profileFields: ['id', 'emails', 'name', 'picture']
-}, async (_accessToken, _refreshToken, profile, done) => {
-  try {
-    const email = (profile.emails?.[0]?.value || `fb_${profile.id}@virtualcare.ng`).toLowerCase();
-    const name = profile.name?.givenName ||
-      profile.displayName?.split(' ')[0] || 'User';
-    const surname = profile.name?.familyName ||
-      profile.displayName?.split(' ').slice(1).join(' ') || '';
-    const avatar = profile.photos?.[0]?.value || profile.picture?.data?.url || '';
-
-    let patient = await User.findOne({
-      role: { $ne: 'admin' },
-      $or: [{ facebookId: profile.id }, { email }]
-    });
-
-    if (patient) {
-      if (!patient.facebookId) {
-        patient.facebookId = profile.id;
-        patient.authProvider = patient.authProvider || 'facebook';
-        if (avatar && !patient.avatar) patient.avatar = avatar;
-        await patient.save();
+      if (doctor) {
+        if (!doctor.googleId) {
+          doctor.googleId = profile.id;
+          doctor.authProvider = doctor.authProvider || 'google';
+          if (avatar && !doctor.avatar) doctor.avatar = avatar;
+          await doctor.save();
+        }
+        return done(null, attachRole(doctor, 'doctor'));
       }
-      return done(null, attachRole(patient, 'patient'));
+
+      const username = await generateUsername(email, `google_${profile.id.slice(0, 8)}`);
+      const newPatient = await User.create({
+        username,
+        name,
+        surname,
+        email,
+        googleId: profile.id,
+        avatar,
+        isVerified: true,
+        authProvider: 'google',
+        state: 'Lagos',
+        phone: '',
+        password: crypto.randomBytes(32).toString('hex')
+      });
+
+      return done(null, attachRole(newPatient, 'patient', { isNewUser: true }));
+    } catch (err) {
+      return done(err);
     }
+  }));
+}
 
-    const doctor = await Doctor.findOne({
-      $or: [{ facebookId: profile.id }, { email }]
-    });
+if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
+  passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: oauthCallbackUrl('/facebook/callback'),
+    profileFields: ['id', 'emails', 'name', 'picture']
+  }, async (_accessToken, _refreshToken, profile, done) => {
+    try {
+      const email = (profile.emails?.[0]?.value || `fb_${profile.id}@virtualcare.ng`).toLowerCase();
+      const name = profile.name?.givenName ||
+        profile.displayName?.split(' ')[0] || 'User';
+      const surname = profile.name?.familyName ||
+        profile.displayName?.split(' ').slice(1).join(' ') || '';
+      const avatar = profile.photos?.[0]?.value || profile.picture?.data?.url || '';
 
-    if (doctor) {
-      if (!doctor.facebookId) {
-        doctor.facebookId = profile.id;
-        doctor.authProvider = doctor.authProvider || 'facebook';
-        if (avatar && !doctor.avatar) doctor.avatar = avatar;
-        await doctor.save();
+      let patient = await User.findOne({
+        role: { $ne: 'admin' },
+        $or: [{ facebookId: profile.id }, { email }]
+      });
+
+      if (patient) {
+        if (!patient.facebookId) {
+          patient.facebookId = profile.id;
+          patient.authProvider = patient.authProvider || 'facebook';
+          if (avatar && !patient.avatar) patient.avatar = avatar;
+          await patient.save();
+        }
+        return done(null, attachRole(patient, 'patient'));
       }
-      return done(null, attachRole(doctor, 'doctor'));
+
+      const doctor = await Doctor.findOne({
+        $or: [{ facebookId: profile.id }, { email }]
+      });
+
+      if (doctor) {
+        if (!doctor.facebookId) {
+          doctor.facebookId = profile.id;
+          doctor.authProvider = doctor.authProvider || 'facebook';
+          if (avatar && !doctor.avatar) doctor.avatar = avatar;
+          await doctor.save();
+        }
+        return done(null, attachRole(doctor, 'doctor'));
+      }
+
+      const username = await generateUsername(email, `fb_${profile.id.slice(0, 8)}`);
+      const newPatient = await User.create({
+        username,
+        name,
+        surname,
+        email,
+        facebookId: profile.id,
+        avatar,
+        isVerified: true,
+        authProvider: 'facebook',
+        state: 'Lagos',
+        phone: '',
+        password: crypto.randomBytes(32).toString('hex')
+      });
+
+      return done(null, attachRole(newPatient, 'patient', { isNewUser: true }));
+    } catch (err) {
+      return done(err);
     }
-
-    const username = await generateUsername(email, `fb_${profile.id.slice(0, 8)}`);
-    const newPatient = await User.create({
-      username,
-      name,
-      surname,
-      email,
-      facebookId: profile.id,
-      avatar,
-      isVerified: true,
-      authProvider: 'facebook',
-      state: 'Lagos',
-      phone: '',
-      password: crypto.randomBytes(32).toString('hex')
-    });
-
-    return done(null, attachRole(newPatient, 'patient', { isNewUser: true }));
-  } catch (err) {
-    return done(err);
-  }
-}));
+  }));
+}
 
 module.exports = passport;
