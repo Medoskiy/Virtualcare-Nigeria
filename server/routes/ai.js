@@ -55,6 +55,121 @@ async function handlePriorityBooking(reply, req, patient) {
   }
 }
 
+async function handleBookAppointment(reply, req, patient) {
+  const jsonMatch = reply.match(/\{"action":"BOOK_APPOINTMENT"[^}]*\}/);
+  if (!jsonMatch) return null;
+
+  try {
+    const action = JSON.parse(jsonMatch[0]);
+    const Doctor = require('../models/Doctor');
+    const Appointment = require('../models/Appointment');
+
+    const specialist = action.specialist || 'General Practitioner';
+
+    // Find available doctors matching specialty
+    const doctors = await Doctor.find({
+      specialty: { $regex: specialist, $options: 'i' },
+      isAvailable: true,
+      isApproved: true
+    }).limit(3);
+
+    if (!doctors.length) {
+      // Try any available doctor if specialty not found
+      const anyDoctor = await Doctor.find({
+        isAvailable: true,
+        isApproved: true
+      }).limit(3);
+
+      if (!anyDoctor.length) {
+        return {
+          reply,
+          bookingStatus: 'no_doctor_available',
+          bookingMessage: 'No available doctors at the moment. Admin has been notified.',
+          doctors: []
+        };
+      }
+
+      return {
+        reply,
+        bookingStatus: 'show_doctors',
+        specialist,
+        urgency: action.urgency || 'normal',
+        reason: action.reason || 'VirtualAI referral',
+        doctors: anyDoctor.map(d => ({
+          id: d._id,
+          name: `Dr. ${d.name} ${d.surname}`,
+          specialty: d.specialty,
+          photo: d.photo,
+          rating: d.rating,
+          pricePerSession: d.pricePerSession,
+          availableSlots: generateTimeSlots(d.availabilitySchedule)
+        }))
+      };
+    }
+
+    return {
+      reply,
+      bookingStatus: 'show_doctors',
+      specialist,
+      urgency: action.urgency || 'normal',
+      reason: action.reason || 'VirtualAI referral',
+      doctors: doctors.map(d => ({
+        id: d._id,
+        name: `Dr. ${d.name} ${d.surname}`,
+        specialty: d.specialty,
+        photo: d.photo,
+        rating: d.rating,
+        pricePerSession: d.pricePerSession,
+        availableSlots: generateTimeSlots(d.availabilitySchedule)
+      }))
+    };
+  } catch (e) {
+    console.error('VirtualAI booking error:', e.message);
+    return null;
+  }
+}
+
+function generateTimeSlots(schedule) {
+  const slots = [];
+  const now = new Date();
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const timeOptions = { timeZone: 'Africa/Lagos', hour: '2-digit', minute: '2-digit' };
+
+  for (let i = 1; i <= 3; i++) {
+    const date = new Date(now);
+    date.setDate(now.getDate() + i);
+    const dayName = days[date.getDay()];
+
+    const daySchedule = schedule?.[dayName];
+    if (daySchedule?.available && daySchedule?.start && daySchedule?.end) {
+      const [startHour] = daySchedule.start.split(':').map(Number);
+      const [endHour] = daySchedule.end.split(':').map(Number);
+
+      for (let hour = startHour; hour < endHour; hour += 1) {
+        const slot = new Date(date);
+        slot.setHours(hour, 0, 0, 0);
+        slots.push({
+          datetime: slot.toISOString(),
+          display: `${date.toLocaleDateString('en-NG', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'Africa/Lagos' })} at ${slot.toLocaleTimeString('en-NG', timeOptions)} WAT`
+        });
+      }
+    } else {
+      // Default slots if no schedule set
+      ['09:00', '11:00', '14:00', '16:00'].forEach(time => {
+        const [h, m] = time.split(':').map(Number);
+        const slot = new Date(date);
+        slot.setHours(h, m, 0, 0);
+        slots.push({
+          datetime: slot.toISOString(),
+          display: `${date.toLocaleDateString('en-NG', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'Africa/Lagos' })} at ${time} WAT`
+        });
+      });
+    }
+  }
+
+  return slots.slice(0, 4); // Return max 4 slots per doctor
+}
+
 router.post('/chat', async (req, res) => {
   const { message, conversationHistory, history: historyAlias } = req.body;
   const rawHistory = conversationHistory || historyAlias || [];
@@ -154,6 +269,19 @@ router.post('/chat', async (req, res) => {
 
       let reply = completion.content[0]?.text || 'I could not generate a response.';
 
+      const booking = await handleBookAppointment(reply, req, patient);
+      if (booking) {
+        return sendSuccess(res, {
+          reply: booking.reply,
+          bookingStatus: booking.bookingStatus,
+          bookingMessage: booking.bookingMessage,
+          specialist: booking.specialist,
+          urgency: booking.urgency,
+          reason: booking.reason,
+          doctors: booking.doctors || []
+        });
+      }
+
       // Strip any JSON action blocks from the visible reply
       reply = reply.replace(/```json[\s\S]*?```/g, '').trim();
       reply = reply.replace(/```[\s\S]*?```/g, '').trim();
@@ -177,6 +305,62 @@ router.post('/chat', async (req, res) => {
     }
   } catch (err) {
     return sendError(res, err.message, 500);
+  }
+});
+
+router.post('/book-appointment', async (req, res) => {
+  try {
+    const { doctorId, scheduledAt, reason, urgency } = req.body;
+    const Doctor = require('../models/Doctor');
+    const Appointment = require('../models/Appointment');
+
+    const patient = await User.findById(req.user._id);
+    const doctor = await Doctor.findById(doctorId);
+
+    if (!doctor) return sendError(res, 'Doctor not found', 404);
+
+    const appointment = await Appointment.create({
+      patient: patient._id,
+      doctor: doctor._id,
+      scheduledAt: new Date(scheduledAt),
+      type: 'video',
+      status: 'pending',
+      reason: reason || 'VirtualAI referral',
+      notes: `Booked via VirtualAI. Urgency: ${urgency || 'normal'}.`
+    });
+
+    // Notify via socket
+    const io = req.app?.get?.('io');
+    if (io) {
+      io.to('role:admin').emit('appointment:new', {
+        appointment,
+        patientName: `${patient.name} ${patient.surname}`,
+        doctorName: `Dr. ${doctor.name} ${doctor.surname}`,
+        reason,
+        source: 'VirtualAI'
+      });
+      io.to(`doctor:${doctor._id}`).emit('appointment:incoming', { appointment });
+    }
+
+    // Send confirmation email
+    try {
+      const { sendAppointmentConfirmationEmail } = require('../services/emailService');
+      await sendAppointmentConfirmationEmail(patient, doctor, appointment, { finalAmount: 0 });
+    } catch (e) {
+      console.error('Booking email failed:', e.message);
+    }
+
+    sendSuccess(res, {
+      appointment: {
+        id: appointment._id,
+        doctor: `Dr. ${doctor.name} ${doctor.surname}`,
+        specialty: doctor.specialty,
+        scheduledAt: appointment.scheduledAt,
+        status: 'pending'
+      }
+    }, `Appointment confirmed with Dr. ${doctor.surname}!`);
+  } catch (err) {
+    sendError(res, err.message, 500);
   }
 });
 

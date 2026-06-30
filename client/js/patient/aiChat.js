@@ -1,6 +1,7 @@
 import { aiApi } from '../shared/api.js';
 import { escapeHtml, formatAIMessage } from '../shared/utils.js';
 import { toast } from '../shared/toast.js';
+import { renderDoctorBookingModal } from '../shared/virtualAIBooking.js';
 
 let virtualAIHistory = [];
 let aiTurnCount = 0;
@@ -137,6 +138,18 @@ async function sendAIMessage(container, userMessage, inputEl) {
     });
 
     appendMessageBubble(container, 'ai', reply);
+
+    const data = result?.data || {};
+
+    if (data.bookingStatus === 'show_doctors' && data.doctors?.length > 0) {
+      const modal = renderDoctorBookingModal(data);
+      const modalEl = document.createElement('div');
+      modalEl.innerHTML = modal;
+      const modalNode = modalEl.firstElementChild;
+      modalNode.dataset.reason = data.reason || 'VirtualAI referral';
+      modalNode.dataset.urgency = data.urgency || 'normal';
+      document.body.appendChild(modalNode);
+    }
 
     if (result?.data?.priorityBookingTriggered) {
       showPriorityBookingBanner(container);
