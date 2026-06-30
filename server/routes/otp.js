@@ -32,7 +32,7 @@ router.post('/verify', auth, async (req, res) => {
     const { phone, otp } = req.body;
     if (!phone || !otp) return sendError(res, 'Phone and OTP required', 400);
 
-    const result = verifyOTP(phone, otp);
+    const result = await verifyOTP(phone, otp);
 
     if (!result.valid) {
       return sendError(res, result.reason || 'Invalid OTP', 400);

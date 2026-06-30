@@ -66,34 +66,66 @@ async function sendSMS(phone, message) {
 }
 
 async function sendOTP(phone, purpose = 'verification') {
-  const otp = generateOTP();
   const formattedPhone = formatNigerianPhone(phone);
-
   if (!formattedPhone) {
     return { success: false, error: 'Invalid phone number' };
   }
 
-  // Store OTP with 10 minute expiry
-  otpStore.set(formattedPhone, {
-    otp,
-    purpose,
-    expiresAt: Date.now() + 10 * 60 * 1000,
-    attempts: 0
-  });
-
-  const message = `Your Virtualcare Nigeria verification code is ${otp}. Valid for 10 minutes. Do not share this code with anyone.`;
-
-  const result = await sendSMS(phone, message);
-
-  if (result.mock) {
+  if (!TERMII_API_KEY) {
+    const otp = generateOTP();
+    otpStore.set(formattedPhone, {
+      otp,
+      purpose,
+      expiresAt: Date.now() + 10 * 60 * 1000,
+      attempts: 0
+    });
     console.log(`[DEMO] OTP for ${formattedPhone}: ${otp}`);
-    return { success: true, mock: true, otp }; // Return OTP in demo mode only
+    return { success: true, mock: true, otp };
   }
 
-  return { success: result.success, error: result.error };
+  try {
+    const response = await fetch(`${TERMII_BASE_URL}/api/sms/otp/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: TERMII_API_KEY,
+        message_type: 'NUMERIC',
+        to: formattedPhone,
+        from: TERMII_SENDER_ID,
+        channel: 'generic',
+        pin_attempts: 3,
+        pin_time_to_live: 10,
+        pin_length: 6,
+        pin_placeholder: '< 1234 >',
+        message_text: 'Your Virtualcare Nigeria OTP is < 1234 >. Valid for 10 minutes. Do not share.',
+        pin_type: 'NUMERIC'
+      })
+    });
+
+    const result = await response.json();
+    console.log('Termii Token API response:', JSON.stringify(result));
+
+    if (result.pinId || result.pin_id) {
+      // Store pinId for verification
+      otpStore.set(formattedPhone, {
+        pinId: result.pinId || result.pin_id,
+        purpose,
+        expiresAt: Date.now() + 10 * 60 * 1000,
+        attempts: 0,
+        useTermiiVerify: true
+      });
+      return { success: true };
+    } else {
+      console.error('Termii Token API failed:', result);
+      return { success: false, error: result.message || 'OTP send failed' };
+    }
+  } catch (err) {
+    console.error('Termii OTP error:', err.message);
+    return { success: false, error: err.message };
+  }
 }
 
-function verifyOTP(phone, otp) {
+async function verifyOTP(phone, otp) {
   const formattedPhone = formatNigerianPhone(phone);
   const stored = otpStore.get(formattedPhone);
 
@@ -106,6 +138,35 @@ function verifyOTP(phone, otp) {
     return { valid: false, reason: 'OTP expired' };
   }
 
+  // Use Termii's verify API if pinId exists
+  if (stored.useTermiiVerify && stored.pinId) {
+    try {
+      const response = await fetch(`${TERMII_BASE_URL}/api/sms/otp/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          api_key: TERMII_API_KEY,
+          pin_id: stored.pinId,
+          pin: otp.toString()
+        })
+      });
+
+      const result = await response.json();
+      console.log('Termii verify response:', JSON.stringify(result));
+
+      if (result.verified === true || result.verified === 'True') {
+        otpStore.delete(formattedPhone);
+        return { valid: true };
+      } else {
+        return { valid: false, reason: result.message || 'Invalid OTP' };
+      }
+    } catch (err) {
+      console.error('Termii verify error:', err.message);
+      return { valid: false, reason: 'Verification failed' };
+    }
+  }
+
+  // Fallback local verification
   stored.attempts += 1;
   if (stored.attempts > 3) {
     otpStore.delete(formattedPhone);
