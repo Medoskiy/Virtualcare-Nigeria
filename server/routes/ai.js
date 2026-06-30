@@ -152,15 +152,23 @@ router.post('/chat', async (req, res) => {
         messages: chatMessages
       });
 
-      const reply = completion.content[0]?.text || 'I could not generate a response.';
+      let reply = completion.content[0]?.text || 'I could not generate a response.';
+
+      // Strip any JSON action blocks from the visible reply
+      reply = reply.replace(/```json[\s\S]*?```/g, '').trim();
+      reply = reply.replace(/```[\s\S]*?```/g, '').trim();
+      reply = reply.replace(/\{"action":"[^}]+"[^}]*\}/g, '').trim();
+      reply = reply.replace(/\n{3,}/g, '\n\n').trim();
+
       const priority = await handlePriorityBooking(reply, req, patient);
       if (priority) {
-        return sendSuccess(res, priority);
+        return sendSuccess(res, { ...priority, reply: priority.reply.replace(/```json[\s\S]*?```/g, '').replace(/```[\s\S]*?```/g, '').replace(/\{"action":"[^}]+"[^}]*\}/g, '').trim() });
       }
       return sendSuccess(res, { reply });
     } catch (error) {
       console.error('VirtualAI error:', error.message);
       const mock = respondWithMock();
+      mock.reply = mock.reply.replace(/```json[\s\S]*?```/g, '').replace(/```[\s\S]*?```/g, '').replace(/\{"action":"[^}]+"[^}]*\}/g, '').trim();
       const priority = await handlePriorityBooking(mock.reply, req, patient);
       if (priority) {
         return sendSuccess(res, { ...priority, isDemo: true });
