@@ -55,60 +55,36 @@ async function handlePriorityBooking(reply, req, patient) {
   }
 }
 
-async function handleBookAppointment(reply, req, patient) {
-  const jsonMatch = reply.match(/\{"action":"BOOK_APPOINTMENT"[^}]*\}/);
-  if (!jsonMatch) return null;
-
+async function handleBookAppointment(action, req, patient) {
   try {
-    const action = JSON.parse(jsonMatch[0]);
     const Doctor = require('../models/Doctor');
-    const Appointment = require('../models/Appointment');
 
     const specialist = action.specialist || 'General Practitioner';
 
-    // Find available doctors matching specialty
-    const doctors = await Doctor.find({
+    let doctors = await Doctor.find({
       specialty: { $regex: specialist, $options: 'i' },
       isAvailable: true,
       isApproved: true
     }).limit(3);
 
     if (!doctors.length) {
-      // Try any available doctor if specialty not found
-      const anyDoctor = await Doctor.find({
+      doctors = await Doctor.find({
         isAvailable: true,
         isApproved: true
       }).limit(3);
+    }
 
-      if (!anyDoctor.length) {
-        return {
-          reply,
-          bookingStatus: 'no_doctor_available',
-          bookingMessage: 'No available doctors at the moment. Admin has been notified.',
-          doctors: []
-        };
-      }
-
+    if (!doctors.length) {
       return {
-        reply,
-        bookingStatus: 'show_doctors',
+        bookingStatus: 'no_doctor_available',
         specialist,
         urgency: action.urgency || 'normal',
         reason: action.reason || 'VirtualAI referral',
-        doctors: anyDoctor.map(d => ({
-          id: d._id,
-          name: `Dr. ${d.name} ${d.surname}`,
-          specialty: d.specialty,
-          photo: d.photo,
-          rating: d.rating,
-          pricePerSession: d.pricePerSession,
-          availableSlots: generateTimeSlots(d.availabilitySchedule)
-        }))
+        doctors: []
       };
     }
 
     return {
-      reply,
       bookingStatus: 'show_doctors',
       specialist,
       urgency: action.urgency || 'normal',
@@ -269,29 +245,64 @@ router.post('/chat', async (req, res) => {
 
       let reply = completion.content[0]?.text || 'I could not generate a response.';
 
-      const booking = await handleBookAppointment(reply, req, patient);
-      if (booking) {
-        return sendSuccess(res, {
-          reply: booking.reply,
-          bookingStatus: booking.bookingStatus,
-          bookingMessage: booking.bookingMessage,
-          specialist: booking.specialist,
-          urgency: booking.urgency,
-          reason: booking.reason,
-          doctors: booking.doctors || []
-        });
+      // Extract JSON actions BEFORE stripping them
+      const priorityMatch = reply.match(/\{"action"\s*:\s*"PRIORITY_BOOKING"[^}]*\}/);
+      const bookingMatch = reply.match(/\{"action"\s*:\s*"BOOK_APPOINTMENT"[^}]*\}/);
+
+      // Strip ALL JSON blocks and markdown from visible reply
+      function cleanReply(text) {
+        return text
+          .replace(/```json[\s\S]*?```/gi, '')
+          .replace(/```[\s\S]*?```/gi, '')
+          .replace(/\{[^{}]*"action"\s*:[^{}]*\}/g, '')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim();
       }
 
-      // Strip any JSON action blocks from the visible reply
-      reply = reply.replace(/```json[\s\S]*?```/g, '').trim();
-      reply = reply.replace(/```[\s\S]*?```/g, '').trim();
-      reply = reply.replace(/\{"action":"[^}]+"[^}]*\}/g, '').trim();
-      reply = reply.replace(/\n{3,}/g, '\n\n').trim();
+      reply = cleanReply(reply);
 
-      const priority = await handlePriorityBooking(reply, req, patient);
-      if (priority) {
-        return sendSuccess(res, { ...priority, reply: priority.reply.replace(/```json[\s\S]*?```/g, '').replace(/```[\s\S]*?```/g, '').replace(/\{"action":"[^}]+"[^}]*\}/g, '').trim() });
+      // Handle priority booking
+      if (priorityMatch) {
+        try {
+          const action = JSON.parse(priorityMatch[0]);
+          await User.findByIdAndUpdate(patient._id, {
+            priorityBooking: true,
+            priorityReason: action.reason || 'Emergency symptoms via VirtualAI',
+            prioritySetAt: new Date()
+          });
+          req.io?.to('role:admin').emit('priority:booking', {
+            patientId: patient._id,
+            patientName: `${patient.name} ${patient.surname}`,
+            reason: action.reason || 'Emergency symptoms described to VirtualAI',
+            urgency: action.urgency || 'high',
+            timestamp: new Date()
+          });
+          return sendSuccess(res, { reply, priorityBookingTriggered: true });
+        } catch (e) {
+          console.error('Priority booking error:', e.message);
+        }
       }
+
+      // Handle appointment booking
+      if (bookingMatch) {
+        try {
+          const action = JSON.parse(bookingMatch[0]);
+          const bookingResult = await handleBookAppointment(action, req, patient);
+          if (bookingResult) {
+            return sendSuccess(res, {
+              reply,
+              bookingStatus: bookingResult.bookingStatus,
+              specialist: bookingResult.specialist,
+              urgency: bookingResult.urgency,
+              reason: bookingResult.reason,
+              doctors: bookingResult.doctors || []
+            });
+          }
+        } catch (e) {
+          console.error('Booking error:', e.message);
+        }
+      }
+
       return sendSuccess(res, { reply });
     } catch (error) {
       console.error('VirtualAI error:', error.message);
