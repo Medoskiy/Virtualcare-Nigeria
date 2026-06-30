@@ -10,6 +10,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="manifest" href="/public/manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Virtualcare">
+  <link rel="apple-touch-icon" href="/public/icons/icon-192.png">
+  <meta name="theme-color" content="#0a2463">
   <link rel="icon" type="image/svg+xml" href="/public/icons/icon.svg">
   <link rel="stylesheet" href="/styles/main.css">
   <link rel="stylesheet" href="/styles/nav.css">
@@ -54,5 +60,14 @@
   <script src="https://js.paystack.co/v1/inline.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script type="module" src="/js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/public/sw.js')
+          .then(reg => console.log('✅ Virtualcare SW registered:', reg.scope))
+          .catch(err => console.warn('SW registration failed:', err));
+      });
+    }
+  </script>
 </body>
 </html>
