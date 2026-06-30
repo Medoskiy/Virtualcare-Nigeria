@@ -8,6 +8,9 @@ const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss');
+const hpp = require('hpp');
 const { Server } = require('socket.io');
 const { startWithMemoryDB } = require('./config/startup');
 const { seedDemoData } = require('./config/seed');
@@ -55,18 +58,20 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", 'https://js.paystack.co', 'https://fonts.googleapis.com'],
+      scriptSrc: ["'self'", 'https://js.paystack.co', 'https://fonts.googleapis.com', 'https://download.agora.io'],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
       imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
       connectSrc: [
         "'self'",
         'https://api.paystack.co',
-        'https://api.openai.com',
-        'https://api.daily.co',
+        'https://api.anthropic.com',
+        'https://*.agora.io',
+        'wss://*.agora.io',
+        'https://v3.api.termii.com',
         process.env.CLIENT_URL || 'http://localhost:3000'
       ],
-      frameSrc: ["'self'", 'https://*.daily.co']
+      frameSrc: ["'self'"]
     }
   },
   crossOriginEmbedderPolicy: false
@@ -75,10 +80,39 @@ app.use(compression());
 app.use(morgan('dev'));
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
 
+// Sanitize MongoDB queries against injection
+app.use(mongoSanitize({
+  replaceWith: '_',
+  onSanitize: ({ req, key }) => {
+    console.warn(`Sanitized MongoDB injection attempt: ${key} from ${req.ip}`);
+  }
+}));
+
+// HTTP Parameter Pollution protection
+app.use(hpp({
+  whitelist: ['sort', 'filter', 'page', 'limit', 'specialty', 'state']
+}));
+
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 300,
   message: { success: false, message: 'Too many requests. Please slow down.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { success: false, message: 'Too many login attempts. Please try again in 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+const otpLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { success: false, message: 'Too many OTP requests. Please try again in an hour.' },
   standardHeaders: true,
   legacyHeaders: false
 });
@@ -97,7 +131,7 @@ app.use(passport.initialize());
 
 app.use('/api/', generalLimiter);
 app.use('/api/health', healthRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/appointments', appointmentRoutes);
@@ -110,7 +144,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadLimiter, uploadRoutes, handleUploadError);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/video', videoRoutes);
-app.use('/api/otp', otpRoutes);
+app.use('/api/otp', otpLimiter, otpRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(express.static(path.join(__dirname, '../client')));

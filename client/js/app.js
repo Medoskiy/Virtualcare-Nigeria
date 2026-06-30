@@ -14,6 +14,8 @@ import { initVideoCall } from './video/callManager.js';
 import { renderDoctorProfile } from './pages/doctorProfile.js';
 import { registerBookingFlowGlobals } from './shared/bookingFlow.js';
 import { registerAvatarSelectorGlobals } from './patient/avatarSelector.js';
+import { initCookieConsent } from './shared/cookieConsent.js';
+import { renderPrivacyPolicy } from './pages/privacyPolicy.js';
 
 registerBookingFlowGlobals();
 registerAvatarSelectorGlobals();
@@ -182,6 +184,7 @@ function requireAuth(roles) {
 
 async function router() {
   initToast();
+  initCookieConsent();
   if (handleOAuthCallback()) return;
 
   const path = getPath();
@@ -227,7 +230,8 @@ async function router() {
     '/for-doctors': renderForDoctors,
     '/blog': renderBlog,
     '/login': renderLogin,
-    '/register': renderRegister
+    '/register': renderRegister,
+    '/privacy-policy': renderPrivacyPolicy
   };
 
   if (path.startsWith('/blog/')) { renderBlog(app); return; }
@@ -238,8 +242,10 @@ async function router() {
   }
 
   const handler = routes[path];
-  if (handler) await handler(app);
-  else { app.innerHTML = '<div class="page-loading"><p>Page not found. <a href="/" data-link>Go home</a></p></div>'; bindLinks(); }
+  if (handler) {
+    await handler(app);
+    if (path === '/privacy-policy') bindLinks();
+  } else { app.innerHTML = '<div class="page-loading"><p>Page not found. <a href="/" data-link>Go home</a></p></div>'; bindLinks(); }
 }
 
 document.getElementById('nav-toggle')?.addEventListener('click', () => {});
