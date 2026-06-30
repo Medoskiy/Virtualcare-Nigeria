@@ -77,6 +77,10 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 app.use(compression());
+// Cache static assets for 1 day
+app.use('/styles', express.static(path.join(__dirname, '../client/styles'), { maxAge: '1d' }));
+app.use('/js', express.static(path.join(__dirname, '../client/js'), { maxAge: '1h' }));
+app.use('/public', express.static(path.join(__dirname, '../client/public'), { maxAge: '7d' }));
 app.use(morgan('dev'));
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
 

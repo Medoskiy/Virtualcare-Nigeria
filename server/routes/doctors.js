@@ -9,10 +9,11 @@ const auth = require('../middleware/auth');
 const requireRole = require('../middleware/role');
 const { getNextAvailableDoctor } = require('../services/rotationService');
 const { sendSuccess, sendError } = require('../utils/response');
+const { cacheMiddleware, clearCache } = require('../utils/cache');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', cacheMiddleware(30), async (req, res) => {
   try {
     const {
       specialty, state, availability, minRating,
