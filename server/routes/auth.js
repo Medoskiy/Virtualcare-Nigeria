@@ -8,6 +8,7 @@ const auth = require('../middleware/auth');
 const { NIGERIAN_STATES, SPECIALTY_PRICES, NIGERIAN_PHONE_REGEX } = require('../config/nigeria');
 const { notifyDoctorApplicationReceived, notifyWelcomePatient } = require('../services/notificationService');
 const { sendPatientWelcomeEmail, sendDoctorWelcomeEmail } = require('../services/emailService');
+const { sendOTP } = require('../services/smsService');
 const { validatePatientRegister, validateDoctorRegister } = require('../middleware/sanitise');
 
 const router = express.Router();
@@ -67,6 +68,9 @@ router.post('/register/patient', authLimiter, validatePatientRegister, async (re
 
     const user = await User.create({ username, name, surname, email, password, phone, dateOfBirth, state });
     try { await sendPatientWelcomeEmail(user); } catch (e) { console.error('Welcome email failed:', e.message); }
+    try {
+      if (user.phone) await sendOTP(user.phone, 'registration');
+    } catch (e) { console.error('OTP send failed:', e.message); }
     const token = signToken(user._id);
     notifyWelcomePatient(user).catch(() => {});
 
@@ -110,6 +114,9 @@ router.post('/register/doctor', authLimiter, validateDoctorRegister, async (req,
       isApproved: false, isVerified: false
     });
     try { await sendDoctorWelcomeEmail(doctor); } catch (e) { console.error('Doctor welcome email failed:', e.message); }
+    try {
+      if (doctor.mobileNo) await sendOTP(doctor.mobileNo, 'registration');
+    } catch (e) { console.error('OTP send failed:', e.message); }
     await notifyDoctorApplicationReceived(doctor);
     const token = signToken(doctor._id);
 

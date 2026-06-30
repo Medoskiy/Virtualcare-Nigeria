@@ -29,6 +29,7 @@ const { handleUploadError } = require('./middleware/upload');
 const notificationRoutes = require('./routes/notifications');
 const healthRoutes = require('./routes/health');
 const videoRoutes = require('./routes/video');
+const otpRoutes = require('./routes/otp');
 const { handlePaystackWebhook } = require('./routes/payments');
 const passport = require('./config/passport');
 
@@ -109,6 +110,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadLimiter, uploadRoutes, handleUploadError);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/video', videoRoutes);
+app.use('/api/otp', otpRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(express.static(path.join(__dirname, '../client')));
