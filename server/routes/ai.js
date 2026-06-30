@@ -1,6 +1,6 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
-const OpenAI = require('openai');
+const Anthropic = require('@anthropic-ai/sdk');
 const User = require('../models/User');
 const Prescription = require('../models/Prescription');
 const Appointment = require('../models/Appointment');
@@ -132,7 +132,7 @@ router.post('/chat', async (req, res) => {
       return { reply: mockResponse, isDemo: true };
     };
 
-    if (!process.env.OPENAI_API_KEY) {
+    if (!process.env.CLAUDE_API_KEY) {
       const mock = respondWithMock();
       const priority = await handlePriorityBooking(mock.reply, req, patient);
       if (priority) {
@@ -142,15 +142,17 @@ router.post('/chat', async (req, res) => {
     }
 
     try {
-      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-      const completion = await openai.chat.completions.create({
-        model: process.env.OPENAI_MODEL || 'gpt-4o',
-        messages,
+      const anthropic = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
+      const systemMessage = messages.find(m => m.role === 'system')?.content || '';
+      const chatMessages = messages.filter(m => m.role !== 'system');
+      const completion = await anthropic.messages.create({
+        model: 'claude-sonnet-4-6',
         max_tokens: 400,
-        temperature: 0.75
+        system: systemMessage,
+        messages: chatMessages
       });
 
-      const reply = completion.choices[0]?.message?.content || 'I could not generate a response.';
+      const reply = completion.content[0]?.text || 'I could not generate a response.';
       const priority = await handlePriorityBooking(reply, req, patient);
       if (priority) {
         return sendSuccess(res, priority);
