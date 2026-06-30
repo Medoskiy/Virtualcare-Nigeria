@@ -23,7 +23,7 @@ async function generateUsername(email, fallback = 'user') {
 
 function oauthCallbackUrl(path) {
   if (process.env.NODE_ENV === 'production') {
-    return `https://virtualcare.ng/api/auth${path}`;
+    return `https://virtualcare.me/api/auth${path}`;
   }
   return `${devBaseUrl}/api/auth${path}`;
 }
