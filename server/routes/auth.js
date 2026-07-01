@@ -214,6 +214,13 @@ router.get('/google',
 );
 
 router.get('/google/callback',
+  (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
+  },
   passport.authenticate('google', {
     failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:3001'}/#/login?error=google_failed`,
     session: false
@@ -234,6 +241,13 @@ router.get('/facebook',
 );
 
 router.get('/facebook/callback',
+  (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
+  },
   passport.authenticate('facebook', {
     failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:3001'}/#/login?error=facebook_failed`,
     session: false
