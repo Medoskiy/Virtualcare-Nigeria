@@ -59,6 +59,40 @@ function updateLocalUserAvatar(avatar) {
   localStorage.setItem('vc_user', JSON.stringify(user));
 }
 
+function updateWelcomeBannerAvatar(selectedAvatar) {
+  const bannerAvatar = document.querySelector('.banner-avatar');
+  if (!bannerAvatar || selectedAvatar == null) return;
+
+  const isUrl = typeof selectedAvatar === 'string'
+    && (selectedAvatar.startsWith('/') || selectedAvatar.startsWith('http') || selectedAvatar.startsWith('data:'));
+
+  if (isUrl) {
+    localStorage.setItem('vc_avatar', selectedAvatar);
+    if (bannerAvatar.tagName === 'IMG') {
+      bannerAvatar.src = selectedAvatar;
+    } else {
+      const img = document.createElement('img');
+      img.src = selectedAvatar;
+      img.className = bannerAvatar.className;
+      img.style.cssText = 'width:72px;height:72px;border-radius:50%;object-fit:cover;';
+      img.alt = 'Avatar';
+      bannerAvatar.replaceWith(img);
+    }
+    return;
+  }
+
+  const emoji = typeof selectedAvatar === 'object' ? selectedAvatar.emoji : selectedAvatar;
+  localStorage.removeItem('vc_avatar');
+  if (bannerAvatar.tagName === 'IMG') {
+    const div = document.createElement('div');
+    div.className = bannerAvatar.className;
+    div.textContent = emoji;
+    bannerAvatar.replaceWith(div);
+  } else {
+    bannerAvatar.textContent = emoji;
+  }
+}
+
 function updateSidebarAvatars(display) {
   document.querySelectorAll('.sidebar-avatar, .banner-avatar, .user-avatar').forEach((el) => {
     if (display.type === 'image') {
@@ -223,6 +257,7 @@ async function confirmAvatarSelection(root) {
   const display = { type: 'emoji', emoji: selectedAvatar.emoji };
   applyAvatarDisplay(root, display);
   updateSidebarAvatars(display);
+  updateWelcomeBannerAvatar(selectedAvatar.emoji);
 
   localStorage.setItem('patientAvatar', JSON.stringify(selectedAvatar));
   localStorage.removeItem('patientAvatarPhoto');
@@ -268,10 +303,19 @@ async function handleAvatarUpload(root, file) {
         updateLocalUserAvatar(url);
       }
       updateSidebarAvatars(display);
+      updateWelcomeBannerAvatar(display.url);
+      localStorage.setItem('vc_avatar', display.url);
       closeAvatarSelector(root);
       toast('Profile photo updated! ✅', 'success');
+      try {
+        await patientsApi.updateProfile({ avatar: display.url });
+      } catch {
+        /* saved locally */
+      }
     } catch {
       updateSidebarAvatars(display);
+      updateWelcomeBannerAvatar(dataUrl);
+      localStorage.setItem('vc_avatar', dataUrl);
       closeAvatarSelector(root);
       toast('Photo saved locally. Upload to server failed.', 'warning');
     }

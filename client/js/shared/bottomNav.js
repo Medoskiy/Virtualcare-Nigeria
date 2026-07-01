@@ -3,7 +3,7 @@ import { getUser, getRole } from './api.js';
 const MOBILE_MAX = 768;
 
 const TABS = [
-  { tab: 'home', href: '/patient/dashboard', icon: '🏠', label: 'Home', match: (p) => p === '/patient/dashboard' || p === '/patient' },
+  { tab: 'home', href: '/', icon: '🏠', label: 'Home', match: (p) => p === '/' },
   { tab: 'book', href: '/find-a-doctor', icon: '📅', label: 'Book', match: (p) => p === '/find-a-doctor' || p.startsWith('/patient/book') },
   { tab: 'ai', href: '/patient/ai', icon: '🤖', label: 'AI', match: (p) => p.startsWith('/patient/ai') },
   { tab: 'messages', href: '/patient/messages', icon: '💬', label: 'Messages', match: (p) => p.startsWith('/patient/messages') },

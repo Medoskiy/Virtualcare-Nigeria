@@ -1,6 +1,6 @@
 const express = require('express');
-const PDFDocument = require('pdfkit');
 const Prescription = require('../models/Prescription');
+const { generatePrescriptionPDF } = require('../services/prescriptionPDF');
 const auth = require('../middleware/auth');
 const requireRole = require('../middleware/role');
 
@@ -59,124 +59,12 @@ router.get('/:id/download', auth, async (req, res) => {
       return res.status(403).json({ success: false, message: 'Access denied' });
     }
 
-    const doc = new PDFDocument({
-      size: 'A4',
-      margins: { top: 60, bottom: 60, left: 60, right: 60 }
-    });
+    const pdfBuffer = await generatePrescriptionPDF(
+      prescription,
+      prescription.patient,
+      prescription.doctor
+    );
 
-    const buffers = [];
-    doc.on('data', (buf) => buffers.push(buf));
-
-    await new Promise((resolve, reject) => {
-      doc.on('end', resolve);
-      doc.on('error', reject);
-
-      doc.save();
-      doc.rotate(45, { origin: [doc.page.width / 2, doc.page.height / 2] });
-      doc.fontSize(55)
-        .fillColor('#e8f4fd')
-        .text('Virtualcare', 50, 280, { width: 500, align: 'center' });
-      doc.restore();
-
-      doc.rect(0, 0, doc.page.width, 95).fill('#0a2463');
-
-      doc.fillColor('#ffffff')
-        .fontSize(22)
-        .font('Helvetica-Bold')
-        .text('Virtualcare Nigeria', 60, 28);
-
-      doc.fontSize(10)
-        .font('Helvetica')
-        .fillColor('#cccccc')
-        .text('MDCN-Compliant Telemedicine Platform', 60, 55)
-        .text('support@virtualcare.ng', 60, 70);
-
-      doc.fillColor('#0a2463')
-        .fontSize(16)
-        .font('Helvetica-Bold')
-        .text('PRESCRIPTION', 60, 115);
-
-      doc.moveTo(60, 138).lineTo(535, 138).strokeColor('#e2e8f0').lineWidth(1).stroke();
-
-      const d = prescription.doctor;
-      doc.fillColor('#0f172a')
-        .fontSize(11)
-        .font('Helvetica-Bold')
-        .text('Prescribing Doctor', 60, 150);
-      doc.font('Helvetica')
-        .fillColor('#334155')
-        .text(`Dr. ${d.name} ${d.surname}`, 60, 166)
-        .text(d.specialty || '', 60, 181)
-        .text(`MDCN: ${d.mdcnNumber || 'N/A'}`, 60, 196)
-        .text(d.hospitalAffiliation || '', 60, 211);
-
-      const p = prescription.patient;
-      doc.fillColor('#0f172a')
-        .font('Helvetica-Bold')
-        .text('Patient', 320, 150);
-      doc.font('Helvetica')
-        .fillColor('#334155')
-        .text(`${p.name} ${p.surname}`, 320, 166)
-        .text(`Date: ${new Date().toLocaleDateString('en-NG', {
-          timeZone: 'Africa/Lagos',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        })}`, 320, 181);
-
-      doc.moveTo(60, 235).lineTo(535, 235).strokeColor('#e2e8f0').lineWidth(1).stroke();
-
-      doc.fillColor('#0a2463')
-        .fontSize(13)
-        .font('Helvetica-Bold')
-        .text('Medications', 60, 250);
-
-      let y = 272;
-      (prescription.medications || []).forEach((med, i) => {
-        doc.rect(60, y - 6, 475, 65).fillColor('#f8fafc').fill();
-        doc.rect(60, y - 6, 3, 65).fillColor('#1d6aba').fill();
-
-        doc.fillColor('#0f172a')
-          .fontSize(12)
-          .font('Helvetica-Bold')
-          .text(`${i + 1}. ${med.name}`, 72, y);
-        doc.font('Helvetica')
-          .fontSize(10)
-          .fillColor('#475569')
-          .text(`Dosage: ${med.dosage || '—'}  |  Frequency: ${med.frequency || '—'}`, 72, y + 16)
-          .text(`Duration: ${med.duration || '—'}  |  Refills: ${med.refillsAllowed || 0}`, 72, y + 30);
-        y += 80;
-      });
-
-      if (prescription.notes) {
-        doc.moveTo(60, y).lineTo(535, y).strokeColor('#e2e8f0').lineWidth(1).stroke();
-        y += 12;
-        doc.fillColor('#0a2463')
-          .fontSize(11)
-          .font('Helvetica-Bold')
-          .text("Doctor's Notes:", 60, y);
-        y += 16;
-        doc.font('Helvetica')
-          .fontSize(10)
-          .fillColor('#475569')
-          .text(prescription.notes, 60, y, { width: 475 });
-      }
-
-      const footerY = doc.page.height - 50;
-      doc.rect(0, footerY - 10, doc.page.width, 60).fill('#0a2463');
-      doc.fillColor('#b0c4de')
-        .fontSize(8)
-        .text(
-          '© 2026 Virtualcare Nigeria  |  NDPR Compliant  |  This prescription is valid for 30 days from issue date',
-          60,
-          footerY + 2,
-          { align: 'center', width: doc.page.width - 120 }
-        );
-
-      doc.end();
-    });
-
-    const pdfBuffer = Buffer.concat(buffers);
     const filename = `virtualcare-rx-${prescription._id.toString().slice(-6)}.pdf`;
 
     res.setHeader('Content-Type', 'application/pdf');

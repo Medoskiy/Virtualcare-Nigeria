@@ -1,152 +1,86 @@
 const PDFDocument = require('pdfkit');
 
-function generatePrescriptionPDF(prescription, doctor, patient) {
+function generatePrescriptionPDF(prescription, patient, doctor) {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({
-      size: 'A4',
-      margins: { top: 60, bottom: 60, left: 60, right: 60 }
-    });
+    try {
+      const doc = new PDFDocument({ size: 'A4', margin: 50 });
+      const chunks = [];
 
-    const buffers = [];
-    doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => resolve(Buffer.concat(buffers)));
-    doc.on('error', reject);
+      doc.on('data', chunk => chunks.push(chunk));
+      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on('error', reject);
 
-    doc.save();
-    doc.rotate(45, { origin: [doc.page.width / 2, doc.page.height / 2] });
-    doc.fontSize(60)
-      .fillColor('#0a2463', 0.06)
-      .text('Virtualcare', 80, 300, { width: 500, align: 'center' });
-    doc.restore();
+      // --- Diagonal Watermark ---
+      doc.save();
+      doc.fontSize(60);
+      doc.fillColor('#e0f2fe');
+      doc.opacity(0.15);
+      doc.rotate(-45, { origin: [300, 400] });
+      doc.text('VIRTUALCARE NIGERIA', 50, 350, { width: 700 });
+      doc.restore();
 
-    doc.rect(0, 0, doc.page.width, 100).fill('#0a2463');
+      // --- Header ---
+      doc.rect(0, 0, doc.page.width, 100).fill('#0066cc');
+      doc.fontSize(24).fillColor('#ffffff').text('Virtualcare Nigeria', 50, 30);
+      doc.fontSize(10).fillColor('#bfdbfe').text('MDCN-Compliant Telemedicine Platform', 50, 60);
+      doc.fontSize(10).text('www.virtualcare.me | support@virtualcare.me', 50, 75);
 
-    doc.fillColor('#ffffff')
-      .fontSize(24)
-      .font('Helvetica-Bold')
-      .text('Virtualcare Nigeria', 60, 30);
+      // --- Prescription Title ---
+      doc.moveDown(3);
+      doc.fontSize(18).fillColor('#1e293b').text('Medical Prescription', { align: 'center' });
+      doc.moveDown(0.5);
+      const rxDate = prescription.createdAt || prescription.issuedAt || new Date();
+      doc.fontSize(10).fillColor('#64748b').text(`Date: ${new Date(rxDate).toLocaleDateString('en-NG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`, { align: 'center' });
 
-    doc.fontSize(11)
-      .font('Helvetica')
-      .text('MDCN-Compliant Telemedicine Platform', 60, 58);
+      // --- Patient Info ---
+      doc.moveDown(1.5);
+      doc.rect(50, doc.y, doc.page.width - 100, 60).fill('#f0f9ff').stroke('#bae6fd');
+      const patientY = doc.y + 10;
+      doc.fontSize(11).fillColor('#0c4a6e').text(`Patient: ${patient.name} ${patient.surname}`, 60, patientY);
+      doc.text(`Email: ${patient.email}`, 60, patientY + 16);
+      doc.text(`Phone: ${patient.phone || 'N/A'}`, 60, patientY + 32);
 
-    doc.fontSize(10)
-      .text('support@virtualcare.ng | www.virtualcare.ng', 60, 75);
+      // --- Doctor Info ---
+      doc.moveDown(3);
+      doc.rect(50, doc.y, doc.page.width - 100, 45).fill('#f0fdf4').stroke('#bbf7d0');
+      const docY = doc.y + 10;
+      doc.fontSize(11).fillColor('#166534').text(`Prescribing Doctor: Dr. ${doctor.name} ${doctor.surname}`, 60, docY);
+      doc.text(`Specialty: ${doctor.specialty || 'General Practice'} | MDCN Verified`, 60, docY + 16);
 
-    doc.fillColor('#0a2463')
-      .fontSize(18)
-      .font('Helvetica-Bold')
-      .text('MEDICAL PRESCRIPTION', 60, 120);
+      // --- Medications ---
+      doc.moveDown(3);
+      doc.fontSize(14).fillColor('#1e293b').text('Medications', 50);
+      doc.moveDown(0.5);
 
-    doc.moveTo(60, 145).lineTo(535, 145).strokeColor('#e2e8f0').lineWidth(1).stroke();
+      const medications = prescription.medications || [];
+      medications.forEach((med, i) => {
+        doc.moveDown(0.3);
+        doc.fontSize(12).fillColor('#0066cc').text(`${i + 1}. ${med.name}`, 60);
+        doc.fontSize(10).fillColor('#475569').text(`   Dosage: ${med.dosage || 'As directed'}`, 70);
+        if (med.frequency) doc.text(`   Frequency: ${med.frequency}`, 70);
+        if (med.duration) doc.text(`   Duration: ${med.duration}`, 70);
+        if (med.notes) doc.text(`   Notes: ${med.notes}`, 70);
+      });
 
-    doc.fillColor('#0f172a')
-      .fontSize(12)
-      .font('Helvetica-Bold')
-      .text('Prescribing Doctor:', 60, 160);
+      // --- Notes ---
+      if (prescription.notes) {
+        doc.moveDown(1.5);
+        doc.fontSize(12).fillColor('#1e293b').text('Additional Notes', 50);
+        doc.moveDown(0.3);
+        doc.fontSize(10).fillColor('#475569').text(prescription.notes, 60, doc.y, { width: doc.page.width - 120 });
+      }
 
-    doc.font('Helvetica')
-      .fontSize(11)
-      .fillColor('#334155')
-      .text(`Dr. ${doctor.name} ${doctor.surname}`, 60, 178)
-      .text(`${doctor.specialty || ''}`, 60, 194)
-      .text(`MDCN No: ${doctor.mdcnNumber || 'N/A'}`, 60, 210)
-      .text(`${doctor.hospitalAffiliation || ''}`, 60, 226);
+      // --- Footer ---
+      const footerY = doc.page.height - 60;
+      doc.rect(0, footerY, doc.page.width, 60).fill('#f8fafc');
+      doc.fontSize(8).fillColor('#94a3b8')
+        .text('Generated by Virtualcare Nigeria — virtualcare.me', 50, footerY + 15, { align: 'center', width: doc.page.width - 100 })
+        .text(`© ${new Date().getFullYear()} Virtualcare Nigeria. This prescription is digitally generated and valid.`, 50, footerY + 28, { align: 'center', width: doc.page.width - 100 });
 
-    doc.font('Helvetica-Bold')
-      .fontSize(12)
-      .fillColor('#0f172a')
-      .text('Patient:', 300, 160);
-
-    doc.font('Helvetica')
-      .fontSize(11)
-      .fillColor('#334155')
-      .text(`${patient.name} ${patient.surname}`, 300, 178)
-      .text(`ID: #${patient._id.toString().slice(-6).toUpperCase()}`, 300, 194)
-      .text(`Date: ${new Date().toLocaleDateString('en-NG', {
-        day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Africa/Lagos'
-      })}`, 300, 210);
-
-    doc.moveTo(60, 250).lineTo(535, 250).strokeColor('#e2e8f0').lineWidth(1).stroke();
-
-    doc.fillColor('#0a2463')
-      .fontSize(14)
-      .font('Helvetica-Bold')
-      .text('Medications Prescribed:', 60, 265);
-
-    let yPos = 290;
-
-    (prescription.medications || []).forEach((med, index) => {
-      doc.rect(60, yPos - 8, 475, 70).fillColor('#f8fafc').fill();
-      doc.rect(60, yPos - 8, 4, 70).fillColor('#1d6aba').fill();
-
-      doc.fillColor('#0f172a')
-        .fontSize(13)
-        .font('Helvetica-Bold')
-        .text(`${index + 1}. ${med.name}`, 75, yPos);
-
-      doc.fillColor('#334155')
-        .fontSize(11)
-        .font('Helvetica')
-        .text(`Dosage: ${med.dosage || '—'}`, 75, yPos + 18)
-        .text(`Frequency: ${med.frequency || '—'}`, 75, yPos + 34)
-        .text(`Duration: ${med.duration || '—'} | Refills: ${med.refillsAllowed || 0}`, 75, yPos + 50);
-
-      yPos += 90;
-    });
-
-    if (prescription.notes) {
-      doc.moveTo(60, yPos).lineTo(535, yPos).strokeColor('#e2e8f0').lineWidth(1).stroke();
-      yPos += 15;
-
-      doc.fillColor('#0a2463')
-        .fontSize(12)
-        .font('Helvetica-Bold')
-        .text("Doctor's Notes:", 60, yPos);
-
-      yPos += 18;
-
-      doc.fillColor('#334155')
-        .fontSize(11)
-        .font('Helvetica')
-        .text(prescription.notes, 60, yPos, { width: 475, align: 'left' });
+      doc.end();
+    } catch (err) {
+      reject(err);
     }
-
-    const sigY = doc.page.height - 180;
-
-    doc.moveTo(60, sigY).lineTo(535, sigY).strokeColor('#e2e8f0').lineWidth(1).stroke();
-
-    doc.fillColor('#0f172a')
-      .fontSize(11)
-      .font('Helvetica-Bold')
-      .text("Doctor's Signature:", 60, sigY + 15);
-
-    doc.moveTo(60, sigY + 55).lineTo(250, sigY + 55).strokeColor('#0f172a').lineWidth(1).stroke();
-
-    doc.fillColor('#334155')
-      .fontSize(10)
-      .font('Helvetica')
-      .text(`Dr. ${doctor.name} ${doctor.surname}`, 60, sigY + 60)
-      .text(`MDCN No: ${doctor.mdcnNumber || 'N/A'}`, 60, sigY + 75);
-
-    doc.fillColor('#64748b')
-      .fontSize(9)
-      .text('This prescription is valid for 30 days from the date of issue.', 60, sigY + 100)
-      .text('Generated by Virtualcare Nigeria — MDCN-Compliant Telemedicine Platform', 60, sigY + 115)
-      .text('Verify this prescription at: www.virtualcare.ng/verify', 60, sigY + 130);
-
-    doc.rect(0, doc.page.height - 40, doc.page.width, 40).fillColor('#0a2463').fill();
-
-    doc.fillColor('#b0c4de')
-      .fontSize(9)
-      .text(
-        '© 2026 Virtualcare Nigeria | NDPR Compliant | support@virtualcare.ng',
-        60,
-        doc.page.height - 25,
-        { align: 'center', width: doc.page.width - 120 }
-      );
-
-    doc.end();
   });
 }
 

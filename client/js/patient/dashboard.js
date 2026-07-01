@@ -74,6 +74,10 @@ export async function renderPatientPage(container, path) {
   }
 }
 
+function isAvatarUrl(avatar) {
+  return avatar && (avatar.startsWith('/') || avatar.startsWith('http') || avatar.startsWith('data:'));
+}
+
 async function renderOverview(el, user) {
   const [upcoming, profileRes, rxRes] = await Promise.all([
     patientsApi.upcoming(), patientsApi.profile(), patientsApi.prescriptions()
@@ -82,10 +86,17 @@ async function renderOverview(el, user) {
   const profile = profileRes.data.profile || user;
   const rx = rxRes.data.prescriptions || [];
 
+  const savedAvatar = profile.avatar || localStorage.getItem('vc_avatar');
+  const avatarHTML = savedAvatar && isAvatarUrl(savedAvatar)
+    ? `<img src="${escapeHtml(savedAvatar)}" class="sidebar-avatar banner-avatar" style="width:72px;height:72px;border-radius:50%;object-fit:cover;" alt="Avatar">`
+    : savedAvatar
+      ? `<div class="sidebar-avatar banner-avatar">${escapeHtml(savedAvatar)}</div>`
+      : `<div class="sidebar-avatar banner-avatar">${initials(profile.name, profile.surname)}</div>`;
+
   el.innerHTML = `
     <div class="profile-banner patient-banner welcome-banner">
       <div class="banner-inner">
-        <div class="sidebar-avatar banner-avatar">${initials(profile.name, profile.surname)}</div>
+        ${avatarHTML}
         <div class="banner-text">
           <h1>Welcome, ${escapeHtml(profile.name)}</h1>
           <p>Member since ${new Date(profile.createdAt).getFullYear()} · ${profile.isReturningPatient ? 'Returning Patient 🎉' : 'New Patient'}</p>
@@ -104,8 +115,8 @@ async function renderOverview(el, user) {
     </div>
     <h2 class="dash-section-title">Quick Actions</h2>
     <div class="quick-actions-grid quick-grid">
-      ${[['📅','Book',true],['🤖','VirtualAI','/patient/ai'],['💬','Messages','/patient/messages'],['📁','Records','/patient/records'],['💊','Rx','/patient/prescriptions'],['💳','Payments','/patient/payments']].map(([ic,lb,hr]) =>
-        hr === true
+      ${[['📅','Book','book'],['🤖','VirtualAI','/patient/ai'],['💬','Messages','/patient/messages'],['📁','Records','/patient/records'],['💊','Rx','/patient/prescriptions'],['💳','Payments','/patient/payments']].map(([ic,lb,hr]) =>
+        hr === 'book'
           ? `<div class="quick-action-card quick-action quick-card" data-book-flow role="button" tabindex="0"><span class="qa-icon icon">${ic}</span><span>${lb}</span></div>`
           : `<a href="${hr}" data-link class="quick-action-card quick-action quick-card"><span class="qa-icon icon">${ic}</span><span>${lb}</span></a>`
       ).join('')}
