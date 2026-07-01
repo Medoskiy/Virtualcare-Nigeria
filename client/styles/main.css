@@ -1074,3 +1074,141 @@ button:focus-visible, .btn:focus-visible { outline: 3px solid var(--light-blue);
 .auth-notice-welcome-doctor .auth-dashboard-link {
   color: #15803d;
 }
+
+/* ── MOBILE FIXES ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Fix mobile nav drawer width */
+  .nav-drawer,
+  .mobile-menu,
+  .sidebar-menu,
+  [class*="mobile-nav"],
+  [class*="nav-mobile"] {
+    width: 75% !important;
+    max-width: 280px !important;
+  }
+
+  /* Fix header overflow */
+  .navbar,
+  .nav-header,
+  header {
+    overflow: hidden;
+    padding: 0 12px !important;
+  }
+
+  /* Fix Dashboard button in header */
+  .btn-dashboard,
+  .nav-dashboard-btn,
+  a[href*="dashboard"] {
+    font-size: 12px !important;
+    padding: 6px 10px !important;
+    white-space: nowrap;
+  }
+
+  /* Add home button for mobile logged-in users */
+  .mobile-home-btn {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: #0066cc;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 12px 16px;
+  }
+
+  /* Fix content overflow on mobile */
+  body {
+    overflow-x: hidden !important;
+  }
+
+  /* Fix cards on mobile */
+  .card {
+    margin: 8px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Fix dashboard tabs on mobile */
+  .dashboard-tabs,
+  .tab-nav {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .dashboard-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Fix modal on mobile */
+  .modal,
+  .modal-content {
+    width: 95% !important;
+    margin: 10px auto !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  /* Fix tables on mobile */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Fix grid layouts on mobile */
+  .dashboard-grid,
+  .stats-grid,
+  .cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Fix font sizes on mobile */
+  h1 { font-size: 24px !important; }
+  h2 { font-size: 20px !important; }
+  h3 { font-size: 17px !important; }
+
+  /* Fix buttons on mobile */
+  .btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px 16px !important;
+  }
+
+  /* Fix video call container on mobile */
+  #vc-call-container {
+    padding: 8px !important;
+  }
+
+  #local-video {
+    width: 100px !important;
+    height: 70px !important;
+  }
+
+  /* Cookie banner on mobile */
+  #vc-cookie-banner {
+    flex-direction: column !important;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens */
+  .container {
+    padding: 0 12px !important;
+  }
+
+  .dashboard-layout {
+    padding: 8px !important;
+  }
+
+  /* Fix quick action buttons */
+  .quick-actions,
+  [class*="quick-action"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
