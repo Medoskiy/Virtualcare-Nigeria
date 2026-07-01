@@ -38,23 +38,6 @@ export function renderPatientShell(path, contentHtml) {
         <button class="sidebar-logout" id="sidebar-logout">🚪 Sign Out</button>
       </aside>
       <div class="dash-main"><div class="dash-content container-fluid">${contentHtml}</div></div>
-      <nav class="mobile-bottom-nav mobile-tab-bar">
-        <a href="/patient/dashboard" data-link class="mobile-nav-item ${path === '/patient/dashboard' ? 'active' : ''}">
-          <span class="mobile-nav-icon">📊</span><span>Home</span>
-        </a>
-        <a href="#" data-book-flow data-tab="book" class="mobile-nav-item nav-item ${path === '/patient/book' ? 'active' : ''}">
-          <span class="mobile-nav-icon">📅</span><span class="nav-label">Book</span>
-        </a>
-        <a href="/patient/messages" data-link class="mobile-nav-item ${path === '/patient/messages' ? 'active' : ''}">
-          <span class="mobile-nav-icon">💬</span><span>Messages</span>
-        </a>
-        <a href="/patient/ai" data-link class="mobile-nav-item ${path === '/patient/ai' ? 'active' : ''}">
-          <span class="mobile-nav-icon">🤖</span><span>VirtualAI</span>
-        </a>
-        <a href="/patient/profile" data-link class="mobile-nav-item ${path === '/patient/profile' ? 'active' : ''}">
-          <span class="mobile-nav-icon">👤</span><span>Profile</span>
-        </a>
-      </nav>
     </div>
   `;
 }

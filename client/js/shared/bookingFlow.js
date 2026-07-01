@@ -8,7 +8,7 @@ function scrollContentTop() {
 }
 
 function setBookNavActive() {
-  const navItems = document.querySelectorAll('.sidebar-nav a, .mobile-bottom-nav a');
+  const navItems = document.querySelectorAll('.sidebar-nav a, #mobile-bottom-nav a');
   navItems.forEach((n) => n.classList.remove('active'));
   navItems.forEach((n) => {
     if (n.hasAttribute('data-book-flow')) n.classList.add('active');

@@ -486,7 +486,9 @@ body:has(#mobile-bottom-nav.is-visible) {
   padding-bottom: 72px;
 }
 
-body:has(#mobile-bottom-nav.is-visible) #mobile-home-btn {
+/* Legacy shell nav — superseded by #mobile-bottom-nav */
+.mobile-bottom-nav,
+.mobile-tab-bar {
   display: none !important;
 }
 
@@ -693,6 +695,92 @@ body:has(#mobile-bottom-nav.is-visible) #mobile-home-btn {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
+
+  /* Navbar header — logo, bell, dashboard, logout, hamburger */
+  .navbar,
+  header nav,
+  .site-header .nav-inner {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 10px 12px !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .navbar-brand,
+  .nav-logo,
+  .logo,
+  .site-header .logo {
+    font-size: 15px !important;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .navbar-right,
+  .nav-actions,
+  .nav-right,
+  .nav-auth-btns {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .notification-bell,
+  .bell-icon,
+  .nav-bell,
+  [class*="notification"] {
+    position: relative !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    padding: 4px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+
+  .btn-dashboard,
+  .nav-dashboard-btn,
+  .nav-auth-btns .btn-primary {
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    min-height: auto !important;
+    min-width: auto !important;
+  }
+
+  .logout-btn,
+  .btn-logout,
+  #logout-btn,
+  .nav-auth-btns .btn-nav-outline {
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    min-height: auto !important;
+    min-width: auto !important;
+  }
+
+  .burger,
+  .menu-burger,
+  .hamburger,
+  .nav-toggle {
+    flex-shrink: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+    order: 10;
+  }
+
+  .nav-auth-btns {
+    order: 9;
+  }
 }
 
 /* ── Extra small screens ─────────────────────────────────── */
@@ -701,6 +789,22 @@ body:has(#mobile-bottom-nav.is-visible) #mobile-home-btn {
   .nav-auth-btns .btn-primary {
     padding: 5px 8px;
     font-size: 11px;
+  }
+
+  .navbar-brand,
+  .nav-logo,
+  .logo,
+  .site-header .logo {
+    font-size: 13px !important;
+  }
+
+  .btn-dashboard,
+  .logout-btn,
+  #logout-btn,
+  .nav-auth-btns .btn-primary,
+  .nav-auth-btns .btn-nav-outline {
+    font-size: 10px !important;
+    padding: 5px 8px !important;
   }
 
   #mobile-bottom-nav a {

@@ -121,31 +121,6 @@ function bindLinks() {
   });
 }
 
-// Add mobile home button for logged-in users
-function addMobileHomeButton() {
-  if (window.innerWidth <= 768 && getUser()) {
-    const existing = document.getElementById('mobile-home-btn');
-    if (existing) return;
-    const btn = document.createElement('a');
-    btn.id = 'mobile-home-btn';
-    btn.href = '/';
-    btn.setAttribute('data-link', '');
-    btn.className = 'mobile-home-btn';
-    btn.innerHTML = '🏠 Home';
-    btn.style.cssText = `
-      position:fixed;bottom:80px;right:16px;z-index:1000;
-      background:#0066cc;color:#fff;border-radius:50px;
-      padding:10px 16px;font-size:13px;font-weight:600;
-      box-shadow:0 4px 12px rgba(0,102,204,0.4);
-      text-decoration:none;display:flex;align-items:center;gap:6px;`;
-    document.body.appendChild(btn);
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.hash = '/';
-    });
-  }
-}
-
 function renderHowItWorks(container) {
   container.innerHTML = `<div class="dashboard-layout"><div class="container section"><h1>How Virtualcare Nigeria Works</h1>
     <p class="text-muted">From Lagos Island to Maiduguri — quality healthcare is now one tap away.</p>
@@ -276,8 +251,6 @@ async function router() {
 document.getElementById('nav-toggle')?.addEventListener('click', () => {});
 
 window.addEventListener('hashchange', router);
-window.addEventListener('load', addMobileHomeButton);
-window.addEventListener('hashchange', addMobileHomeButton);
 window.addEventListener('load', () => {
   if (!window.location.hash) window.location.hash = '/';
   else router();
