@@ -311,3 +311,9 @@ document.getElementById('install-btn')?.addEventListener('click', async () => {
 document.getElementById('install-dismiss')?.addEventListener('click', () => {
   document.getElementById('install-prompt')?.classList.add('hidden');
 });
+
+// Mobile bottom navigation
+import { renderBottomNav } from './shared/bottomNav.js';
+window.addEventListener('load', renderBottomNav);
+window.addEventListener('hashchange', renderBottomNav);
+window.addEventListener('resize', renderBottomNav);

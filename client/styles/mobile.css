@@ -1,0 +1,716 @@
+/* ═══════════════════════════════════════════════════════════
+   Virtualcare Nigeria — Mobile-First Design System
+   ═══════════════════════════════════════════════════════════ */
+
+/* SAFETY: All overlays hidden by default */
+.mobile-drawer,
+.mobile-sheet,
+.slide-panel,
+.bottom-sheet {
+  display: none;
+}
+
+.mobile-drawer.open,
+.mobile-sheet.open,
+.slide-panel.open,
+.bottom-sheet.open {
+  display: block;
+}
+
+/* ── Design tokens (mobile base) ─────────────────────────── */
+:root {
+  --vc-touch-min: 44px;
+  --vc-transition: 250ms ease;
+  --vc-radius-lg: 16px;
+  --vc-radius-pill: 999px;
+  --vc-shadow-card: 0 2px 12px rgba(10, 36, 99, 0.08);
+  --vc-shadow-float: 0 8px 24px rgba(10, 36, 99, 0.12);
+  --vc-brand: #0066cc;
+  --vc-brand-dark: #0a2463;
+  --vc-surface: #ffffff;
+  --vc-bg: #f8fafc;
+  --vc-text-muted: #64748b;
+  --vc-border: #e2e8f0;
+  --vc-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ── Mobile base (default: up to 768px) ──────────────────── */
+html {
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  background: var(--vc-bg);
+  padding-bottom: var(--vc-safe-bottom);
+}
+
+/* Touch targets */
+button,
+.btn,
+a.btn,
+.nav-toggle,
+input[type="submit"],
+input[type="button"] {
+  min-height: var(--vc-touch-min);
+  min-width: var(--vc-touch-min);
+}
+
+/* Inputs: 16px prevents iOS zoom */
+input,
+select,
+textarea {
+  font-size: 16px;
+  transition: border-color var(--vc-transition), box-shadow var(--vc-transition);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--vc-brand);
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+/* ── Navbar ──────────────────────────────────────────────── */
+.site-header .nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 8px;
+}
+
+.site-header .logo {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.site-header .logo-text {
+  font-size: 17px;
+}
+
+.nav-auth-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.nav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background var(--vc-transition);
+}
+
+.nav-toggle:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.btn-login,
+.btn-nav-outline {
+  padding: 6px 12px;
+  font-size: 13px;
+  min-height: var(--vc-touch-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.btn-register,
+.nav-auth-btns .btn-primary {
+  padding: 6px 12px;
+  font-size: 13px;
+  min-height: var(--vc-touch-min);
+  white-space: nowrap;
+}
+
+/* Backdrop hidden until opened */
+.mobile-backdrop,
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity var(--vc-transition);
+}
+
+.mobile-backdrop.open,
+.nav-overlay.open {
+  display: block;
+  opacity: 1;
+}
+
+/* ── Hero ────────────────────────────────────────────────── */
+.hero {
+  padding: 32px 16px 40px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: clamp(1.75rem, 7vw, 2.25rem);
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+
+.hero p,
+.hero .hero-sub {
+  font-size: 15px;
+  color: var(--vc-text-muted);
+  max-width: 36ch;
+  margin: 0 auto 20px;
+}
+
+.hero .btn,
+.hero-cta .btn {
+  width: 100%;
+  max-width: 320px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--vc-radius-lg);
+  transition: transform var(--vc-transition), box-shadow var(--vc-transition);
+}
+
+.hero .btn:active {
+  transform: scale(0.98);
+}
+
+/* ── Cards ───────────────────────────────────────────────── */
+.card,
+.appt-card,
+.kpi-card,
+.blog-card,
+.specialty-card,
+.doctor-card {
+  border-radius: var(--vc-radius-lg);
+  box-shadow: var(--vc-shadow-card);
+  margin-bottom: 12px;
+  transition: box-shadow var(--vc-transition), transform var(--vc-transition);
+}
+
+.card {
+  padding: 16px;
+  background: var(--vc-surface);
+  border: 1px solid var(--vc-border);
+}
+
+/* ── Forms ───────────────────────────────────────────────── */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vc-brand-dark);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--vc-border);
+  border-radius: 12px;
+  background: var(--vc-surface);
+  box-sizing: border-box;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn {
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background var(--vc-transition), transform var(--vc-transition);
+}
+
+.btn-block,
+.form-actions .btn,
+.auth-form .btn-primary {
+  width: 100%;
+  display: block;
+  text-align: center;
+}
+
+/* ── Modals / bottom sheets ──────────────────────────────── */
+.modal,
+.vc-modal,
+.booking-modal {
+  display: none;
+}
+
+.modal.open,
+.modal.active,
+.vc-modal.open,
+.booking-modal.open {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .modal-content,
+  .vc-modal-content,
+  .booking-modal-content,
+  .modal-dialog {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 92vh;
+    border-radius: 20px 20px 0 0;
+    transform: translateY(100%);
+    transition: transform 300ms ease;
+    overflow-y: auto;
+    padding-bottom: calc(16px + var(--vc-safe-bottom));
+  }
+
+  .modal.open .modal-content,
+  .modal.active .modal-content,
+  .vc-modal.open .vc-modal-content,
+  .booking-modal.open .booking-modal-content {
+    transform: translateY(0);
+  }
+}
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--vc-surface);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 16px calc(20px + var(--vc-safe-bottom));
+  box-shadow: var(--vc-shadow-float);
+  z-index: 10001;
+  transform: translateY(100%);
+  transition: transform 300ms ease;
+}
+
+.bottom-sheet.open {
+  transform: translateY(0);
+}
+
+/* ── Dashboard tabs ──────────────────────────────────────── */
+.dashboard-nav {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.dashboard-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.dashboard-nav ul {
+  display: flex;
+  gap: 4px;
+  padding: 0 12px;
+  min-width: max-content;
+}
+
+.dashboard-nav a {
+  padding: 12px 14px;
+  font-size: 13px;
+  white-space: nowrap;
+  min-height: var(--vc-touch-min);
+  display: flex;
+  align-items: center;
+}
+
+/* Patient sidebar tabs on mobile */
+.dash-sidebar .sidebar-nav {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 4px;
+  padding: 8px 12px;
+}
+
+/* ── VirtualAI chat ──────────────────────────────────────── */
+.ai-chat,
+.ai-chat .chat-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.ai-chat .chat-container {
+  height: min(60vh, 480px);
+  border-radius: var(--vc-radius-lg);
+}
+
+.chat-messages,
+.ai-messages,
+.vc-chat-messages {
+  padding: 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  min-height: 0;
+}
+
+.chat-input,
+.chat-input-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px calc(8px + var(--vc-safe-bottom));
+  background: var(--vc-surface);
+  border-top: 1px solid var(--vc-border);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.chat-input input,
+.ai-input,
+.message-input,
+input[placeholder*="symptom"],
+input[placeholder*="Describe"] {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border-radius: var(--vc-radius-pill);
+  font-size: 16px;
+  border: 1.5px solid var(--vc-border);
+  background: var(--vc-bg);
+}
+
+.ai-send-btn,
+.chat-send-btn,
+.send-btn,
+.chat-input .btn-primary {
+  flex-shrink: 0;
+  min-width: var(--vc-touch-min);
+  width: auto !important;
+  max-width: 80px;
+  padding: 10px 16px;
+  border-radius: var(--vc-radius-pill);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.chat-bubble,
+.ai-message,
+.user-message {
+  max-width: 88%;
+  padding: 10px 14px;
+  font-size: 14px;
+  border-radius: 14px;
+  word-wrap: break-word;
+}
+
+/* ── Profile layout ──────────────────────────────────────── */
+.profile-banner,
+.welcome-banner,
+.profile-header {
+  text-align: center;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-card,
+.patient-profile {
+  padding: 16px;
+}
+
+.badges,
+.profile-badges,
+.stat-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+/* ── Bottom nav (hidden until JS initializes) ───────────── */
+#mobile-bottom-nav {
+  display: none;
+}
+
+#mobile-bottom-nav.is-visible {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--vc-surface);
+  border-top: 1px solid var(--vc-border);
+  padding: 8px 4px calc(8px + var(--vc-safe-bottom));
+  z-index: 998;
+  box-shadow: 0 -4px 16px rgba(10, 36, 99, 0.06);
+}
+
+#mobile-bottom-nav a {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 4px;
+  text-decoration: none;
+  color: var(--vc-text-muted);
+  font-size: 10px;
+  font-weight: 500;
+  gap: 2px;
+  min-height: var(--vc-touch-min);
+  transition: color var(--vc-transition);
+}
+
+#mobile-bottom-nav a span:first-child {
+  font-size: 20px;
+  line-height: 1;
+}
+
+#mobile-bottom-nav a.active {
+  color: var(--vc-brand);
+  font-weight: 600;
+}
+
+body:has(#mobile-bottom-nav.is-visible) {
+  padding-bottom: 72px;
+}
+
+body:has(#mobile-bottom-nav.is-visible) #mobile-home-btn {
+  display: none !important;
+}
+
+/* ── Tablet (768px+) ─────────────────────────────────────── */
+@media (min-width: 768px) {
+  .site-header .nav-inner {
+    padding: 16px 24px;
+  }
+
+  .hero {
+    padding: 48px 24px 56px;
+  }
+
+  .hero .btn,
+  .hero-cta .btn {
+    width: auto;
+    min-width: 200px;
+  }
+
+  .btn-block,
+  .form-actions .btn {
+    width: auto;
+  }
+
+  #mobile-bottom-nav {
+    display: none !important;
+  }
+
+  body:has(#mobile-bottom-nav) {
+    padding-bottom: 0;
+  }
+}
+
+/* ── Desktop (1024px+) ───────────────────────────────────── */
+@media (min-width: 1024px) {
+  .hero {
+    padding: 64px 32px 72px;
+  }
+
+  .card {
+    padding: 24px;
+  }
+
+  .dashboard-nav a {
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   KNOWN MOBILE ISSUE FIXES
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Prevent horizontal scroll */
+  html, body { overflow-x: hidden; max-width: 100vw; }
+
+  /* Navbar: logo left, actions right */
+  .navbar,
+  .site-header .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+  }
+
+  /* Login/Register buttons proper size */
+  .btn-login, .btn-register,
+  .btn-nav-outline,
+  .nav-auth-btns .btn-primary {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  /* Menu drawer proper width — slide from right */
+  .nav-drawer,
+  .mobile-menu,
+  .mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100vh;
+    height: 100dvh;
+    background: var(--deep-blue, #0a2463);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 10000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  .nav-drawer.open,
+  .mobile-menu.open,
+  .mobile-drawer.open {
+    transform: translateX(0);
+  }
+
+  /* Drawer buttons full width */
+  .nav-drawer a,
+  .nav-drawer button,
+  .mobile-drawer a,
+  .mobile-drawer button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 4px 0;
+    box-sizing: border-box;
+    text-align: left;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+
+  .drawer-auth {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 16px;
+  }
+
+  .drawer-auth .drawer-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* VirtualAI chat proper layout */
+  .chat-input-container {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .chat-input {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .chat-input input,
+  .ai-input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 14px;
+    border-radius: 20px;
+    font-size: 16px;
+  }
+
+  .chat-send-btn,
+  .ai-send-btn,
+  .chat-input .btn-primary {
+    flex-shrink: 0;
+    width: auto !important;
+    min-width: 44px;
+    padding: 10px 14px;
+    border-radius: 20px;
+  }
+
+  /* Bottom nav */
+  #mobile-bottom-nav.is-visible {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    background: #fff;
+    border-top: 1px solid #e2e8f0;
+    padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+    z-index: 998;
+  }
+
+  #mobile-bottom-nav a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 4px;
+    text-decoration: none;
+    color: #64748b;
+    font-size: 10px;
+    gap: 2px;
+  }
+
+  #mobile-bottom-nav a span:first-child { font-size: 20px; }
+  #mobile-bottom-nav a.active { color: #0066cc; }
+
+  /* Add padding to body when bottom nav present */
+  body:has(#mobile-bottom-nav.is-visible) { padding-bottom: 70px; }
+
+  /* Dashboard content spacing */
+  .dash-content,
+  #app main,
+  #app .dashboard-layout {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  /* KPI grid stacks on mobile */
+  .kpi-grid,
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}
+
+/* ── Extra small screens ─────────────────────────────────── */
+@media (max-width: 380px) {
+  .nav-auth-btns .btn-nav-outline,
+  .nav-auth-btns .btn-primary {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  #mobile-bottom-nav a {
+    font-size: 9px;
+  }
+
+  .ai-send-btn,
+  .chat-send-btn {
+    min-width: 50px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
