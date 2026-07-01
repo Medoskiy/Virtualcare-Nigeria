@@ -97,7 +97,77 @@
 }
 
 @media (max-width: 768px) {
-  .nav-toggle { display: block; min-height: 44px; min-width: 44px; }
-  .nav-center, .nav-auth-btns .nav-search { display: none; }
-  .nav-links { display: none; }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .logo {
+    flex-shrink: 0;
+    font-size: 1.1rem;
+    margin-right: auto;
+  }
+
+  .nav-center,
+  .nav-links,
+  .nav-auth-btns .nav-search {
+    display: none;
+  }
+
+  .nav-auth-btns {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .nav-auth-btns .nav-bell {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    padding: 4px;
+    cursor: pointer;
+    position: relative;
+    width: auto;
+  }
+
+  .nav-auth-btns .btn,
+  .nav-auth-btns .btn-primary,
+  .nav-auth-btns .btn-nav-outline {
+    padding: 6px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    width: auto;
+  }
+
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    order: 99;
+    min-height: 36px;
+    min-width: 36px;
+    flex-shrink: 0;
+    margin-left: 2px;
+  }
+}
+
+@media (max-width: 380px) {
+  .logo {
+    font-size: 0.95rem;
+  }
+
+  .nav-auth-btns .btn,
+  .nav-auth-btns .btn-primary,
+  .nav-auth-btns .btn-nav-outline {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  .nav-auth-btns {
+    gap: 4px;
+  }
 }
