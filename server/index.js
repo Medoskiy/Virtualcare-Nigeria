@@ -150,6 +150,13 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/otp', otpLimiter, otpRoutes);
 
+app.get('/public/sw.js', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.sendFile(require('path').join(__dirname, '../client/public/sw.js'));
+});
+
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(express.static(path.join(__dirname, '../client')));
 app.use('/public', express.static(path.join(__dirname, '../client/public')));
