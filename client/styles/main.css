@@ -1694,3 +1694,306 @@ img, video, iframe {
     font-size: 22px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE ISSUE FIXES - Round 2
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── FIX 1: MENU DRAWER CUTTING OFF REGISTER BUTTON ──── */
+  .nav-drawer,
+  .mobile-menu,
+  .sidebar-menu,
+  .drawer,
+  [class*="mobile-nav"],
+  [class*="nav-drawer"] {
+    width: 85% !important;
+    max-width: 320px !important;
+    padding: 20px 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .nav-drawer a,
+  .nav-drawer button,
+  .mobile-menu a,
+  .mobile-menu button,
+  .drawer a,
+  .drawer button {
+    display: block !important;
+    width: 100% !important;
+    padding: 12px !important;
+    margin: 4px 0 !important;
+    box-sizing: border-box !important;
+    text-align: left;
+    white-space: normal !important;
+    word-wrap: break-word;
+    font-size: 14px !important;
+  }
+
+  /* Register/CTA button in drawer */
+  .nav-drawer .btn-primary,
+  .nav-drawer .btn-register,
+  .mobile-menu .btn-primary,
+  .drawer .btn-primary {
+    background: #0066cc !important;
+    color: #fff !important;
+    text-align: center !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    margin-top: 8px !important;
+  }
+
+  /* ── FIX 2: LOGOUT BUTTON CUTTING OFF ────────────────── */
+  .logout-btn,
+  .btn-logout,
+  a[href*="logout"],
+  button[onclick*="logout"] {
+    display: block !important;
+    width: 100% !important;
+    padding: 12px 16px !important;
+    text-align: center !important;
+    white-space: normal !important;
+    box-sizing: border-box !important;
+    margin: 8px 0 !important;
+  }
+
+  .user-menu,
+  .profile-menu,
+  .dropdown-menu {
+    width: 90% !important;
+    max-width: 280px !important;
+    right: 10px !important;
+    left: auto !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  .user-menu a,
+  .user-menu button,
+  .profile-menu a,
+  .profile-menu button {
+    display: block !important;
+    width: 100% !important;
+    padding: 10px !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+    white-space: normal !important;
+  }
+
+  /* ── FIX 3: HOME BUTTON POSITION (not overlapping) ──── */
+  #mobile-home-btn {
+    position: fixed !important;
+    bottom: 90px !important;  /* Higher up */
+    right: 16px !important;
+    z-index: 998 !important;
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 22px !important;
+    box-shadow: 0 4px 16px rgba(0,102,204,0.4) !important;
+  }
+
+  /* Hide "Home" text on mobile - icon only */
+  #mobile-home-btn span,
+  #mobile-home-btn .text {
+    display: none !important;
+  }
+
+  /* ── FIX 4: VIRTUALAI CHAT BOX ON MOBILE ─────────────── */
+  .virtualai-container,
+  .ai-chat-container,
+  #virtualai-chat,
+  [class*="virtualai"] {
+    padding: 8px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .vc-chat-messages,
+  #virtualai-messages,
+  .ai-messages,
+  .chat-messages {
+    padding: 12px 8px !important;
+    max-height: 60vh !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+  }
+
+  .chat-input-container,
+  .virtualai-input,
+  .ai-input-wrapper,
+  [class*="chat-input"] {
+    display: flex !important;
+    gap: 6px !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+  }
+
+  .chat-input,
+  .virtualai-input input,
+  .ai-input,
+  input[placeholder*="symptom"],
+  input[placeholder*="Describe"] {
+    flex: 1 !important;
+    width: 100% !important;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    border-radius: 20px !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+
+  .chat-send-btn,
+  .send-btn,
+  button[type="submit"][class*="send"],
+  button:has(> .send-icon) {
+    flex-shrink: 0 !important;
+    width: auto !important;
+    min-width: 60px !important;
+    max-width: 80px !important;
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+    border-radius: 20px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Send button in AI chat specifically */
+  #virtualai-chat button,
+  [class*="virtualai"] button[type="submit"],
+  [class*="ai-chat"] button {
+    width: auto !important;
+    min-width: 60px !important;
+    max-width: 80px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Message bubbles */
+  .chat-message,
+  .ai-message,
+  .user-message {
+    max-width: 85% !important;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    border-radius: 12px !important;
+    margin-bottom: 8px !important;
+    word-wrap: break-word;
+  }
+
+  /* ── FIX 5: NAVBAR RIGHT BUTTONS SPACING ──────────────── */
+  .navbar,
+  header nav {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    padding: 10px 12px !important;
+  }
+
+  .navbar-right,
+  .nav-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .navbar-right .btn,
+  .nav-actions .btn,
+  .navbar-right button,
+  .navbar-right a {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ── FIX 6: PATIENT PROFILE ARRANGEMENT ──────────────── */
+  .profile-container,
+  .patient-profile,
+  .doctor-profile {
+    padding: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .profile-header,
+  .welcome-banner {
+    text-align: center !important;
+    padding: 20px 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .profile-avatar,
+  .avatar-large {
+    width: 72px !important;
+    height: 72px !important;
+    font-size: 28px !important;
+    margin: 0 auto !important;
+  }
+
+  .profile-header h1 {
+    font-size: 18px !important;
+    margin: 8px 0 4px !important;
+  }
+
+  .profile-header p {
+    font-size: 13px !important;
+  }
+
+  /* Profile badges */
+  .badges,
+  .profile-badges {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    justify-content: center !important;
+    margin-top: 8px !important;
+  }
+
+  .badge {
+    padding: 4px 10px !important;
+    font-size: 11px !important;
+    border-radius: 12px !important;
+  }
+}
+
+/* ── EXTRA SMALL SCREENS ────────────────────────────────── */
+@media (max-width: 380px) {
+
+  .navbar-right .btn,
+  .nav-actions .btn {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+  }
+
+  #mobile-home-btn {
+    bottom: 80px !important;
+    right: 12px !important;
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .chat-input,
+  input[placeholder*="symptom"] {
+    font-size: 13px !important;
+    padding: 8px 10px !important;
+  }
+
+  .chat-send-btn,
+  .send-btn {
+    min-width: 50px !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+  }
+}
