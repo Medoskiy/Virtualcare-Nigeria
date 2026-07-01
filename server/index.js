@@ -80,6 +80,12 @@ app.use(compression());
 // Cache static assets for 1 day
 app.use('/styles', express.static(path.join(__dirname, '../client/styles'), { maxAge: '1d' }));
 app.use('/js', express.static(path.join(__dirname, '../client/js'), { maxAge: '1h' }));
+app.get('/public/sw.js', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.sendFile(require('path').join(__dirname, '../client/public/sw.js'));
+});
 app.use('/public', express.static(path.join(__dirname, '../client/public'), { maxAge: '7d' }));
 app.use(morgan('dev'));
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
@@ -150,16 +156,8 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/otp', otpLimiter, otpRoutes);
 
-app.get('/public/sw.js', (req, res) => {
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Service-Worker-Allowed', '/');
-  res.sendFile(require('path').join(__dirname, '../client/public/sw.js'));
-});
-
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(express.static(path.join(__dirname, '../client')));
-app.use('/public', express.static(path.join(__dirname, '../client/public')));
 
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api/')) {
