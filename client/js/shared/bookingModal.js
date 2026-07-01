@@ -42,11 +42,9 @@ function renderModal() {
   if (overlay) overlay.remove();
   overlay = document.createElement('div');
   overlay.className = 'modal-overlay booking-overlay';
-  const isMobile = window.innerWidth < 768;
   overlay.innerHTML = `
-    <div class="modal booking-modal${isMobile ? ' booking-sheet' : ''}">
-      ${isMobile ? '<div class="booking-sheet-handle" aria-hidden="true"></div>' : ''}
-      <button class="modal-close" id="booking-close" aria-label="Close booking">✕</button>
+    <div class="modal booking-modal">
+      <button class="modal-close" id="booking-close">✕</button>
       <div class="booking-progress">
         ${['Specialty', 'Doctor', 'Date & Time', 'Payment'].map((s, i) => `
           <div class="bp-step ${state.step > i + 1 ? 'done' : ''} ${state.step === i + 1 ? 'active' : ''}">

@@ -16,9 +16,6 @@ import { registerBookingFlowGlobals } from './shared/bookingFlow.js';
 import { registerAvatarSelectorGlobals } from './patient/avatarSelector.js';
 import { initCookieConsent } from './shared/cookieConsent.js';
 import { renderPrivacyPolicy } from './pages/privacyPolicy.js';
-import { renderBottomNav } from './shared/bottomNav.js';
-import { renderMobileHeader } from './shared/mobileHeader.js';
-import { setupMobileDrawer } from './shared/mobileDrawer.js';
 
 registerBookingFlowGlobals();
 registerAvatarSelectorGlobals();
@@ -39,13 +36,7 @@ async function updateNav() {
   const role = getRole();
   const path = getPath();
   const header = document.getElementById('site-header');
-  const isMobileView = window.innerWidth < 1024;
-  const hideSiteHeader = isDashboardPath(path) || path === '/login' || path === '/register' || path === '/oauth-callback' || isMobileView;
-  header.classList.toggle('hidden', hideSiteHeader);
-
-  await renderMobileHeader(path);
-  renderBottomNav(path);
-  setupMobileDrawer();
+  header.classList.toggle('hidden', isDashboardPath(path) || path === '/login' || path === '/register' || path === '/oauth-callback');
 
   if (user) {
     connectSocket(user, role);
@@ -75,6 +66,50 @@ async function updateNav() {
     });
   }
   bindLinks();
+  setupDrawer();
+}
+
+function setupDrawer() {
+  const toggle = document.getElementById('nav-toggle');
+  const drawer = document.getElementById('nav-drawer');
+  const overlay = document.getElementById('nav-overlay');
+
+  const closeDrawer = () => {
+    drawer?.classList.remove('open');
+    overlay?.classList.remove('open');
+  };
+
+  drawer.className = 'mobile-drawer';
+  overlay.className = 'mobile-backdrop';
+
+  drawer.innerHTML = `
+    <button type="button" class="drawer-close" id="drawer-close" aria-label="Close">×</button>
+    <a href="/" class="logo drawer-logo" data-link>⊕ <span class="logo-text">Virtual<span class="logo-accent">care</span></span></a>
+    <a href="/find-a-doctor" data-link>Find a Doctor</a>
+    <a href="/how-it-works" data-link>How It Works</a>
+    <a href="/blog" data-link>Blog & Health Tips</a>
+    <a href="/for-doctors" data-link>For Doctors</a>
+    <div class="drawer-auth">
+      <a href="/login" data-link class="btn-nav-outline drawer-btn">Login</a>
+      <a href="/register" data-link class="btn btn-primary btn-sm drawer-btn">Register</a>
+    </div>
+  `;
+
+  drawer.querySelectorAll('a[data-link]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeDrawer();
+      window.location.hash = a.getAttribute('href');
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    });
+  });
+
+  document.getElementById('drawer-close')?.addEventListener('click', closeDrawer);
+  toggle?.addEventListener('click', () => {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  });
+  overlay?.addEventListener('click', closeDrawer);
 }
 
 function bindLinks() {
@@ -84,6 +119,31 @@ function bindLinks() {
       window.location.hash = a.getAttribute('href');
     });
   });
+}
+
+// Add mobile home button for logged-in users
+function addMobileHomeButton() {
+  if (window.innerWidth <= 768 && getUser()) {
+    const existing = document.getElementById('mobile-home-btn');
+    if (existing) return;
+    const btn = document.createElement('a');
+    btn.id = 'mobile-home-btn';
+    btn.href = '/';
+    btn.setAttribute('data-link', '');
+    btn.className = 'mobile-home-btn';
+    btn.innerHTML = '🏠 Home';
+    btn.style.cssText = `
+      position:fixed;bottom:80px;right:16px;z-index:1000;
+      background:#0066cc;color:#fff;border-radius:50px;
+      padding:10px 16px;font-size:13px;font-weight:600;
+      box-shadow:0 4px 12px rgba(0,102,204,0.4);
+      text-decoration:none;display:flex;align-items:center;gap:6px;`;
+    document.body.appendChild(btn);
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.hash = '/';
+    });
+  }
 }
 
 function renderHowItWorks(container) {
@@ -215,13 +275,9 @@ async function router() {
 
 document.getElementById('nav-toggle')?.addEventListener('click', () => {});
 
-window.addEventListener('resize', () => {
-  const path = getPath();
-  renderMobileHeader(path);
-  renderBottomNav(path);
-});
-
 window.addEventListener('hashchange', router);
+window.addEventListener('load', addMobileHomeButton);
+window.addEventListener('hashchange', addMobileHomeButton);
 window.addEventListener('load', () => {
   if (!window.location.hash) window.location.hash = '/';
   else router();
