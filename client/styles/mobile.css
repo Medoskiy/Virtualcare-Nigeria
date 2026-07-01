@@ -74,64 +74,6 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
 }
 
-/* ── Navbar ──────────────────────────────────────────────── */
-.site-header .nav-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  gap: 8px;
-}
-
-.site-header .logo {
-  flex-shrink: 1;
-  min-width: 0;
-}
-
-.site-header .logo-text {
-  font-size: 17px;
-}
-
-.nav-auth-btns {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.nav-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  padding: 8px;
-  border-radius: 8px;
-  transition: background var(--vc-transition);
-}
-
-.nav-toggle:active {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.btn-login,
-.btn-nav-outline {
-  padding: 6px 12px;
-  font-size: 13px;
-  min-height: var(--vc-touch-min);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-}
-
-.btn-register,
-.nav-auth-btns .btn-primary {
-  padding: 6px 12px;
-  font-size: 13px;
-  min-height: var(--vc-touch-min);
-  white-space: nowrap;
-}
-
 /* Backdrop hidden until opened */
 .mobile-backdrop,
 .nav-overlay {
@@ -539,29 +481,151 @@ body:has(#mobile-bottom-nav.is-visible) {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   MOBILE HEADER NAVBAR
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Header container */
+  #site-header .nav-inner,
+  .site-header .nav-inner {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Logo - always full text, never shrink away */
+  #site-header .logo {
+    flex-shrink: 0 !important;
+    font-size: 16px !important;
+    white-space: nowrap !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+  }
+  #site-header .logo-text {
+    display: inline !important;
+  }
+
+  /* Hide center nav links on mobile (they live in the drawer) */
+  #site-header .nav-links,
+  #site-header #nav-center {
+    display: none !important;
+  }
+
+  /* Hide search on mobile */
+  #site-header .nav-search,
+  #nav-search {
+    display: none !important;
+  }
+
+  /* Auth button group - right aligned, tight, no wrap */
+  #site-header .nav-auth-btns,
+  #nav-auth {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+    margin-left: auto !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* Bell */
+  #site-header .nav-bell {
+    flex-shrink: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    font-size: 18px !important;
+    padding: 4px !important;
+    position: relative !important;
+    width: auto !important;
+    cursor: pointer;
+  }
+  #site-header .nav-bell .badge-count {
+    position: absolute !important;
+    top: -2px !important;
+    right: -2px !important;
+    background: #ef4444 !important;
+    color: #fff !important;
+    font-size: 9px !important;
+    min-width: 15px !important;
+    height: 15px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 3px !important;
+  }
+
+  /* Dashboard button - compact, not stretched */
+  #site-header #nav-auth .btn-primary,
+  #site-header #nav-auth .btn.btn-sm {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
+    border-radius: 6px !important;
+  }
+
+  /* Login / Logout outline buttons - compact */
+  #site-header #nav-auth .btn-nav-outline {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
+    border-radius: 6px !important;
+  }
+
+  /* Hamburger - always last, clearly separated */
+  #site-header .nav-toggle {
+    order: 99 !important;
+    flex-shrink: 0 !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 20px !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
+    margin-left: 2px !important;
+  }
+
+  /* Override global touch-target min sizes inside header */
+  #site-header .nav-bell,
+  #site-header #nav-auth .btn,
+  #site-header .nav-toggle {
+    min-width: 0 !important;
+    min-height: 0 !important;
+  }
+}
+
+/* Very small screens - shrink text slightly but keep full word */
+@media (max-width: 380px) {
+  #site-header .logo { font-size: 14px !important; }
+  #site-header #nav-auth .btn-primary,
+  #site-header #nav-auth .btn-nav-outline {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+  }
+  #site-header #nav-auth { gap: 4px !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════
    KNOWN MOBILE ISSUE FIXES
    ═══════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
   /* Prevent horizontal scroll */
   html, body { overflow-x: hidden; max-width: 100vw; }
-
-  /* Navbar: logo left, actions right */
-  .navbar,
-  .site-header .nav-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-  }
-
-  /* Login/Register buttons proper size */
-  .btn-login, .btn-register,
-  .btn-nav-outline,
-  .nav-auth-btns .btn-primary {
-    padding: 6px 12px;
-    font-size: 13px;
-  }
 
   /* Menu drawer proper width — slide from right */
   .nav-drawer,
@@ -695,118 +759,10 @@ body:has(#mobile-bottom-nav.is-visible) {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
-
-  /* Navbar header — logo, bell, dashboard, logout, hamburger */
-  .navbar,
-  header nav,
-  .site-header .nav-inner {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 10px 12px !important;
-    gap: 8px !important;
-    flex-wrap: nowrap !important;
-  }
-
-  .navbar-brand,
-  .nav-logo,
-  .logo,
-  .site-header .logo {
-    font-size: 15px !important;
-    flex-shrink: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .navbar-right,
-  .nav-actions,
-  .nav-right,
-  .nav-auth-btns {
-    display: flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .notification-bell,
-  .bell-icon,
-  .nav-bell,
-  [class*="notification"] {
-    position: relative !important;
-    flex-shrink: 0 !important;
-    margin: 0 !important;
-    padding: 4px !important;
-    min-width: 32px !important;
-    min-height: 32px !important;
-  }
-
-  .btn-dashboard,
-  .nav-dashboard-btn,
-  .nav-auth-btns .btn-primary {
-    padding: 6px 10px !important;
-    font-size: 11px !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    min-height: auto !important;
-    min-width: auto !important;
-  }
-
-  .logout-btn,
-  .btn-logout,
-  #logout-btn,
-  .nav-auth-btns .btn-nav-outline {
-    padding: 6px 10px !important;
-    font-size: 11px !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-    min-height: auto !important;
-    min-width: auto !important;
-  }
-
-  .burger,
-  .menu-burger,
-  .hamburger,
-  .nav-toggle {
-    flex-shrink: 0 !important;
-    width: 32px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    min-height: 32px !important;
-    padding: 0 !important;
-    order: 10;
-  }
-
-  .nav-auth-btns {
-    order: 9;
-  }
 }
 
 /* ── Extra small screens ─────────────────────────────────── */
 @media (max-width: 380px) {
-  .nav-auth-btns .btn-nav-outline,
-  .nav-auth-btns .btn-primary {
-    padding: 5px 8px;
-    font-size: 11px;
-  }
-
-  .navbar-brand,
-  .nav-logo,
-  .logo,
-  .site-header .logo {
-    font-size: 13px !important;
-  }
-
-  .btn-dashboard,
-  .logout-btn,
-  #logout-btn,
-  .nav-auth-btns .btn-primary,
-  .nav-auth-btns .btn-nav-outline {
-    font-size: 10px !important;
-    padding: 5px 8px !important;
-  }
-
   #mobile-bottom-nav a {
     font-size: 9px;
   }
