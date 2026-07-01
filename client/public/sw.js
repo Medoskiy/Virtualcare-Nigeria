@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'virtualcare-ng-v2';
+const CACHE_VERSION = 'virtualcare-ng-v3';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 
@@ -29,6 +29,18 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
+
+  // NEVER intercept OAuth callback requests - let browser handle them directly
+  if (url.pathname.includes('/auth/google/callback') ||
+      url.pathname.includes('/auth/facebook/callback') ||
+      url.pathname.includes('/oauth-callback') ||
+      url.pathname.startsWith('/api/auth/google') ||
+      url.pathname.startsWith('/api/auth/facebook') ||
+      url.pathname === '/api/auth/logout') {
+    return; // Don't intercept
+  }
+
+  // Handle API requests
   if (url.pathname.startsWith('/api/')) {
     e.respondWith(
       fetch(e.request).catch(() =>
@@ -39,12 +51,17 @@ self.addEventListener('fetch', (e) => {
     );
     return;
   }
+
+  // Handle static assets with cache-first strategy
   e.respondWith(
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
       return fetch(e.request).then((response) => {
-        const clone = response.clone();
-        caches.open(DYNAMIC_CACHE).then((cache) => cache.put(e.request, clone));
+        // Only cache successful responses
+        if (response.status === 200) {
+          const clone = response.clone();
+          caches.open(DYNAMIC_CACHE).then((cache) => cache.put(e.request, clone));
+        }
         return response;
       });
     }).catch(() => caches.match('/'))
