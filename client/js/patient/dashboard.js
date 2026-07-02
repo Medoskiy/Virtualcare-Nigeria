@@ -86,18 +86,34 @@ async function renderOverview(el, user) {
   const profile = profileRes.data.profile || user;
   const rx = rxRes.data.prescriptions || [];
 
-  let savedAvatar = profile.avatar || localStorage.getItem('vc_avatar');
-  if (!savedAvatar) {
+  // Resolve avatar — local override always wins over DB (handles Facebook OAuth photo)
+  const avatarOverride = localStorage.getItem('vc_avatar_override');
+  let savedAvatar;
+  if (avatarOverride === 'emoji') {
+    // User manually picked an emoji — use it regardless of DB
     try {
       const raw = localStorage.getItem('patientAvatar');
       if (raw) { const p = JSON.parse(raw); if (p?.emoji) savedAvatar = p.emoji; }
     } catch { /* ignore */ }
+  } else if (avatarOverride === 'url') {
+    // User uploaded a photo — use it
+    savedAvatar = localStorage.getItem('vc_avatar');
+  }
+  // Fall back to DB avatar if no local override
+  if (!savedAvatar) {
+    savedAvatar = profile.avatar || localStorage.getItem('vc_avatar');
+    if (!savedAvatar) {
+      try {
+        const raw = localStorage.getItem('patientAvatar');
+        if (raw) { const p = JSON.parse(raw); if (p?.emoji) savedAvatar = p.emoji; }
+      } catch { /* ignore */ }
+    }
   }
   const avatarHTML = savedAvatar && isAvatarUrl(savedAvatar)
-    ? `<img src="${escapeHtml(savedAvatar)}" class="sidebar-avatar banner-avatar" style="width:72px;height:72px;border-radius:50%;object-fit:cover;" alt="Avatar">`
+    ? `<img src="${escapeHtml(savedAvatar)}" class="sidebar-avatar banner-avatar" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.15);" alt="Avatar">`
     : savedAvatar
       ? `<div class="sidebar-avatar banner-avatar" style="font-size:52px;line-height:1;display:flex;align-items:center;justify-content:center;width:72px;height:72px;">${savedAvatar}</div>`
-      : `<div class="sidebar-avatar banner-avatar">${initials(profile.name, profile.surname)}</div>`;
+      : `<div class="sidebar-avatar banner-avatar" style="font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;width:72px;height:72px;background:#1d6aba;color:#fff;border-radius:50%;">${initials(profile.name, profile.surname)}</div>`;
 
   el.innerHTML = `
     <div class="profile-banner patient-banner welcome-banner">

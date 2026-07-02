@@ -260,7 +260,9 @@ async function confirmAvatarSelection(root) {
   updateWelcomeBannerAvatar(selectedAvatar.emoji);
 
   localStorage.setItem('patientAvatar', JSON.stringify(selectedAvatar));
+  localStorage.setItem('vc_avatar_override', 'emoji');
   localStorage.removeItem('patientAvatarPhoto');
+  localStorage.removeItem('vc_avatar');
   updateLocalUserAvatar(selectedAvatar.emoji);
 
   closeAvatarSelector(root);
@@ -305,6 +307,7 @@ async function handleAvatarUpload(root, file) {
       updateSidebarAvatars(display);
       updateWelcomeBannerAvatar(display.url);
       localStorage.setItem('vc_avatar', display.url);
+      localStorage.setItem('vc_avatar_override', 'url');
       closeAvatarSelector(root);
       toast('Profile photo updated! ✅', 'success');
       try {
