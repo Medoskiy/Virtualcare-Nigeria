@@ -1479,6 +1479,13 @@ body:has(#mobile-bottom-nav.is-visible) {
     font-size: 10px !important;
     padding: 5px 10px !important;
   }
+  /* Quick actions stay 3 columns even on small screens */
+  .quick-actions-grid,
+  .quick-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+
   /* Keep 2-column KPIs even on small screens (not 1 column) */
   .kpi-grid,
   .stats-grid {

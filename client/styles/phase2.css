@@ -686,6 +686,12 @@
   color: #15803d;
   border-color: #bbf7d0;
 }
+.quick-action-card:nth-child(7),
+.quick-action:nth-child(7) {
+  background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+  color: #7c3aed;
+  border-color: #ddd6fe;
+}
 .quick-action-card:hover,
 .quick-action:hover,
 .quick-card:hover {
