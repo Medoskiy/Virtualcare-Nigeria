@@ -1814,3 +1814,98 @@ body:has(#mobile-bottom-nav.is-visible) {
     padding: 10px 12px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   LOGIN PAGE — MOBILE ENHANCEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Role selector (Patient / Doctor / Admin toggle) */
+  .auth-role-selector {
+    display: flex !important;
+    gap: 0 !important;
+    padding: 4px !important;
+    border-radius: 10px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .auth-role-btn {
+    flex: 1 !important;
+    padding: 10px 6px !important;
+    font-size: 12px !important;
+    gap: 4px !important;
+    border-radius: 8px !important;
+  }
+
+  .role-icon {
+    font-size: 14px !important;
+  }
+
+  /* Login form field spacing */
+  .auth-form .auth-field {
+    margin-bottom: 14px !important;
+  }
+
+  /* Label row (label + forgot password link) */
+  .auth-label-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 4px !important;
+  }
+
+  .auth-forgot-link {
+    font-size: 12px !important;
+    padding: 0 !important;
+  }
+
+  /* Remember me row */
+  .auth-remember-row {
+    margin-bottom: 16px !important;
+  }
+
+  .auth-remember {
+    font-size: 13px !important;
+    gap: 8px !important;
+  }
+
+  /* Divider */
+  .auth-divider {
+    margin-bottom: 16px !important;
+    font-size: 12px !important;
+  }
+
+  /* Forgot password modal */
+  .forgot-pw-modal {
+    padding: 16px !important;
+    z-index: 10003 !important;
+  }
+
+  .forgot-pw-box {
+    width: calc(100% - 32px) !important;
+    max-width: 100% !important;
+    padding: 24px 20px !important;
+    border-radius: 16px !important;
+  }
+
+  .fpb-header h3 {
+    font-size: 18px !important;
+  }
+
+  .forgot-pw-desc {
+    font-size: 13px !important;
+  }
+
+  .forgot-email-input {
+    font-size: 16px !important;
+    width: 100% !important;
+  }
+
+  /* Error message styling */
+  .auth-error-msg {
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+    border-radius: 8px !important;
+    margin-bottom: 12px !important;
+  }
+}
