@@ -122,26 +122,71 @@ async function sendAIMessage(container, userMessage, inputEl) {
 
     const data = result?.data || {};
 
+    // Show doctor booking modal when AI triggers BOOK_APPOINTMENT
     if (data.bookingStatus === 'show_doctors' && data.doctors?.length > 0) {
+      // Remove any existing modal
+      document.getElementById('vc-booking-modal')?.remove();
+
       const modal = renderDoctorBookingModal(data);
       const modalEl = document.createElement('div');
       modalEl.innerHTML = modal;
       const modalNode = modalEl.firstElementChild;
-      modalNode.dataset.reason = data.reason || 'VirtualAI referral';
-      modalNode.dataset.urgency = data.urgency || 'normal';
-      document.body.appendChild(modalNode);
+      if (modalNode) {
+        modalNode.dataset.reason = data.reason || 'VirtualAI referral';
+        modalNode.dataset.urgency = data.urgency || 'normal';
+        document.body.appendChild(modalNode);
+      }
+
+      // Also show a chat bubble with a book button
+      const box = getAIChatBox(container);
+      box?.insertAdjacentHTML('beforeend', `
+        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:14px 16px;margin-top:8px">
+          <div style="font-size:13px;font-weight:600;color:#1d6aba;margin-bottom:8px">📋 I found available ${escapeHtml(data.specialist || 'doctors')} for you</div>
+          <button type="button" onclick="document.getElementById('vc-booking-modal')?.remove();
+            (function(){
+              var modal = document.createElement('div');
+              modal.id='vc-booking-modal';
+              modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px';
+              document.body.appendChild(modal);
+              if(typeof window.openBookingFlow==='function') window.openBookingFlow();
+              else modal.remove();
+            })()" 
+            style="background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;width:100%">
+            📅 View Available Doctors & Book
+          </button>
+        </div>
+      `);
+    } else if (data.bookingStatus === 'no_doctor_available') {
+      // No doctors available — show regular booking flow
+      const box = getAIChatBox(container);
+      box?.insertAdjacentHTML('beforeend', `
+        <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:14px 16px;margin-top:8px">
+          <div style="font-size:13px;color:#92400e;margin-bottom:8px">⚠️ No ${escapeHtml(data.specialist || 'specialist')} doctors are available right now. You can still book a General Practitioner.</div>
+          <button type="button" onclick="window.openBookingFlow?.()" style="background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;width:100%">
+            📅 Book Available Doctor
+          </button>
+        </div>
+      `);
     }
 
     if (result?.data?.priorityBookingTriggered) {
       showPriorityBookingBanner(container);
     }
 
+    // Show book button for any specialty suggestion
     if (result?.data?.suggestSpecialty) {
       const box = getAIChatBox(container);
       box?.insertAdjacentHTML('beforeend', `
-        <button type="button" style="margin:8px;background:#1d6aba;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;display:inline-block" onclick="window.openBookingFlow?.()">
-          📅 Book a ${escapeHtml(result.data.suggestSpecialty)}
-        </button>
+        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:12px 16px;margin-top:8px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🏥</span>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:#0a2463">Book a ${escapeHtml(result.data.suggestSpecialty)}</div>
+            <div style="font-size:12px;color:#64748b">Recommended by VirtualAI based on your symptoms</div>
+          </div>
+          <button type="button" onclick="window.openBookingFlowWithSpecialty?.('${escapeHtml(result.data.suggestSpecialty)}') || window.openBookingFlow?.()" style="background:#1d6aba;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
+            Book Now
+          </button>
+        </div>
       `);
     }
 
