@@ -20,16 +20,11 @@ import { renderPrivacyPolicy } from './pages/privacyPolicy.js';
 registerBookingFlowGlobals();
 registerAvatarSelectorGlobals();
 
-// Global safety-net: any element with data-book-flow, #msg-book, or #hero-book always opens the booking modal
 document.addEventListener('click', (e) => {
-  const target = e.target.closest('[data-book-flow], #msg-book, #hero-book, #footer-book, #priority-book-btn');
+  const target = e.target.closest('#msg-book, #hero-book, #footer-book, #priority-book-btn');
   if (!target) return;
-  // Don't intercept if it's a proper link inside a nav that already has its own handler
-  if (target.closest('#mobile-bottom-nav')) return;
   e.preventDefault();
-  if (typeof window.openBookingFlow === 'function') {
-    window.openBookingFlow();
-  }
+  if (typeof window.openBookingFlow === 'function') window.openBookingFlow();
 });
 
 const app = document.getElementById('app');

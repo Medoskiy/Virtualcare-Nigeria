@@ -34,7 +34,7 @@ function bindNavLinks(nav) {
     a.addEventListener('click', (e) => {
       e.preventDefault();
       const tab = a.dataset.tab;
-      // Special case: Book tab opens the booking modal directly
+
       if (tab === 'book') {
         if (typeof window.openBookingFlow === 'function') {
           window.openBookingFlow();
@@ -45,6 +45,7 @@ function bindNavLinks(nav) {
         highlightActiveTab(nav);
         return;
       }
+
       const href = a.getAttribute('href');
       if (!href) return;
       window.location.hash = href;

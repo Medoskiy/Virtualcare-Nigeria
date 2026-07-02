@@ -61,31 +61,17 @@ function showPriorityBookingBanner(container) {
   const box = getAIChatBox(container);
   if (!box || box.querySelector('.priority-booking-alert')) return;
   box.insertAdjacentHTML('beforeend', `
-    <div class="priority-booking-alert" style="
-      background: #fee2e2;
-      border: 2px solid var(--red);
-      border-radius: 10px;
-      padding: 14px 18px;
-      margin: 10px 0;
-      font-size: 14px;
-      color: #991b1b;
-      font-weight: 600;
-      animation: pulse 1s ease 3;
-    ">
+    <div style="background:#fee2e2;border:2px solid #dc2626;border-radius:10px;padding:14px 18px;margin:10px 0;font-size:14px;color:#991b1b;font-weight:600">
       🚨 <strong>Priority Booking Activated</strong><br>
-      <span style="font-weight:400">Your case has been flagged as urgent.
-      A Virtualcare doctor will be prioritised for you.
-      Please also call <strong>112</strong> if this is an emergency.</span>
+      <span style="font-weight:400">Your case has been flagged as urgent. A Virtualcare doctor will be prioritised for you. Please also call <strong>112</strong> if this is an emergency.</span>
       <br><br>
-      <button type="button" class="btn btn-primary btn-sm" id="priority-book-btn"
-        style="background:var(--red);border:none">
+      <button type="button" id="priority-book-btn" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer">
         Book Priority Appointment Now
       </button>
     </div>
   `);
   box.querySelector('#priority-book-btn')?.addEventListener('click', () => {
-    window.location.hash = '/patient/book';
-    window.dispatchEvent(new HashChangeEvent('hashchange'));
+    if (typeof window.openBookingFlow === 'function') window.openBookingFlow();
   });
   scrollToBottom(container);
 }
@@ -97,7 +83,7 @@ export function clearAIConversation() {
   if (messagesContainer) {
     messagesContainer.innerHTML = '';
     appendMessageBubble(activeAIContainer, 'ai',
-      'Hello! I am VirtualAI. How can I help you today?');
+      '👋 Hello! I am VirtualAI, your Nigerian health assistant. Describe your symptoms and I will help you understand what might be wrong and which specialist to see.');
   }
 }
 
@@ -110,10 +96,10 @@ async function sendAIMessage(container, userMessage, inputEl) {
 
   const trimmedMessage = userMessage.trim();
 
-  virtualAIHistory.push({
-    role: 'user',
-    content: trimmedMessage
-  });
+  var suggestWrap = container.querySelector('#vcaiSuggestWrap');
+  if (suggestWrap) suggestWrap.style.display = 'none';
+
+  virtualAIHistory.push({ role: 'user', content: trimmedMessage });
   aiTurnCount++;
 
   appendMessageBubble(container, 'user', trimmedMessage);
@@ -126,17 +112,12 @@ async function sendAIMessage(container, userMessage, inputEl) {
 
   try {
     const result = await aiApi.chat(trimmedMessage, virtualAIHistory.slice(0, -1));
-
     hideTypingIndicator(container);
 
     const reply = result?.data?.reply || result?.reply;
     if (!reply) throw new Error('No reply from VirtualAI');
 
-    virtualAIHistory.push({
-      role: 'ai',
-      content: reply
-    });
-
+    virtualAIHistory.push({ role: 'ai', content: reply });
     appendMessageBubble(container, 'ai', reply);
 
     const data = result?.data || {};
@@ -158,17 +139,10 @@ async function sendAIMessage(container, userMessage, inputEl) {
     if (result?.data?.suggestSpecialty) {
       const box = getAIChatBox(container);
       box?.insertAdjacentHTML('beforeend', `
-        <a href="/find-a-doctor?specialty=${encodeURIComponent(result.data.suggestSpecialty)}"
-          data-link class="btn btn-primary btn-sm" style="margin:8px">
-          Book a ${escapeHtml(result.data.suggestSpecialty)}
-        </a>
+        <button type="button" style="margin:8px;background:#1d6aba;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;display:inline-block" onclick="window.openBookingFlow?.()">
+          📅 Book a ${escapeHtml(result.data.suggestSpecialty)}
+        </button>
       `);
-      container.querySelectorAll('[data-link]').forEach((a) => {
-        a.addEventListener('click', (e) => {
-          e.preventDefault();
-          window.location.hash = a.getAttribute('href');
-        });
-      });
     }
 
     scrollToBottom(container);
@@ -182,13 +156,7 @@ async function sendAIMessage(container, userMessage, inputEl) {
 }
 
 function bindAIInputEnter(container) {
-  const aiInput = container.querySelector('#aiInput')
-    || container.querySelector('#ai-input')
-    || container.querySelector('.ai-input')
-    || container.querySelector('[placeholder*="symptom"]')
-    || container.querySelector('[placeholder*="Describe"]')
-    || container.querySelector('[placeholder*="health"]');
-
+  const aiInput = container.querySelector('#aiInput');
   if (!aiInput) return;
 
   if (aiInput._aiEnterHandler) {
@@ -198,60 +166,72 @@ function bindAIInputEnter(container) {
   aiInput._aiEnterHandler = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      const sendBtn = container.querySelector('#aiSendBtn')
-        || container.querySelector('#ai-send')
-        || container.querySelector('.ai-send-btn')
-        || container.querySelector('#aichat button[type="submit"]');
-      if (sendBtn) {
-        sendBtn.click();
-      } else {
-        sendAIMessage(container, aiInput.value, aiInput);
-      }
+      const sendBtn = container.querySelector('#aiSendBtn');
+      if (sendBtn) sendBtn.click();
+      else sendAIMessage(container, aiInput.value, aiInput);
     }
   };
 
   aiInput.addEventListener('keydown', aiInput._aiEnterHandler);
 }
 
+const AI_SUGGESTIONS = [
+  { icon: '🦟', text: 'I have fever, chills and body aches — could it be malaria?' },
+  { icon: '🌡️', text: 'How do I know if I have typhoid fever?' },
+  { icon: '❤️', text: 'My blood pressure reads 150/95 — is that dangerous?' },
+  { icon: '🧬', text: 'My genotype is AS — what precautions should I take?' },
+  { icon: '🤰', text: 'I am pregnant, what antenatal tests should I do?' },
+  { icon: '😔', text: 'I have been feeling depressed and hopeless lately' },
+  { icon: '🍚', text: 'I have severe stomach pain after eating' },
+  { icon: '💊', text: 'I need advice on managing diabetes in Nigeria' },
+  { icon: '👶', text: 'My baby has a fever and is not eating' },
+  { icon: '🧠', text: 'I get severe headaches almost every day' },
+  { icon: '🫁', text: 'I have a persistent cough for over 2 weeks' },
+  { icon: '👁️', text: 'My eyes are red, itchy and swollen' },
+  { icon: '🦴', text: 'My joints ache badly especially in the morning' },
+  { icon: '🩸', text: 'I feel weak and dizzy — could it be low blood?' },
+  { icon: '🏥', text: 'Recommend a specialist doctor near me' }
+];
+
 export async function renderAiChat(container) {
   activeAIContainer = container;
   const hasHistory = virtualAIHistory.length > 0;
 
   container.innerHTML = `
-    <div class="ai-chat-header-row">
-      <h1 class="ai-chat-title">VirtualAI Health Assistant</h1>
-      <button type="button" class="ai-new-chat-pill" id="ai-new-chat">✨ New Chat</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;margin-bottom:12px">
+      <h1 style="font-size:20px;font-weight:800;color:#0a2463;margin:0;white-space:nowrap">VirtualAI Health Assistant</h1>
+      <button type="button" id="ai-new-chat" style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(124,58,237,0.3)">✨ New Chat</button>
     </div>
-    <div class="ai-chat">
-      <div class="ai-disclaimer">⚠️ VirtualAI provides general health information only. Always consult a licensed doctor for medical advice.</div>
-      <p class="ai-ask-label">💡 Try asking about:</p>
-      <div class="ai-suggest-list" id="aiSuggestList">
-        ${[
-          { icon: '🦟', text: 'I have fever, chills and body aches — could it be malaria?' },
-          { icon: '🌡️', text: 'How do I know if I have typhoid fever?' },
-          { icon: '❤️', text: 'My blood pressure reads 150/95 — is that dangerous?' },
-          { icon: '🧬', text: 'My genotype is AS — what precautions should I take?' },
-          { icon: '🤰', text: 'I am pregnant, what antenatal tests should I do?' },
-          { icon: '😔', text: 'I have been feeling depressed and hopeless lately' },
-          { icon: '🍚', text: 'I have severe stomach pain after eating' },
-          { icon: '💊', text: 'I need advice on managing diabetes in Nigeria' },
-          { icon: '👶', text: 'My baby has a fever and is not eating — what should I do?' },
-          { icon: '🧠', text: 'I get severe headaches almost every day' },
-          { icon: '🫁', text: 'I have a persistent cough for over 2 weeks' },
-          { icon: '👁️', text: 'My eyes are red, itchy and swollen' },
-          { icon: '🦴', text: 'My joints ache badly, especially in the morning' },
-          { icon: '🩸', text: 'I feel weak and dizzy — could I have low blood levels?' },
-          { icon: '🏥', text: 'Recommend a specialist doctor near me' }
-        ].map((p, i) => `<button type="button" class="ai-suggest-row ${i >= 5 ? 'ai-suggest-hidden' : ''}" data-prompt="${escapeHtml(p.text)}"><span class="ai-suggest-icon">${p.icon}</span><span class="ai-suggest-text">${escapeHtml(p.text)}</span><span class="ai-suggest-arrow">›</span></button>`).join('')}
+    <div style="max-width:800px;margin:0 auto">
+      <div style="background:#fef3c7;color:#92400e;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px">⚠️ VirtualAI provides general health information only. Always consult a licensed doctor for medical advice.</div>
+      <div id="vcaiSuggestWrap" style="${hasHistory ? 'display:none' : ''}">
+        <p style="font-size:14px;font-weight:700;color:#0a2463;margin:8px 0 10px">💡 Try asking about:</p>
+        <div id="vcaiSuggestList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px">
+          ${AI_SUGGESTIONS.map((s, i) => `
+            <button type="button" data-vc-prompt="${escapeHtml(s.text)}" class="vcai-srow ${i >= 5 ? 'vcai-hidden' : ''}" style="
+              display:${i >= 5 ? 'none' : 'flex'};align-items:center;gap:12px;width:100%;padding:12px 14px;
+              background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;
+              font-size:13.5px;font-weight:500;color:#0f172a;text-align:left;
+              line-height:1.4;cursor:pointer;box-sizing:border-box;
+            "
+              onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 16px rgba(10,36,99,0.1)';this.style.borderColor='#3b99e0';this.style.background='linear-gradient(135deg,#eff6ff,#dbeafe)'"
+              onmouseout="this.style.transform='';this.style.boxShadow='';this.style.borderColor='#e2e8f0';this.style.background='#fff'"
+            >
+              <span style="font-size:20px;flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#f1f5f9">${s.icon}</span>
+              <span style="flex:1;min-width:0">${escapeHtml(s.text)}</span>
+              <span style="flex-shrink:0;font-size:18px;color:#94a3b8;font-weight:600">›</span>
+            </button>
+          `).join('')}
+        </div>
+        <button type="button" id="vcaiToggle" style="display:block;width:100%;padding:10px;background:transparent;border:1.5px dashed #e2e8f0;border-radius:10px;font-size:13px;font-weight:600;color:#1d6aba;cursor:pointer;text-align:center;margin-bottom:14px">Show more questions ▾</button>
       </div>
-      <button type="button" class="ai-suggest-toggle" id="aiSuggestToggle">Show more questions ▾</button>
-      <div class="chat-container" style="height:450px">
-        <div class="chat-messages ai-messages" id="aiMessages">
+      <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden;height:450px">
+        <div class="chat-messages ai-messages" id="aiMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px">
           ${hasHistory ? '' : '<div class="chat-bubble received">👋 Hello! I am VirtualAI, your Nigerian health assistant. Describe your symptoms and I will help you understand what might be wrong and which specialist to see.</div>'}
         </div>
-        <div class="chat-input">
-          <input type="text" id="aiInput" class="ai-input" placeholder="Describe your symptoms…">
-          <button type="button" class="btn btn-primary btn-sm ai-send-btn" id="aiSendBtn">Send</button>
+        <div style="display:flex;gap:8px;padding:12px;border-top:1px solid #e2e8f0;background:#fff;align-items:center">
+          <input type="text" id="aiInput" placeholder="Describe your symptoms…" style="flex:1;min-width:0;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:20px;font-size:16px;font-family:inherit;background:#f8fafc;box-sizing:border-box">
+          <button type="button" id="aiSendBtn" style="flex-shrink:0;background:#1d6aba;color:#fff;border:none;border-radius:20px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">Send</button>
         </div>
       </div>
     </div>
@@ -270,24 +250,28 @@ export async function renderAiChat(container) {
   const send = () => sendAIMessage(container, input.value, input);
 
   container.querySelector('#aiSendBtn')?.addEventListener('click', send);
-  container.querySelector('#ai-new-chat')?.addEventListener('click', clearAIConversation);
+  container.querySelector('#ai-new-chat')?.addEventListener('click', () => {
+    clearAIConversation();
+    var wrap = container.querySelector('#vcaiSuggestWrap');
+    if (wrap) wrap.style.display = '';
+  });
   bindAIInputEnter(container);
 
-  // Suggestion row clicks
-  container.querySelectorAll('.ai-suggest-row').forEach((row) => {
+  container.querySelectorAll('[data-vc-prompt]').forEach((row) => {
     row.addEventListener('click', () => {
-      const prompt = row.dataset.prompt || row.textContent.trim();
-      sendAIMessage(container, prompt, input);
+      sendAIMessage(container, row.dataset.vcPrompt, input);
     });
   });
 
-  // Show more / Show less toggle
-  const toggleBtn = container.querySelector('#aiSuggestToggle');
+  var toggleBtn = container.querySelector('#vcaiToggle');
   if (toggleBtn) {
+    var expanded = false;
     toggleBtn.addEventListener('click', () => {
-      const list = container.querySelector('#aiSuggestList');
-      const isExpanded = list.classList.toggle('ai-suggest-expanded');
-      toggleBtn.textContent = isExpanded ? 'Show fewer questions ▴' : 'Show more questions ▾';
+      expanded = !expanded;
+      container.querySelectorAll('.vcai-hidden').forEach((el) => {
+        el.style.display = expanded ? 'flex' : 'none';
+      });
+      toggleBtn.textContent = expanded ? 'Show fewer questions ▴' : 'Show more questions ▾';
     });
   }
 }
