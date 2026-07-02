@@ -265,6 +265,7 @@ async function renderMessages(el) {
   onTypingStop(() => { el.querySelector('#typing').innerHTML = ''; });
   initMessageInput(el);
   await load(selected);
+  bindBookFlow(el);
 }
 
 async function downloadPrescription(prescriptionId) {

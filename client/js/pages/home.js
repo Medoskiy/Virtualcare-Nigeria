@@ -3,7 +3,6 @@ import { SPECIALTIES, FILTER_TABS, escapeHtml } from '../shared/utils.js';
 import { TESTIMONIALS } from '../shared/nigeria.js';
 import { renderDoctorCard, bindDoctorCardActions, doctorCardSkeleton } from '../shared/doctorCard.js';
 import { openBookingModal, requireAuthForBooking } from '../shared/bookingModal.js';
-import { bookConsultation } from '../auth.js';
 
 let carouselIndex = 0;
 let carouselPages = 1;
@@ -242,10 +241,12 @@ function setupCarousel(container, count) {
 }
 
 function bindHomeEvents(container) {
-  container.querySelector('#hero-book')?.addEventListener('click', () => bookConsultation());
+  container.querySelector('#hero-book')?.addEventListener('click', () => {
+    requireAuthForBooking(() => openBookingModal());
+  });
   container.querySelector('#footer-book')?.addEventListener('click', (e) => {
     e.preventDefault();
-    bookConsultation();
+    requireAuthForBooking(() => openBookingModal());
   });
   container.querySelector('#try-ai')?.addEventListener('click', () => {
     if (!localStorage.getItem('vc_token')) { window.location.hash = '/login'; }

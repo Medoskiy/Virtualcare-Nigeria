@@ -1123,10 +1123,10 @@ body:has(#mobile-bottom-nav.is-visible) {
 }
 
 @media (max-width: 480px) {
-  /* Extra small - 2 column quick actions */
+  /* Extra small - 3 column quick actions */
   .quick-actions-grid,
   .quick-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(3, 1fr) !important;
   }
 
   .kpi-grid,
