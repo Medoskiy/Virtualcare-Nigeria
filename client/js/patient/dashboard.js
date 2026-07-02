@@ -332,11 +332,63 @@ async function renderPrescriptions(el) {
       </div>
 
       ${rx.length === 0 ? `
-        <div style="text-align:center;padding:48px 24px;background:#f8fafc;border-radius:16px;border:1.5px dashed #e2e8f0">
+        <div style="text-align:center;padding:40px 24px 32px;background:#f8fafc;border-radius:16px;border:1.5px dashed #e2e8f0;margin-bottom:24px">
           <div style="font-size:48px;margin-bottom:12px">💊</div>
           <h3 style="color:#0a2463;margin:0 0 8px">No Prescriptions Yet</h3>
-          <p style="color:#64748b;font-size:14px;margin:0 0 20px">Your prescriptions will appear here after a consultation</p>
-          <button type="button" data-book-flow style="background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer">Book a Consultation</button>
+          <p style="color:#64748b;font-size:14px;margin:0 0 20px">Your prescriptions will appear here after a consultation with a Virtualcare doctor</p>
+          <button type="button" data-book-flow style="background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer">📅 Book a Consultation</button>
+        </div>
+
+        <!-- SAMPLE PRESCRIPTION PREVIEW -->
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <div style="flex:1;height:1px;background:#e2e8f0"></div>
+            <span style="font-size:12px;color:#94a3b8;white-space:nowrap;font-weight:600">SAMPLE PRESCRIPTION — HOW IT WILL LOOK</span>
+            <div style="flex:1;height:1px;background:#e2e8f0"></div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:16px;border:1.5px solid #e2e8f0;overflow:hidden;box-shadow:0 1px 4px rgba(10,36,99,0.06);opacity:0.75;pointer-events:none">
+          <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:24px">💊</span>
+              <div>
+                <div style="font-size:14px;font-weight:700;color:#0a2463">Dr. Chioma Okonkwo</div>
+                <div style="font-size:12px;color:#64748b">Issued 15 Jan 2026</div>
+              </div>
+            </div>
+            <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:#bbf7d0;color:#16a34a">✅ Active</span>
+          </div>
+          <div style="padding:16px 18px">
+            <div style="font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Medications</div>
+            <div style="display:flex;gap:12px;padding:12px;background:#f8fafc;border-radius:10px;margin-bottom:8px;border-left:3px solid #1d6aba">
+              <div style="font-size:18px;flex-shrink:0">💉</div>
+              <div>
+                <div style="font-size:14px;font-weight:700;color:#0a2463">Amoxicillin <span style="font-weight:400;color:#64748b">500mg</span></div>
+                <div style="font-size:12px;color:#64748b;margin-top:2px">🕐 Twice daily · 📅 7 days · 🔁 1 refill</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;padding:12px;background:#fff;border-radius:10px;margin-bottom:8px;border-left:3px solid #1d6aba">
+              <div style="font-size:18px;flex-shrink:0">💉</div>
+              <div>
+                <div style="font-size:14px;font-weight:700;color:#0a2463">Paracetamol <span style="font-weight:400;color:#64748b">1000mg</span></div>
+                <div style="font-size:12px;color:#64748b;margin-top:2px">🕐 Three times daily · 📅 5 days</div>
+              </div>
+            </div>
+            <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px;margin-top:8px">
+              <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:4px">📋 Doctor's Notes</div>
+              <div style="font-size:13px;color:#78350f">Take with food. Avoid alcohol. Return for follow-up in 7 days if symptoms persist.</div>
+            </div>
+            <div style="font-size:12px;color:#94a3b8;margin-top:10px">🗓️ Expires: 15 Feb 2026 · Specialty: General Practice</div>
+          </div>
+          <div style="padding:12px 18px;border-top:1px solid #f1f5f9;display:flex;gap:8px;flex-wrap:wrap">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;flex:1;justify-content:center;min-width:140px">
+              📄 Download PDF
+            </div>
+            <div style="display:inline-flex;align-items:center;gap:6px;background:#f1f5f9;color:#0a2463;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;flex:1;justify-content:center;min-width:120px">
+              🔁 Request Refill
+            </div>
+          </div>
         </div>
       ` : rx.map((p) => {
         const expired = p.expiresAt && new Date(p.expiresAt) < new Date();
