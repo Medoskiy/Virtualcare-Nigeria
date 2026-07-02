@@ -17,9 +17,8 @@ function setBookNavActive() {
 
 export function registerBookingFlowGlobals() {
   window.openBookingFlow = function () {
-    if (window._bookingLoading) return;
-    window._bookingLoading = true;
-    setTimeout(() => { window._bookingLoading = false; }, 1000);
+    // Clear any stuck loading flag
+    window._bookingLoading = false;
 
     requireAuthForBooking(() => {
       setBookNavActive();
@@ -29,10 +28,8 @@ export function registerBookingFlowGlobals() {
   };
 
   window.openBookingFlowWithSpecialty = function (specialty) {
-    window._preSelectedSpecialty = specialty;
-    if (window._bookingLoading) return;
-    window._bookingLoading = true;
-    setTimeout(() => { window._bookingLoading = false; }, 1000);
+    // Clear any stuck loading flag
+    window._bookingLoading = false;
 
     requireAuthForBooking(() => {
       setBookNavActive();
