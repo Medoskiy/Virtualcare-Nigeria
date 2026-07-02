@@ -220,19 +220,38 @@ export async function renderAiChat(container) {
   container.innerHTML = `
     <div class="dashboard-header ai-chat-header">
       <h1>VirtualAI Health Assistant</h1>
-      <button type="button" class="ai-new-chat-btn" id="ai-new-chat">+ New Chat</button>
+      <button type="button" class="ai-new-chat-btn" id="ai-new-chat">
+        <span style="font-size:16px">✨</span> New Chat
+      </button>
     </div>
     <div class="ai-chat">
       <div class="ai-disclaimer">⚠️ VirtualAI provides general health information only. It cannot diagnose conditions. Always consult a licensed doctor for medical advice.</div>
-      <div class="ai-prompt-chips" style="padding:12px;display:flex;flex-wrap:wrap;gap:8px">
-        ${['I have fever and chills', 'Check my blood pressure', 'My genotype is AS — what should I know?', 'I\'m pregnant and have concerns', 'I\'ve been feeling depressed', 'Suggest a specialist in Lagos'].map((p) => `<button type="button" class="ai-chip">${p}</button>`).join('')}
+      <div class="ai-suggestions-title">💡 Try asking about:</div>
+      <div class="ai-prompt-chips ai-suggestions">
+        ${[
+          { icon: '🦟', text: 'I have fever, chills and body aches — could it be malaria?', color: 'chip-red' },
+          { icon: '🌡️', text: 'How do I know if I have typhoid fever?', color: 'chip-orange' },
+          { icon: '❤️', text: 'My blood pressure reads 150/95 — is that dangerous?', color: 'chip-pink' },
+          { icon: '🧬', text: 'My genotype is AS — what precautions should I take?', color: 'chip-purple' },
+          { icon: '🤰', text: 'I am pregnant, what antenatal tests should I do?', color: 'chip-teal' },
+          { icon: '😔', text: 'I have been feeling depressed and hopeless lately', color: 'chip-indigo' },
+          { icon: '🍚', text: 'I have severe stomach pain after eating', color: 'chip-amber' },
+          { icon: '💊', text: 'I need advice on managing diabetes in Nigeria', color: 'chip-green' },
+          { icon: '👶', text: 'My baby has a fever and is not eating — what should I do?', color: 'chip-cyan' },
+          { icon: '🧠', text: 'I get severe headaches almost every day', color: 'chip-violet' },
+          { icon: '🫁', text: 'I have a persistent cough for 2 weeks', color: 'chip-blue' },
+          { icon: '👁️', text: 'My eyes are red, itchy and swollen', color: 'chip-rose' },
+          { icon: '🦴', text: 'My joints ache badly, especially in the morning', color: 'chip-slate' },
+          { icon: '🩸', text: 'I feel weak and dizzy — could I have low blood levels?', color: 'chip-crimson' },
+          { icon: '🏥', text: 'Recommend a cardiologist near me in Lagos', color: 'chip-emerald' }
+        ].map((p) => `<button type="button" class="ai-chip ${p.color}" data-prompt="${escapeHtml(p.text)}"><span class="ai-chip-icon">${p.icon}</span><span class="ai-chip-text">${escapeHtml(p.text)}</span></button>`).join('')}
       </div>
       <div class="chat-container" style="height:450px">
         <div class="chat-messages ai-messages" id="aiMessages">
-          ${hasHistory ? '' : '<div class="chat-bubble received">Hello! I am VirtualAI. How can I help you today?</div>'}
+          ${hasHistory ? '' : '<div class="chat-bubble received">👋 Hello! I am VirtualAI, your Nigerian health assistant. Ask me anything about your health, symptoms, or which specialist you should see.</div>'}
         </div>
         <div class="chat-input">
-          <input type="text" id="aiInput" class="ai-input" placeholder="Describe your symptoms…">
+          <input type="text" id="aiInput" class="ai-input" placeholder="Describe your symptoms in your own words…">
           <button type="button" class="btn btn-primary btn-sm ai-send-btn" id="aiSendBtn">Send</button>
         </div>
       </div>
@@ -256,6 +275,9 @@ export async function renderAiChat(container) {
   bindAIInputEnter(container);
 
   container.querySelectorAll('.ai-chip').forEach((chip) => {
-    chip.addEventListener('click', () => sendAIMessage(container, chip.textContent.trim(), input));
+    chip.addEventListener('click', () => {
+      const prompt = chip.dataset.prompt || chip.textContent.trim();
+      sendAIMessage(container, prompt, input);
+    });
   });
 }

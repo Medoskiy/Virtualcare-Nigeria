@@ -4,7 +4,7 @@ const MOBILE_MAX = 768;
 
 const TABS = [
   { tab: 'home', href: '/', icon: '🏠', label: 'Home', match: (p) => p === '/' },
-  { tab: 'book', href: '/find-a-doctor', icon: '📅', label: 'Book', match: (p) => p === '/find-a-doctor' || p.startsWith('/patient/book') },
+  { tab: 'book', href: '/patient/book', icon: '📅', label: 'Book', match: (p) => p.startsWith('/patient/book') },
   { tab: 'ai', href: '/patient/ai', icon: '🤖', label: 'AI', match: (p) => p.startsWith('/patient/ai') },
   { tab: 'messages', href: '/patient/messages', icon: '💬', label: 'Messages', match: (p) => p.startsWith('/patient/messages') },
   { tab: 'profile', href: '/patient/profile', icon: '👤', label: 'Profile', match: (p) => p.startsWith('/patient/profile') }
@@ -33,6 +33,18 @@ function bindNavLinks(nav) {
   nav.querySelectorAll('a[data-tab]').forEach((a) => {
     a.addEventListener('click', (e) => {
       e.preventDefault();
+      const tab = a.dataset.tab;
+      // Special case: Book tab opens the booking modal directly
+      if (tab === 'book') {
+        if (typeof window.openBookingFlow === 'function') {
+          window.openBookingFlow();
+        } else {
+          window.location.hash = '/patient/book';
+          window.dispatchEvent(new HashChangeEvent('hashchange'));
+        }
+        highlightActiveTab(nav);
+        return;
+      }
       const href = a.getAttribute('href');
       if (!href) return;
       window.location.hash = href;
