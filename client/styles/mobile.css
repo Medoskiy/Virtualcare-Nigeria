@@ -1500,180 +1500,187 @@ body:has(#mobile-bottom-nav.is-visible) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   VirtualAI Page — Enhanced Suggestion Cards & New Chat Button
+   VirtualAI Page — Redesigned Suggestion Rows & New Chat
    ═══════════════════════════════════════════════════════════ */
 
-.ai-suggestions-title {
+/* Header row — title left, new chat right, single line */
+.ai-chat-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  margin-bottom: 12px;
+}
+
+.ai-chat-title {
+  font-size: 20px !important;
+  font-weight: 800;
+  color: var(--deep-blue);
+  margin: 0 !important;
+  white-space: nowrap;
+}
+
+/* New Chat pill button — inline, clean */
+.ai-new-chat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ai-new-chat-pill:hover,
+.ai-new-chat-pill:active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.45);
+}
+
+/* "Try asking about" label */
+.ai-ask-label {
   font-size: 14px;
   font-weight: 700;
   color: var(--deep-blue);
-  margin: 8px 12px 12px;
-  letter-spacing: 0.2px;
+  margin: 12px 0 8px;
 }
 
-.ai-prompt-chips.ai-suggestions {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  padding: 4px 12px 16px;
-  max-height: 320px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
+/* Suggestion list — always 1 column, full width rows */
+.ai-suggest-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin-bottom: 8px;
 }
 
-.ai-prompt-chips.ai-suggestions::-webkit-scrollbar {
-  width: 4px;
-}
-.ai-prompt-chips.ai-suggestions::-webkit-scrollbar-thumb {
-  background: rgba(10, 36, 99, 0.2);
-  border-radius: 4px;
-}
-
-.ai-chip {
+/* Individual suggestion row */
+.ai-suggest-row {
   display: flex !important;
   align-items: center;
   gap: 12px;
-  width: 100%;
-  padding: 14px 16px !important;
-  border: 1.5px solid transparent;
-  border-radius: 14px !important;
+  width: 100% !important;
+  padding: 12px 14px !important;
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 12px !important;
   font-size: 13.5px !important;
   font-weight: 500;
+  color: var(--text);
   text-align: left !important;
   line-height: 1.4;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  background: #ffffff;
-  color: var(--text);
-  box-shadow: 0 1px 3px rgba(10, 36, 99, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
 }
 
-.ai-chip:hover,
-.ai-chip:active,
-.ai-chip:focus {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(10, 36, 99, 0.12);
-  outline: none;
+.ai-suggest-row:hover,
+.ai-suggest-row:active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(10, 36, 99, 0.1);
+  border-color: var(--light-blue);
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
 }
 
-.ai-chip-icon {
-  font-size: 22px;
+.ai-suggest-icon {
+  font-size: 20px;
   line-height: 1;
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.7);
+  background: #f1f5f9;
 }
 
-.ai-chip-text {
+.ai-suggest-row:hover .ai-suggest-icon {
+  background: #dbeafe;
+}
+
+.ai-suggest-text {
   flex: 1;
   min-width: 0;
 }
 
-/* Color variants — each chip has its own theme */
-.ai-chip.chip-red { background: linear-gradient(135deg, #fef2f2, #fee2e2); border-color: #fecaca; color: #991b1b; }
-.ai-chip.chip-red:hover { border-color: #f87171; }
+.ai-suggest-arrow {
+  flex-shrink: 0;
+  font-size: 18px;
+  color: var(--muted);
+  font-weight: 600;
+  transition: transform 0.2s, color 0.2s;
+}
 
-.ai-chip.chip-orange { background: linear-gradient(135deg, #fff7ed, #ffedd5); border-color: #fed7aa; color: #9a3412; }
-.ai-chip.chip-orange:hover { border-color: #fb923c; }
+.ai-suggest-row:hover .ai-suggest-arrow {
+  transform: translateX(3px);
+  color: var(--bright-blue);
+}
 
-.ai-chip.chip-pink { background: linear-gradient(135deg, #fdf2f8, #fce7f3); border-color: #fbcfe8; color: #9d174d; }
-.ai-chip.chip-pink:hover { border-color: #f472b6; }
+/* Collapse: hide rows 6+ until expanded */
+.ai-suggest-hidden {
+  display: none !important;
+}
 
-.ai-chip.chip-purple { background: linear-gradient(135deg, #faf5ff, #f3e8ff); border-color: #ddd6fe; color: #6b21a8; }
-.ai-chip.chip-purple:hover { border-color: #a855f7; }
+.ai-suggest-expanded .ai-suggest-hidden {
+  display: flex !important;
+}
 
-.ai-chip.chip-teal { background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border-color: #99f6e4; color: #115e59; }
-.ai-chip.chip-teal:hover { border-color: #2dd4bf; }
-
-.ai-chip.chip-indigo { background: linear-gradient(135deg, #eef2ff, #e0e7ff); border-color: #c7d2fe; color: #3730a3; }
-.ai-chip.chip-indigo:hover { border-color: #6366f1; }
-
-.ai-chip.chip-amber { background: linear-gradient(135deg, #fffbeb, #fef3c7); border-color: #fde68a; color: #92400e; }
-.ai-chip.chip-amber:hover { border-color: #f59e0b; }
-
-.ai-chip.chip-green { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #bbf7d0; color: #14532d; }
-.ai-chip.chip-green:hover { border-color: #22c55e; }
-
-.ai-chip.chip-cyan { background: linear-gradient(135deg, #ecfeff, #cffafe); border-color: #a5f3fc; color: #155e75; }
-.ai-chip.chip-cyan:hover { border-color: #06b6d4; }
-
-.ai-chip.chip-violet { background: linear-gradient(135deg, #f5f3ff, #ede9fe); border-color: #ddd6fe; color: #5b21b6; }
-.ai-chip.chip-violet:hover { border-color: #8b5cf6; }
-
-.ai-chip.chip-blue { background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: #bfdbfe; color: #1e3a8a; }
-.ai-chip.chip-blue:hover { border-color: #3b82f6; }
-
-.ai-chip.chip-rose { background: linear-gradient(135deg, #fff1f2, #ffe4e6); border-color: #fecdd3; color: #9f1239; }
-.ai-chip.chip-rose:hover { border-color: #f43f5e; }
-
-.ai-chip.chip-slate { background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-color: #e2e8f0; color: #334155; }
-.ai-chip.chip-slate:hover { border-color: #64748b; }
-
-.ai-chip.chip-crimson { background: linear-gradient(135deg, #fef2f2, #fecaca); border-color: #fca5a5; color: #7f1d1d; }
-.ai-chip.chip-crimson:hover { border-color: #ef4444; }
-
-.ai-chip.chip-emerald { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-color: #a7f3d0; color: #064e3b; }
-.ai-chip.chip-emerald:hover { border-color: #10b981; }
-
-/* Enhanced "+ New Chat" button */
-.ai-new-chat-btn {
-  background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
-  color: #ffffff !important;
-  border: none !important;
-  border-radius: 24px !important;
-  padding: 8px 18px !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
+/* Show more / Show less toggle button */
+.ai-suggest-toggle {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1.5px dashed var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bright-blue);
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.ai-new-chat-btn:hover,
-.ai-new-chat-btn:active,
-.ai-new-chat-btn:focus {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.45) !important;
-  background: linear-gradient(135deg, #6d28d9, #4338ca) !important;
-  outline: none;
-}
-
-.ai-chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  text-align: center;
   margin-bottom: 16px;
+  transition: background 0.2s, border-color 0.2s;
 }
 
-.ai-chat-header h1 {
-  font-size: 22px;
-  color: var(--deep-blue);
-  margin: 0;
+.ai-suggest-toggle:hover {
+  background: var(--sky);
+  border-color: var(--light-blue);
 }
 
-/* Tablet+ view — 2 columns for suggestions */
-@media (min-width: 640px) {
-  .ai-prompt-chips.ai-suggestions {
-    grid-template-columns: 1fr 1fr;
-    max-height: 400px;
+/* Override the old 2-column chip grid that was breaking layout */
+.ai-prompt-chips.ai-suggestions,
+.ai-prompt-chips,
+.ai-suggestions {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: none !important;
+}
+
+@media (max-width: 380px) {
+  .ai-chat-title {
+    font-size: 17px !important;
   }
-}
-
-/* Desktop — 3 columns */
-@media (min-width: 1024px) {
-  .ai-prompt-chips.ai-suggestions {
-    grid-template-columns: 1fr 1fr 1fr;
-    max-height: 460px;
+  .ai-new-chat-pill {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .ai-suggest-row {
+    padding: 10px 12px !important;
+    font-size: 12.5px !important;
+    gap: 10px;
+  }
+  .ai-suggest-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
   }
 }

@@ -218,40 +218,39 @@ export async function renderAiChat(container) {
   const hasHistory = virtualAIHistory.length > 0;
 
   container.innerHTML = `
-    <div class="dashboard-header ai-chat-header">
-      <h1>VirtualAI Health Assistant</h1>
-      <button type="button" class="ai-new-chat-btn" id="ai-new-chat">
-        <span style="font-size:16px">✨</span> New Chat
-      </button>
+    <div class="ai-chat-header-row">
+      <h1 class="ai-chat-title">VirtualAI Health Assistant</h1>
+      <button type="button" class="ai-new-chat-pill" id="ai-new-chat">✨ New Chat</button>
     </div>
     <div class="ai-chat">
-      <div class="ai-disclaimer">⚠️ VirtualAI provides general health information only. It cannot diagnose conditions. Always consult a licensed doctor for medical advice.</div>
-      <div class="ai-suggestions-title">💡 Try asking about:</div>
-      <div class="ai-prompt-chips ai-suggestions">
+      <div class="ai-disclaimer">⚠️ VirtualAI provides general health information only. Always consult a licensed doctor for medical advice.</div>
+      <p class="ai-ask-label">💡 Try asking about:</p>
+      <div class="ai-suggest-list" id="aiSuggestList">
         ${[
-          { icon: '🦟', text: 'I have fever, chills and body aches — could it be malaria?', color: 'chip-red' },
-          { icon: '🌡️', text: 'How do I know if I have typhoid fever?', color: 'chip-orange' },
-          { icon: '❤️', text: 'My blood pressure reads 150/95 — is that dangerous?', color: 'chip-pink' },
-          { icon: '🧬', text: 'My genotype is AS — what precautions should I take?', color: 'chip-purple' },
-          { icon: '🤰', text: 'I am pregnant, what antenatal tests should I do?', color: 'chip-teal' },
-          { icon: '😔', text: 'I have been feeling depressed and hopeless lately', color: 'chip-indigo' },
-          { icon: '🍚', text: 'I have severe stomach pain after eating', color: 'chip-amber' },
-          { icon: '💊', text: 'I need advice on managing diabetes in Nigeria', color: 'chip-green' },
-          { icon: '👶', text: 'My baby has a fever and is not eating — what should I do?', color: 'chip-cyan' },
-          { icon: '🧠', text: 'I get severe headaches almost every day', color: 'chip-violet' },
-          { icon: '🫁', text: 'I have a persistent cough for 2 weeks', color: 'chip-blue' },
-          { icon: '👁️', text: 'My eyes are red, itchy and swollen', color: 'chip-rose' },
-          { icon: '🦴', text: 'My joints ache badly, especially in the morning', color: 'chip-slate' },
-          { icon: '🩸', text: 'I feel weak and dizzy — could I have low blood levels?', color: 'chip-crimson' },
-          { icon: '🏥', text: 'Recommend a cardiologist near me in Lagos', color: 'chip-emerald' }
-        ].map((p) => `<button type="button" class="ai-chip ${p.color}" data-prompt="${escapeHtml(p.text)}"><span class="ai-chip-icon">${p.icon}</span><span class="ai-chip-text">${escapeHtml(p.text)}</span></button>`).join('')}
+          { icon: '🦟', text: 'I have fever, chills and body aches — could it be malaria?' },
+          { icon: '🌡️', text: 'How do I know if I have typhoid fever?' },
+          { icon: '❤️', text: 'My blood pressure reads 150/95 — is that dangerous?' },
+          { icon: '🧬', text: 'My genotype is AS — what precautions should I take?' },
+          { icon: '🤰', text: 'I am pregnant, what antenatal tests should I do?' },
+          { icon: '😔', text: 'I have been feeling depressed and hopeless lately' },
+          { icon: '🍚', text: 'I have severe stomach pain after eating' },
+          { icon: '💊', text: 'I need advice on managing diabetes in Nigeria' },
+          { icon: '👶', text: 'My baby has a fever and is not eating — what should I do?' },
+          { icon: '🧠', text: 'I get severe headaches almost every day' },
+          { icon: '🫁', text: 'I have a persistent cough for over 2 weeks' },
+          { icon: '👁️', text: 'My eyes are red, itchy and swollen' },
+          { icon: '🦴', text: 'My joints ache badly, especially in the morning' },
+          { icon: '🩸', text: 'I feel weak and dizzy — could I have low blood levels?' },
+          { icon: '🏥', text: 'Recommend a specialist doctor near me' }
+        ].map((p, i) => `<button type="button" class="ai-suggest-row ${i >= 5 ? 'ai-suggest-hidden' : ''}" data-prompt="${escapeHtml(p.text)}"><span class="ai-suggest-icon">${p.icon}</span><span class="ai-suggest-text">${escapeHtml(p.text)}</span><span class="ai-suggest-arrow">›</span></button>`).join('')}
       </div>
+      <button type="button" class="ai-suggest-toggle" id="aiSuggestToggle">Show more questions ▾</button>
       <div class="chat-container" style="height:450px">
         <div class="chat-messages ai-messages" id="aiMessages">
-          ${hasHistory ? '' : '<div class="chat-bubble received">👋 Hello! I am VirtualAI, your Nigerian health assistant. Ask me anything about your health, symptoms, or which specialist you should see.</div>'}
+          ${hasHistory ? '' : '<div class="chat-bubble received">👋 Hello! I am VirtualAI, your Nigerian health assistant. Describe your symptoms and I will help you understand what might be wrong and which specialist to see.</div>'}
         </div>
         <div class="chat-input">
-          <input type="text" id="aiInput" class="ai-input" placeholder="Describe your symptoms in your own words…">
+          <input type="text" id="aiInput" class="ai-input" placeholder="Describe your symptoms…">
           <button type="button" class="btn btn-primary btn-sm ai-send-btn" id="aiSendBtn">Send</button>
         </div>
       </div>
@@ -274,10 +273,21 @@ export async function renderAiChat(container) {
   container.querySelector('#ai-new-chat')?.addEventListener('click', clearAIConversation);
   bindAIInputEnter(container);
 
-  container.querySelectorAll('.ai-chip').forEach((chip) => {
-    chip.addEventListener('click', () => {
-      const prompt = chip.dataset.prompt || chip.textContent.trim();
+  // Suggestion row clicks
+  container.querySelectorAll('.ai-suggest-row').forEach((row) => {
+    row.addEventListener('click', () => {
+      const prompt = row.dataset.prompt || row.textContent.trim();
       sendAIMessage(container, prompt, input);
     });
   });
+
+  // Show more / Show less toggle
+  const toggleBtn = container.querySelector('#aiSuggestToggle');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const list = container.querySelector('#aiSuggestList');
+      const isExpanded = list.classList.toggle('ai-suggest-expanded');
+      toggleBtn.textContent = isExpanded ? 'Show fewer questions ▴' : 'Show more questions ▾';
+    });
+  }
 }
