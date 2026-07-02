@@ -86,11 +86,21 @@ async function renderOverview(el, user) {
   const profile = profileRes.data.profile || user;
   const rx = rxRes.data.prescriptions || [];
 
-  const savedAvatar = profile.avatar || localStorage.getItem('vc_avatar');
+  // Resolve avatar — check profile, URL cache, and emoji cache (patientAvatar key)
+  let savedAvatar = profile.avatar || localStorage.getItem('vc_avatar');
+  if (!savedAvatar) {
+    try {
+      const emojiData = localStorage.getItem('patientAvatar');
+      if (emojiData) {
+        const parsed = JSON.parse(emojiData);
+        if (parsed?.emoji) savedAvatar = parsed.emoji;
+      }
+    } catch { /* ignore */ }
+  }
   const avatarHTML = savedAvatar && isAvatarUrl(savedAvatar)
     ? `<img src="${escapeHtml(savedAvatar)}" class="sidebar-avatar banner-avatar" style="width:72px;height:72px;border-radius:50%;object-fit:cover;" alt="Avatar">`
     : savedAvatar
-      ? `<div class="sidebar-avatar banner-avatar">${escapeHtml(savedAvatar)}</div>`
+      ? `<div class="sidebar-avatar banner-avatar" style="font-size:52px;display:flex;align-items:center;justify-content:center;">${escapeHtml(savedAvatar)}</div>`
       : `<div class="sidebar-avatar banner-avatar">${initials(profile.name, profile.surname)}</div>`;
 
   el.innerHTML = `
