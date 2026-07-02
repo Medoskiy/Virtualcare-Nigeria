@@ -142,28 +142,21 @@ async function sendAIMessage(container, userMessage, inputEl) {
       box?.insertAdjacentHTML('beforeend', `
         <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:14px 16px;margin-top:8px">
           <div style="font-size:13px;font-weight:600;color:#1d6aba;margin-bottom:8px">📋 I found available ${escapeHtml(data.specialist || 'doctors')} for you</div>
-          <button type="button" onclick="document.getElementById('vc-booking-modal')?.remove();
-            (function(){
-              var modal = document.createElement('div');
-              modal.id='vc-booking-modal';
-              modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px';
-              document.body.appendChild(modal);
-              if(typeof window.openBookingFlow==='function') window.openBookingFlow();
-              else modal.remove();
-            })()" 
-            style="background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;width:100%">
+          <button type="button" onclick="window.openBookingFlow?.()" style="background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:8px;padding:12px 18px;font-size:13px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px">
             📅 View Available Doctors & Book
           </button>
         </div>
       `);
     } else if (data.bookingStatus === 'no_doctor_available') {
-      // No doctors available — show regular booking flow
       const box = getAIChatBox(container);
+      const specialist = escapeHtml(data.specialist || 'specialist');
       box?.insertAdjacentHTML('beforeend', `
         <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:14px 16px;margin-top:8px">
-          <div style="font-size:13px;color:#92400e;margin-bottom:8px">⚠️ No ${escapeHtml(data.specialist || 'specialist')} doctors are available right now. You can still book a General Practitioner.</div>
-          <button type="button" onclick="window.openBookingFlow?.()" style="background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;width:100%">
-            📅 Book Available Doctor
+          <div style="font-size:13px;color:#92400e;margin-bottom:10px">
+            ⚠️ No <strong>${specialist}</strong> doctors are online right now. You can browse all available Virtualcare doctors and book a consultation.
+          </div>
+          <button type="button" onclick="window.openBookingFlow?.()" style="background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:8px;padding:12px 18px;font-size:13px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px">
+            📅 Browse All Doctors & Book
           </button>
         </div>
       `);
