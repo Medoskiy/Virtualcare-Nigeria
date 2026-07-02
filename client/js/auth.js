@@ -72,9 +72,7 @@ function getLoginHTML() {
 
     <div class="auth-right-panel">
       <div class="auth-form-card">
-        <a href="/" data-link style="text-decoration:none;display:inline-block;margin-bottom:24px">
-          <span style="font-size:28px;font-weight:900;color:#0a2463">Virtual</span><span style="font-size:28px;font-weight:900;color:#1d6aba">care</span>
-        </a>
+        <div class="auth-mobile-logo"><a href="/" data-link style="text-decoration:none"><span style="color:#0a2463;font-weight:900;font-size:28px">Virtual</span><span style="color:#1d6aba;font-weight:900;font-size:28px">care</span></a></div>
         <h2 class="auth-form-title">Welcome Back</h2>
         <p class="auth-form-subtitle">Sign in to your Virtualcare account</p>
 
@@ -196,9 +194,7 @@ function getRegisterHTML() {
     <div class="auth-right-panel" style="width:520px;min-width:0;background:#fff;display:flex;align-items:flex-start;justify-content:center;padding:40px 32px;overflow-y:auto;min-height:100vh">
       <div style="width:100%;max-width:460px;padding-top:10px">
         <!-- Mobile logo (hidden on desktop by left panel visibility) -->
-        <a href="/" data-link class="auth-mobile-logo" style="text-decoration:none;display:none;margin-bottom:24px">
-          <span style="font-size:28px;font-weight:900;color:#0a2463">Virtual</span><span style="font-size:28px;font-weight:900;color:#1d6aba">care</span>
-        </a>
+        <div class="auth-mobile-logo"><a href="/" data-link style="text-decoration:none"><span style="color:#0a2463;font-weight:900;font-size:28px">Virtual</span><span style="color:#1d6aba;font-weight:900;font-size:28px">care</span></a></div>
 
         <h2 style="font-size:26px;font-weight:900;color:#0a2463;margin:0 0 6px">Create Your Account</h2>
         <p style="font-size:15px;color:#64748b;margin:0 0 24px">Join Virtualcare Nigeria — it's free</p>

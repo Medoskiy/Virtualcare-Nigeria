@@ -1685,3 +1685,132 @@ body:has(#mobile-bottom-nav.is-visible) {
     font-size: 18px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   REGISTRATION PAGE — MOBILE FIX
+   Force left panel hidden, right panel full width on mobile.
+   Uses !important because main.css base rules override without it.
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .auth-page-wrap {
+    flex-direction: column !important;
+  }
+
+  .auth-left-panel,
+  .auth-left-panel.register-left {
+    display: none !important;
+  }
+
+  .auth-right-panel {
+    width: 100% !important;
+    min-width: unset !important;
+    padding: 24px 20px !important;
+    min-height: auto !important;
+    align-items: flex-start !important;
+  }
+
+  .auth-mobile-logo {
+    display: block !important;
+    font-size: 28px !important;
+    font-weight: 900 !important;
+    margin-bottom: 20px !important;
+  }
+
+  .auth-form-card,
+  .register-card {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .auth-form-title {
+    font-size: 24px !important;
+  }
+
+  .auth-form-subtitle {
+    font-size: 14px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .reg-type-selector {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .reg-type-btn {
+    width: 100% !important;
+  }
+
+  .social-auth-section {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .btn-social-auth {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .auth-form-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .auth-input-wrap {
+    width: 100% !important;
+  }
+
+  .auth-input {
+    font-size: 16px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .auth-select {
+    font-size: 16px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .btn-auth-submit {
+    width: 100% !important;
+    padding: 14px !important;
+    font-size: 15px !important;
+  }
+
+  .auth-switch-link {
+    text-align: center !important;
+    margin-top: 20px !important;
+  }
+
+  .auth-back-home {
+    text-align: center !important;
+    margin-top: 10px !important;
+  }
+
+  .auth-terms-label {
+    font-size: 13px !important;
+  }
+
+  .doctor-mdcn-notice {
+    font-size: 13px !important;
+  }
+
+  .reg-benefits-section {
+    display: none !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .auth-right-panel {
+    padding: 16px 14px !important;
+  }
+
+  .auth-form-title {
+    font-size: 22px !important;
+  }
+
+  .reg-type-btn {
+    padding: 10px 12px !important;
+  }
+}
