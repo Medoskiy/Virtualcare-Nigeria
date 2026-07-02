@@ -42,12 +42,13 @@ function renderModal() {
   if (overlay) overlay.remove();
   overlay = document.createElement('div');
   overlay.className = 'modal-overlay booking-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10001;padding:16px';
   overlay.innerHTML = `
-    <div class="modal booking-modal">
-      <button class="modal-close" id="booking-close">✕</button>
-      <div class="booking-progress">
+    <div style="background:#fff;border-radius:12px;padding:24px;width:min(580px,95%);max-height:90vh;overflow-y:auto;position:relative">
+      <button class="modal-close" id="booking-close" style="position:absolute;top:12px;right:12px;background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#64748b">✕</button>
+      <div class="booking-progress" style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
         ${['Specialty', 'Doctor', 'Date & Time', 'Payment'].map((s, i) => `
-          <div class="bp-step ${state.step > i + 1 ? 'done' : ''} ${state.step === i + 1 ? 'active' : ''}">
+          <div class="bp-step ${state.step > i + 1 ? 'done' : ''} ${state.step === i + 1 ? 'active' : ''}" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;${state.step === i + 1 ? 'background:#0a2463;color:#fff' : state.step > i + 1 ? 'background:#dcfce7;color:#16a34a' : 'background:#f1f5f9;color:#64748b'}">
             <span class="bp-num">${state.step > i + 1 ? '✓' : i + 1}</span> ${s}
           </div>
         `).join('')}
@@ -68,9 +69,11 @@ function renderStep() {
   else if (state.step === 3) renderStep3(body);
   else renderStep4(body);
   overlay.querySelectorAll('.bp-step').forEach((el, i) => {
-    el.classList.toggle('active', state.step === i + 1);
-    el.classList.toggle('done', state.step > i + 1);
-    el.querySelector('.bp-num').textContent = state.step > i + 1 ? '✓' : i + 1;
+    const isActive = state.step === i + 1;
+    const isDone = state.step > i + 1;
+    el.style.background = isActive ? '#0a2463' : isDone ? '#dcfce7' : '#f1f5f9';
+    el.style.color = isActive ? '#fff' : isDone ? '#16a34a' : '#64748b';
+    el.querySelector('.bp-num').textContent = isDone ? '✓' : i + 1;
   });
 }
 

@@ -13,6 +13,7 @@ import { renderAdminPage } from './admin/dashboard.js';
 import { initVideoCall } from './video/callManager.js';
 import { renderDoctorProfile } from './pages/doctorProfile.js';
 import { registerBookingFlowGlobals } from './shared/bookingFlow.js';
+import { openBookingModal } from './shared/bookingModal.js';
 import { registerAvatarSelectorGlobals } from './patient/avatarSelector.js';
 import { initCookieConsent } from './shared/cookieConsent.js';
 import { renderPrivacyPolicy } from './pages/privacyPolicy.js';
