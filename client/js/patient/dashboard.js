@@ -115,7 +115,7 @@ async function renderOverview(el, user) {
     </div>
     <h2 class="dash-section-title">Quick Actions</h2>
     <div class="quick-actions-grid quick-grid">
-      ${[['📅','Book','book'],['🤖','VirtualAI','/patient/ai'],['💬','Messages','/patient/messages'],['📁','Records','/patient/records'],['💊','Rx','/patient/prescriptions'],['💳','Payments','/patient/payments']].map(([ic,lb,hr]) =>
+      ${[['📅','Book','book'],['🤖','VirtualAI','/patient/ai'],['💬','Messages','/patient/messages'],['📁','Records','/patient/records'],['💊','Rx','/patient/prescriptions'],['💳','Payments','/patient/payments'],['⭐','Reviews','/patient/reviews']].map(([ic,lb,hr]) =>
         hr === 'book'
           ? `<div class="quick-action-card quick-action quick-card" data-book-flow role="button" tabindex="0"><span class="qa-icon icon">${ic}</span><span>${lb}</span></div>`
           : `<a href="${hr}" data-link class="quick-action-card quick-action quick-card"><span class="qa-icon icon">${ic}</span><span>${lb}</span></a>`
