@@ -1,0 +1,10 @@
+#!/bin/bash
+FILE="client/index.html"
+CURRENT=$(grep -o '?v=[0-9]*' "$FILE" | head -1 | grep -o '[0-9]*')
+if [ -z "$CURRENT" ]; then exit 0; fi
+NEXT=$((CURRENT + 1))
+sed -i "s/?v=${CURRENT}/?v=${NEXT}/g" "$FILE"
+echo "Cache bust: v${CURRENT} ? v${NEXT}"
+git add "$FILE"
+git commit --amend --no-edit --no-verify
+exit 0
