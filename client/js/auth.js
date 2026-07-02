@@ -41,110 +41,67 @@ function specialtyOptions() {
 
 function getLoginHTML() {
   return `
-  <div class="auth-page-wrap">
-    <div class="auth-left-panel">
-      <div class="alp-content">
-        <div class="alp-logo">
-          <span class="logo-virtual">Virtual</span>
-          <span class="logo-care">care</span>
+  <div style="display:flex;min-height:100vh;background:#f0f4f8">
+    <div class="auth-left-panel" style="flex:1;background:linear-gradient(135deg,#0a2463 0%,#1e3a8a 50%,#0f766e 100%);padding:48px 52px;display:flex;flex-direction:column;justify-content:space-between;min-height:100vh;position:sticky;top:0">
+      <div>
+        <a href="/" data-link style="text-decoration:none;display:inline-block;margin-bottom:40px"><span style="font-size:28px;font-weight:900;color:#ffffff">Virtual</span><span style="font-size:28px;font-weight:900;color:#7ec8f7">care</span></a>
+        <h1 style="font-size:34px;font-weight:900;color:#fff;line-height:1.2;margin:0 0 32px">Nigeria's Most Trusted<br/><span style="color:#7ec8f7">Telemedicine Platform</span></h1>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:40px">
+          <div style="display:flex;align-items:center;gap:12px;color:#fff;font-size:15px"><span style="font-size:18px;width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">✅</span>80+ MDCN-Verified Doctors</div>
+          <div style="display:flex;align-items:center;gap:12px;color:#fff;font-size:15px"><span style="font-size:18px;width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">📱</span>Consult from anywhere in Nigeria</div>
+          <div style="display:flex;align-items:center;gap:12px;color:#fff;font-size:15px"><span style="font-size:18px;width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">💰</span>Affordable from ₦5,000</div>
+          <div style="display:flex;align-items:center;gap:12px;color:#fff;font-size:15px"><span style="font-size:18px;width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">🔒</span>NDPR Compliant &amp; Secure</div>
         </div>
-        <h1 class="alp-headline">
-          Nigeria's Most Trusted<br/>
-          <span class="alp-highlight">Telemedicine Platform</span>
-        </h1>
-        <div class="alp-features">
-          <div class="alp-feature"><span class="alp-feat-icon">✅</span><span>80+ MDCN-Verified Doctors</span></div>
-          <div class="alp-feature"><span class="alp-feat-icon">📱</span><span>Consult from anywhere in Nigeria</span></div>
-          <div class="alp-feature"><span class="alp-feat-icon">💰</span><span>Affordable from ₦5,000</span></div>
-          <div class="alp-feature"><span class="alp-feat-icon">🔒</span><span>NDPR Compliant &amp; Secure</span></div>
-        </div>
-        <div class="alp-trust-badges">
-          <div class="alp-badge"><strong>50K+</strong><span>Consultations</span></div>
-          <div class="alp-badge"><strong>4.9★</strong><span>Average Rating</span></div>
-          <div class="alp-badge"><strong>36</strong><span>States Covered</span></div>
+        <div style="display:flex;gap:24px">
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#fff">50K+</div><div style="font-size:12px;color:rgba(255,255,255,0.7)">Consultations</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#fff">4.9★</div><div style="font-size:12px;color:rgba(255,255,255,0.7)">Average Rating</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:#fff">36</div><div style="font-size:12px;color:rgba(255,255,255,0.7)">States Covered</div></div>
         </div>
       </div>
-      <div class="alp-testimonial">
-        <div class="alp-test-text">"Virtualcare Nigeria saved me hours of travel. I consulted a cardiologist from my home in Kano!"</div>
-        <div class="alp-test-author">— Ibrahim M., Kano State</div>
+      <div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:18px;margin-top:32px">
+        <div style="font-size:14px;color:rgba(255,255,255,0.9);line-height:1.5;font-style:italic">"Virtualcare saved me hours of travel. I consulted a cardiologist from my home in Kano!"</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:8px">— Ibrahim M., Kano State</div>
       </div>
     </div>
-
-    <div class="auth-right-panel">
-      <div class="auth-form-card">
-        <div class="auth-mobile-logo"><a href="/" data-link style="text-decoration:none"><span style="color:#0a2463;font-weight:900;font-size:28px">Virtual</span><span style="color:#1d6aba;font-weight:900;font-size:28px">care</span></a></div>
-        <h2 class="auth-form-title">Welcome Back</h2>
-        <p class="auth-form-subtitle">Sign in to your Virtualcare account</p>
-
-        <div class="auth-role-selector">
-          <button type="button" class="auth-role-btn ${currentAuthRole === 'patient' ? 'active' : ''}" data-auth-role="patient">
-            <span class="role-icon">👤</span><span>Patient</span>
-          </button>
-          <button type="button" class="auth-role-btn ${currentAuthRole === 'doctor' ? 'active' : ''}" data-auth-role="doctor">
-            <span class="role-icon">👨‍⚕️</span><span>Doctor</span>
-          </button>
-          <button type="button" class="auth-role-btn ${currentAuthRole === 'admin' ? 'active' : ''}" data-auth-role="admin">
-            <span class="role-icon">⚙️</span><span>Admin</span>
-          </button>
+    <div class="auth-right-panel" style="width:520px;min-width:0;background:#fff;display:flex;align-items:flex-start;justify-content:center;padding:40px 32px;overflow-y:auto;min-height:100vh">
+      <div style="width:100%;max-width:440px;padding-top:10px">
+        <a href="/" data-link class="auth-mobile-logo" style="text-decoration:none;display:none;margin-bottom:20px"><span style="font-size:28px;font-weight:900;color:#0a2463">Virtual</span><span style="font-size:28px;font-weight:900;color:#1d6aba">care</span></a>
+        <h2 style="font-size:26px;font-weight:900;color:#0a2463;margin:0 0 6px">Welcome Back</h2>
+        <p style="font-size:15px;color:#64748b;margin:0 0 24px">Sign in to your Virtualcare account</p>
+        <div class="auth-role-selector" style="display:flex;background:#f1f5f9;border-radius:10px;padding:4px;margin-bottom:24px;border:1px solid #e2e8f0">
+          <button type="button" class="auth-role-btn ${currentAuthRole === 'patient' ? 'active' : ''}" data-auth-role="patient" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;${currentAuthRole === 'patient' ? 'background:#fff;color:#1d6aba;box-shadow:0 2px 8px rgba(0,0,0,0.1)' : 'background:transparent;color:#64748b'}"><span style="font-size:16px">👤</span><span>Patient</span></button>
+          <button type="button" class="auth-role-btn ${currentAuthRole === 'doctor' ? 'active' : ''}" data-auth-role="doctor" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;${currentAuthRole === 'doctor' ? 'background:#fff;color:#1d6aba;box-shadow:0 2px 8px rgba(0,0,0,0.1)' : 'background:transparent;color:#64748b'}"><span style="font-size:16px">👨‍⚕️</span><span>Doctor</span></button>
+          <button type="button" class="auth-role-btn ${currentAuthRole === 'admin' ? 'active' : ''}" data-auth-role="admin" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;${currentAuthRole === 'admin' ? 'background:#fff;color:#1d6aba;box-shadow:0 2px 8px rgba(0,0,0,0.1)' : 'background:transparent;color:#64748b'}"><span style="font-size:16px">⚙️</span><span>Admin</span></button>
         </div>
-
-        <div class="social-auth-section" id="socialAuthSection" style="${currentAuthRole === 'admin' ? 'display:none' : ''}">
-          <button type="button" class="btn-social-auth google-btn" data-action="google-signin">${GOOGLE_SVG} Continue with Google</button>
-          <button type="button" class="btn-social-auth facebook-btn" data-action="facebook-signin">${FACEBOOK_SVG} Continue with Facebook</button>
+        <div class="social-auth-section" id="socialAuthSection" style="${currentAuthRole === 'admin' ? 'display:none' : 'display:flex;flex-direction:column;gap:10px;margin-bottom:20px'}">
+          <button type="button" class="btn-social-auth google-btn" data-action="google-signin" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;font-size:14px;font-weight:600;color:#0a2463;cursor:pointer">${GOOGLE_SVG} Continue with Google</button>
+          <button type="button" class="btn-social-auth facebook-btn" data-action="facebook-signin" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:none;border-radius:10px;background:#1877F2;font-size:14px;font-weight:600;color:#fff;cursor:pointer">${FACEBOOK_SVG} Continue with Facebook</button>
         </div>
-
-        <div class="auth-divider" id="authDivider" style="${currentAuthRole === 'admin' ? 'display:none' : ''}">
-          <span>or sign in with email</span>
-        </div>
-
-        <form class="auth-form" id="loginForm">
-          <div class="auth-field">
-            <label for="loginEmail">Email Address</label>
-            <div class="auth-input-wrap">
-              <span class="auth-input-icon">📧</span>
-              <input type="email" id="loginEmail" class="auth-input" placeholder="Enter your email" required autocomplete="email" />
-            </div>
+        <div class="auth-divider" id="authDivider" style="${currentAuthRole === 'admin' ? 'display:none' : 'display:flex;align-items:center;gap:14px;margin-bottom:20px'}"><div style="flex:1;height:1px;background:#e2e8f0"></div><span style="font-size:13px;color:#94a3b8;white-space:nowrap">or sign in with email</span><div style="flex:1;height:1px;background:#e2e8f0"></div></div>
+        <form class="auth-form" id="loginForm" style="display:flex;flex-direction:column;gap:0">
+          <div style="margin-bottom:16px">
+            <label for="loginEmail" style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:6px">Email Address</label>
+            <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap"><span style="font-size:16px;margin-right:10px;flex-shrink:0;display:flex;align-items:center">📧</span><input type="email" id="loginEmail" placeholder="Enter your email" required autocomplete="email" style="flex:1;border:none;background:transparent;padding:12px 0;font-size:16px;font-family:inherit;outline:none;min-width:0;color:#0f172a" class="auth-input" /></div>
           </div>
-          <div class="auth-field">
-            <div class="auth-label-row">
-              <label for="loginPassword">Password</label>
-              <button type="button" class="auth-forgot-link" data-action="forgot-password">Forgot password?</button>
-            </div>
-            <div class="auth-input-wrap">
-              <span class="auth-input-icon">🔒</span>
-              <input type="password" id="loginPassword" class="auth-input" placeholder="Enter your password" required autocomplete="current-password" />
-              <button type="button" class="auth-toggle-pw" data-toggle-pw="loginPassword" aria-label="Toggle password">👁️</button>
-            </div>
+          <div style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label for="loginPassword" style="font-size:13px;font-weight:600;color:#0a2463;margin:0">Password</label><button type="button" data-action="forgot-password" style="background:none;border:none;color:#1d6aba;font-size:12px;font-weight:600;cursor:pointer;padding:0">Forgot password?</button></div>
+            <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap"><span style="font-size:16px;margin-right:10px;flex-shrink:0;display:flex;align-items:center">🔒</span><input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password" style="flex:1;border:none;background:transparent;padding:12px 0;font-size:16px;font-family:inherit;outline:none;min-width:0;color:#0f172a" class="auth-input" /><button type="button" data-toggle-pw="loginPassword" aria-label="Toggle password" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px;flex-shrink:0;display:flex;align-items:center">👁️</button></div>
           </div>
-          <div class="auth-remember-row">
-            <label class="auth-remember">
-              <input type="checkbox" id="rememberMe" />
-              <span>Remember me for 30 days</span>
-            </label>
-          </div>
-          <div class="auth-error-msg" id="loginError" style="display:none"></div>
-          <button type="submit" class="btn-auth-submit" id="loginSubmitBtn">Sign In</button>
+          <div style="margin-bottom:20px"><label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#64748b;cursor:pointer"><input type="checkbox" id="rememberMe" style="accent-color:#1d6aba;width:16px;height:16px" /><span>Remember me for 30 days</span></label></div>
+          <div class="auth-error-msg" id="loginError" style="display:none;background:#fef2f2;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px"></div>
+          <button type="submit" class="btn-auth-submit" id="loginSubmitBtn" style="width:100%;padding:14px;background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">Sign In</button>
         </form>
-
-        <div class="auth-switch-link">
-          Don't have an account? <a href="/register" data-link>Register free →</a>
-        </div>
-        <div class="auth-back-home">
-          <a href="/" data-link>← Back to Home</a>
-        </div>
+        <div style="text-align:center;margin-top:20px;font-size:14px;color:#64748b">Don't have an account? <a href="/register" data-link style="color:#1d6aba;font-weight:600;text-decoration:none">Register free →</a></div>
+        <div style="text-align:center;margin-top:10px"><a href="/" data-link style="font-size:13px;color:#94a3b8;text-decoration:none">← Back to Home</a></div>
       </div>
     </div>
   </div>
-
   <div id="forgotPwModal" class="forgot-pw-modal" style="display:none">
-    <div class="forgot-pw-box">
-      <div class="fpb-header">
-        <h3>Reset Password</h3>
-        <button type="button" class="modal-close-btn" data-action="close-forgot">×</button>
-      </div>
-      <p class="forgot-pw-desc">Enter your email address and we will send you a password reset link.</p>
-      <input type="email" id="forgotEmail" class="auth-input forgot-email-input" placeholder="Your email address" />
-      <button type="button" class="btn-auth-submit" data-action="send-reset">Send Reset Link</button>
+    <div style="background:#fff;border-radius:16px;padding:24px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><h3 style="font-size:20px;font-weight:800;color:#0a2463;margin:0">Reset Password</h3><button type="button" data-action="close-forgot" style="background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#64748b">×</button></div>
+      <p style="color:#64748b;font-size:14px;margin:0 0 16px">Enter your email and we will send you a password reset link.</p>
+      <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc;margin-bottom:14px" class="auth-input-wrap"><span style="font-size:16px;margin-right:10px;flex-shrink:0;display:flex;align-items:center">📧</span><input type="email" id="forgotEmail" placeholder="Your email address" style="flex:1;border:none;background:transparent;padding:12px 0;font-size:16px;font-family:inherit;outline:none;min-width:0" class="auth-input" /></div>
+      <button type="button" data-action="send-reset" style="width:100%;padding:14px;background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">Send Reset Link</button>
     </div>
   </div>`;
 }
