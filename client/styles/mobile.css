@@ -602,7 +602,8 @@ body:has(#mobile-bottom-nav.is-visible) {
 
 /* Very small screens - shrink text slightly but keep full word */
 @media (max-width: 380px) {
-  #site-header .logo { font-size: 14px !important; }
+  #site-header .logo { font-size: 16px !important; }
+  #site-header .logo-text { font-size: 16px !important; }
   #site-header #nav-auth .btn-primary,
   #site-header #nav-auth .btn-nav-outline {
     padding: 5px 8px !important;

@@ -72,10 +72,9 @@ function getLoginHTML() {
 
     <div class="auth-right-panel">
       <div class="auth-form-card">
-        <div class="auth-mobile-logo">
-          <span class="logo-virtual">Virtual</span>
-          <span class="logo-care">care</span>
-        </div>
+        <a href="/" data-link style="text-decoration:none;display:inline-block;margin-bottom:24px">
+          <span style="font-size:28px;font-weight:900;color:#0a2463">Virtual</span><span style="font-size:28px;font-weight:900;color:#1d6aba">care</span>
+        </a>
         <h2 class="auth-form-title">Welcome Back</h2>
         <p class="auth-form-subtitle">Sign in to your Virtualcare account</p>
 
@@ -155,208 +154,246 @@ function getLoginHTML() {
 function getRegisterHTML() {
   const isPatient = currentRegType === 'patient';
   return `
-  <div class="auth-page-wrap">
-    <div class="auth-left-panel register-left">
-      <div class="alp-content">
-        <div class="alp-logo">
-          <span class="logo-virtual">Virtual</span>
-          <span class="logo-care">care</span>
-        </div>
-        <h1 class="alp-headline">
+  <div style="display:flex;min-height:100vh;background:#f0f4f8">
+    <!-- LEFT PANEL (desktop only) -->
+    <div class="auth-left-panel register-left" style="flex:1;background:linear-gradient(135deg,#0f766e 0%,#0a2463 60%,#7c3aed 100%);padding:48px 52px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;position:sticky;top:0">
+      <div>
+        <a href="/" data-link style="text-decoration:none;display:inline-block;margin-bottom:40px">
+          <span style="font-size:28px;font-weight:900;color:#ffffff">Virtual</span><span style="font-size:28px;font-weight:900;color:#7ec8f7">care</span>
+        </a>
+        <h1 style="font-size:34px;font-weight:900;color:#fff;line-height:1.2;margin:0 0 32px">
           Join Millions of<br/>
-          <span class="alp-highlight">Nigerians Getting Quality<br/>Healthcare Online</span>
+          <span style="color:#7ec8f7">Nigerians Getting Quality<br/>Healthcare Online</span>
         </h1>
-        <div class="reg-benefits-section" id="patientBenefits" style="${isPatient ? '' : 'display:none'}">
-          <div class="rbs-title">As a Patient you get:</div>
-          <div class="rbs-items">
-            <div class="rbs-item"><span>📅</span> Book appointments 24/7</div>
-            <div class="rbs-item"><span>💊</span> Digital prescriptions</div>
-            <div class="rbs-item"><span>📁</span> Medical records storage</div>
-            <div class="rbs-item"><span>💰</span> 25% off as returning patient</div>
-            <div class="rbs-item"><span>🔁</span> Follow up with same doctor</div>
+        <div id="patientBenefits" style="${isPatient ? '' : 'display:none'}">
+          <div style="font-size:14px;font-weight:700;color:#7ec8f7;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px">As a Patient you get:</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            ${[
+              ['📅', 'Book appointments 24/7'],
+              ['💊', 'Digital prescriptions'],
+              ['📁', 'Medical records storage'],
+              ['💰', '25% off as returning patient'],
+              ['🔁', 'Follow up with same doctor']
+            ].map(([i, t]) => `<div style="display:flex;align-items:center;gap:12px;color:#fff;font-size:15px"><span style="font-size:20px;width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i}</span>${t}</div>`).join('')}
           </div>
         </div>
-        <div class="reg-benefits-section" id="doctorBenefits" style="${isPatient ? 'display:none' : ''}">
-          <div class="rbs-title">As a Doctor you earn:</div>
-          <div class="rbs-items">
-            <div class="rbs-item"><span>💰</span> 70% of every consultation fee</div>
-            <div class="rbs-item"><span>📱</span> Work from anywhere in Nigeria</div>
-            <div class="rbs-item"><span>📊</span> Full earnings dashboard</div>
-            <div class="rbs-item"><span>🏥</span> Professional MDCN profile</div>
-            <div class="rbs-item"><span>🔒</span> Paystack direct bank transfers</div>
+        <div id="doctorBenefits" style="${isPatient ? 'display:none' : ''}">
+          <div style="font-size:14px;font-weight:700;color:#7ec8f7;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px">As a Doctor you earn:</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            ${[
+              ['💰', '70% of every consultation fee'],
+              ['📱', 'Work from anywhere in Nigeria'],
+              ['📊', 'Full earnings dashboard'],
+              ['🏥', 'Professional MDCN profile'],
+              ['🔒', 'Paystack direct bank transfers']
+            ].map(([i, t]) => `<div style="display:flex;align-items:center;gap:12px;color:#fff;font-size:15px"><span style="font-size:20px;width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i}</span>${t}</div>`).join('')}
           </div>
         </div>
       </div>
     </div>
 
-    <div class="auth-right-panel">
-      <div class="auth-form-card register-card">
-        <div class="auth-mobile-logo">
-          <span class="logo-virtual">Virtual</span>
-          <span class="logo-care">care</span>
-        </div>
-        <h2 class="auth-form-title">Create Your Account</h2>
-        <p class="auth-form-subtitle">Join Virtualcare Nigeria — it's free</p>
+    <!-- RIGHT PANEL (form) -->
+    <div class="auth-right-panel" style="width:520px;min-width:0;background:#fff;display:flex;align-items:flex-start;justify-content:center;padding:40px 32px;overflow-y:auto;min-height:100vh">
+      <div style="width:100%;max-width:460px;padding-top:10px">
+        <!-- Mobile logo (hidden on desktop by left panel visibility) -->
+        <a href="/" data-link class="auth-mobile-logo" style="text-decoration:none;display:none;margin-bottom:24px">
+          <span style="font-size:28px;font-weight:900;color:#0a2463">Virtual</span><span style="font-size:28px;font-weight:900;color:#1d6aba">care</span>
+        </a>
 
-        <div class="reg-type-selector">
-          <button type="button" id="regTypePatient" class="reg-type-btn ${isPatient ? 'active' : ''}" data-reg-type="patient">
-            <span class="reg-type-icon">👤</span>
-            <div class="reg-type-info"><strong>Patient</strong><span>Book consultations</span></div>
-            <div class="reg-type-check" id="patientCheck" style="${isPatient ? '' : 'display:none'}">✓</div>
+        <h2 style="font-size:26px;font-weight:900;color:#0a2463;margin:0 0 6px">Create Your Account</h2>
+        <p style="font-size:15px;color:#64748b;margin:0 0 24px">Join Virtualcare Nigeria — it's free</p>
+
+        <!-- Role selector -->
+        <div class="reg-type-selector" style="display:flex;gap:10px;margin-bottom:24px">
+          <button type="button" id="regTypePatient" class="reg-type-btn ${isPatient ? 'active' : ''}" data-reg-type="patient" style="flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;border:2px solid ${isPatient ? '#1d6aba' : '#e2e8f0'};border-radius:12px;background:${isPatient ? '#eff6ff' : '#fff'};cursor:pointer;transition:border-color 0.2s,background 0.2s">
+            <span style="font-size:24px">👤</span>
+            <div style="text-align:left"><strong style="display:block;font-size:14px;color:#0a2463">Patient</strong><span style="font-size:12px;color:#64748b">Book consultations</span></div>
+            <div class="reg-type-check" id="patientCheck" style="margin-left:auto;color:#1d6aba;font-weight:700;font-size:16px;${isPatient ? '' : 'display:none'}">✓</div>
           </button>
-          <button type="button" id="regTypeDoctor" class="reg-type-btn ${!isPatient ? 'active' : ''}" data-reg-type="doctor">
-            <span class="reg-type-icon">👨‍⚕️</span>
-            <div class="reg-type-info"><strong>Doctor</strong><span>Earn 70% per consultation</span></div>
-            <div class="reg-type-check" id="doctorCheck" style="${!isPatient ? '' : 'display:none'}">✓</div>
+          <button type="button" id="regTypeDoctor" class="reg-type-btn ${!isPatient ? 'active' : ''}" data-reg-type="doctor" style="flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;border:2px solid ${!isPatient ? '#1d6aba' : '#e2e8f0'};border-radius:12px;background:${!isPatient ? '#eff6ff' : '#fff'};cursor:pointer;transition:border-color 0.2s,background 0.2s">
+            <span style="font-size:24px">👨‍⚕️</span>
+            <div style="text-align:left"><strong style="display:block;font-size:14px;color:#0a2463">Doctor</strong><span style="font-size:12px;color:#64748b">Earn 70% per consultation</span></div>
+            <div class="reg-type-check" id="doctorCheck" style="margin-left:auto;color:#1d6aba;font-weight:700;font-size:16px;${!isPatient ? '' : 'display:none'}">✓</div>
           </button>
         </div>
 
-        <div class="social-auth-section">
-          <button type="button" class="btn-social-auth google-btn" data-action="google-signup">${GOOGLE_SVG} Sign up with Google</button>
-          <button type="button" class="btn-social-auth facebook-btn" data-action="facebook-signup">${FACEBOOK_SVG} Sign up with Facebook</button>
+        <!-- Social auth -->
+        <div class="social-auth-section" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+          <button type="button" class="btn-social-auth google-btn" data-action="google-signup" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;font-size:14px;font-weight:600;color:#0a2463;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s">${GOOGLE_SVG} Sign up with Google</button>
+          <button type="button" class="btn-social-auth facebook-btn" data-action="facebook-signup" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:none;border-radius:10px;background:#1877F2;font-size:14px;font-weight:600;color:#fff;cursor:pointer;transition:opacity 0.2s">${FACEBOOK_SVG} Sign up with Facebook</button>
         </div>
 
-        <div class="auth-divider"><span>or register with email</span></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+          <div style="flex:1;height:1px;background:#e2e8f0"></div>
+          <span style="font-size:13px;color:#94a3b8;white-space:nowrap">or register with email</span>
+          <div style="flex:1;height:1px;background:#e2e8f0"></div>
+        </div>
 
+        <!-- Registration form -->
         <form class="auth-form" id="registerForm">
+          <!-- PATIENT FIELDS -->
           <div id="patientFields" style="${isPatient ? '' : 'display:none'}">
-            <div class="auth-form-row">
-              <div class="auth-field">
-                <label>First Name *</label>
-                <div class="auth-input-wrap"><span class="auth-input-icon">👤</span>
-                  <input type="text" id="regFirstName" class="auth-input" placeholder="e.g. Amaka" ${isPatient ? 'required' : ''} /></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" class="auth-form-row">
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">First Name *</label>
+                <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc;transition:border-color 0.2s" class="auth-input-wrap">
+                  <span style="font-size:16px;margin-right:8px;flex-shrink:0">👤</span>
+                  <input type="text" id="regFirstName" placeholder="e.g. Amaka" ${isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
+                </div>
               </div>
-              <div class="auth-field">
-                <label>Surname *</label>
-                <div class="auth-input-wrap"><span class="auth-input-icon">👤</span>
-                  <input type="text" id="regSurname" class="auth-input" placeholder="e.g. Obi" ${isPatient ? 'required' : ''} /></div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">Surname *</label>
+                <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc;transition:border-color 0.2s" class="auth-input-wrap">
+                  <span style="font-size:16px;margin-right:8px;flex-shrink:0">👤</span>
+                  <input type="text" id="regSurname" placeholder="e.g. Obi" ${isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
+                </div>
               </div>
             </div>
-            <div class="auth-field">
-              <label>Email Address *</label>
-              <div class="auth-input-wrap">
-                <span class="auth-input-icon">📧</span>
-                <input type="email" id="regEmail" class="auth-input" placeholder="yourname@email.com" ${isPatient ? 'required' : ''} />
+            <div style="margin-bottom:12px">
+              <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">Email Address *</label>
+              <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                <span style="font-size:16px;margin-right:8px;flex-shrink:0">📧</span>
+                <input type="email" id="regEmail" placeholder="yourname@email.com" ${isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
                 <div class="auth-email-check" id="emailCheckStatus"></div>
               </div>
             </div>
-            <div class="auth-field">
-              <label>Nigerian Mobile Number *</label>
-              <div class="auth-input-wrap">
-                <span class="auth-input-icon">📱</span>
-                <input type="tel" id="regPhone" class="auth-input" placeholder="e.g. 0801 234 5678" maxlength="11" ${isPatient ? 'required' : ''} />
+            <div style="margin-bottom:12px">
+              <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">Nigerian Mobile Number *</label>
+              <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                <span style="font-size:16px;margin-right:8px;flex-shrink:0">📱</span>
+                <input type="tel" id="regPhone" placeholder="e.g. 0801 234 5678" maxlength="11" ${isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
               </div>
-              <div class="auth-field-hint">Nigerian numbers: 080X, 070X, 090X, 081X</div>
+              <div style="font-size:11px;color:#94a3b8;margin-top:4px">Nigerian numbers: 080X, 070X, 090X, 081X</div>
             </div>
-            <div class="auth-field">
-              <label>State of Residence *</label>
-              <div class="auth-input-wrap">
-                <span class="auth-input-icon">📍</span>
-                <select id="regState" class="auth-input auth-select" ${isPatient ? 'required' : ''}>
+            <div style="margin-bottom:12px">
+              <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">State of Residence *</label>
+              <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                <span style="font-size:16px;margin-right:8px;flex-shrink:0">📍</span>
+                <select id="regState" ${isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer" class="auth-input auth-select">
                   <option value="">Select your state...</option>${stateOptions()}
                 </select>
               </div>
             </div>
           </div>
 
+          <!-- DOCTOR FIELDS -->
           <div id="doctorFields" style="${isPatient ? 'display:none' : ''}">
-            <div class="auth-form-row">
-              <div class="auth-field">
-                <label>First Name *</label>
-                <div class="auth-input-wrap"><span class="auth-input-icon">👤</span>
-                  <input type="text" id="regDoctorFirstName" class="auth-input" placeholder="e.g. Chukwuemeka" ${!isPatient ? 'required' : ''} /></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" class="auth-form-row">
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">First Name *</label>
+                <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                  <span style="font-size:16px;margin-right:8px;flex-shrink:0">👤</span>
+                  <input type="text" id="regDoctorFirstName" placeholder="e.g. Chukwuemeka" ${!isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
+                </div>
               </div>
-              <div class="auth-field">
-                <label>Surname *</label>
-                <div class="auth-input-wrap"><span class="auth-input-icon">👤</span>
-                  <input type="text" id="regDoctorSurname" class="auth-input" placeholder="e.g. Okonkwo" ${!isPatient ? 'required' : ''} /></div>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">Surname *</label>
+                <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                  <span style="font-size:16px;margin-right:8px;flex-shrink:0">👤</span>
+                  <input type="text" id="regDoctorSurname" placeholder="e.g. Okonkwo" ${!isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
+                </div>
               </div>
             </div>
-            <div class="auth-field">
-              <label>Email Address *</label>
-              <div class="auth-input-wrap"><span class="auth-input-icon">📧</span>
-                <input type="email" id="regDoctorEmail" class="auth-input" placeholder="doctor@email.com" ${!isPatient ? 'required' : ''} /></div>
+            <div style="margin-bottom:12px">
+              <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">Email Address *</label>
+              <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                <span style="font-size:16px;margin-right:8px;flex-shrink:0">📧</span>
+                <input type="email" id="regDoctorEmail" placeholder="doctor@email.com" ${!isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
+              </div>
             </div>
-            <div class="auth-field">
-              <label>Nigerian Mobile Number *</label>
-              <div class="auth-input-wrap"><span class="auth-input-icon">📱</span>
-                <input type="tel" id="regDoctorPhone" class="auth-input" placeholder="e.g. 0801 234 5678" maxlength="11" ${!isPatient ? 'required' : ''} /></div>
+            <div style="margin-bottom:12px">
+              <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">Nigerian Mobile Number *</label>
+              <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                <span style="font-size:16px;margin-right:8px;flex-shrink:0">📱</span>
+                <input type="tel" id="regDoctorPhone" placeholder="e.g. 0801 234 5678" maxlength="11" ${!isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
+              </div>
             </div>
-            <div class="auth-field">
-              <label>MDCN Registration Number *</label>
-              <div class="auth-input-wrap"><span class="auth-input-icon">🏥</span>
-                <input type="text" id="regMDCN" class="auth-input" placeholder="e.g. MDN/LUTH/2020/12345" ${!isPatient ? 'required' : ''} /></div>
-              <div class="auth-field-hint mdcn-hint">Format: MDN/HOSPITAL/YEAR/NUMBER</div>
+            <div style="margin-bottom:12px">
+              <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">MDCN Registration Number *</label>
+              <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                <span style="font-size:16px;margin-right:8px;flex-shrink:0">🏥</span>
+                <input type="text" id="regMDCN" placeholder="e.g. MDN/LUTH/2020/12345" ${!isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
+              </div>
+              <div style="font-size:11px;color:#94a3b8;margin-top:4px" class="mdcn-hint">Format: MDN/HOSPITAL/YEAR/NUMBER</div>
             </div>
-            <div class="auth-form-row">
-              <div class="auth-field">
-                <label>Specialty *</label>
-                <div class="auth-input-wrap"><span class="auth-input-icon">🩺</span>
-                  <select id="regSpecialty" class="auth-input auth-select" ${!isPatient ? 'required' : ''}>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" class="auth-form-row">
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">Specialty *</label>
+                <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                  <span style="font-size:16px;margin-right:8px;flex-shrink:0">🩺</span>
+                  <select id="regSpecialty" ${!isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer" class="auth-input auth-select">
                     <option value="">Select specialty...</option>${specialtyOptions()}
-                  </select></div>
+                  </select>
+                </div>
               </div>
-              <div class="auth-field">
-                <label>State of Practice *</label>
-                <div class="auth-input-wrap"><span class="auth-input-icon">📍</span>
-                  <select id="regDoctorState" class="auth-input auth-select" ${!isPatient ? 'required' : ''}>
+              <div>
+                <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">State of Practice *</label>
+                <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                  <span style="font-size:16px;margin-right:8px;flex-shrink:0">📍</span>
+                  <select id="regDoctorState" ${!isPatient ? 'required' : ''} style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer" class="auth-input auth-select">
                     <option value="">Select state...</option>${stateOptions()}
-                  </select></div>
+                  </select>
+                </div>
               </div>
             </div>
-            <div class="auth-field">
-              <label>Hospital / Clinic Affiliation</label>
-              <div class="auth-input-wrap"><span class="auth-input-icon">🏥</span>
-                <input type="text" id="regHospital" class="auth-input" placeholder="e.g. Lagos University Teaching Hospital" /></div>
+            <div style="margin-bottom:12px">
+              <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">Hospital / Clinic Affiliation</label>
+              <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                <span style="font-size:16px;margin-right:8px;flex-shrink:0">🏥</span>
+                <input type="text" id="regHospital" placeholder="e.g. Lagos University Teaching Hospital" style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
+              </div>
             </div>
-            <div class="doctor-mdcn-notice">
-              <span>📋</span>
+            <div style="display:flex;gap:12px;padding:14px 16px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;margin-bottom:16px;font-size:13px;color:#92400e">
+              <span style="font-size:20px;flex-shrink:0">📋</span>
               <div>
                 <strong>MDCN Verification Required</strong>
-                <p>Your application will be reviewed by our admin team within 24 hours. You will be notified once approved.</p>
+                <p style="margin:4px 0 0;font-size:12px;line-height:1.4">Your application will be reviewed by our admin team within 24 hours. You will be notified once approved.</p>
               </div>
             </div>
           </div>
 
-          <div class="auth-form-row">
-            <div class="auth-field">
-              <label>Password *</label>
-              <div class="auth-input-wrap">
-                <span class="auth-input-icon">🔒</span>
-                <input type="password" id="regPassword" class="auth-input" placeholder="Min. 8 characters" required />
-                <button type="button" class="auth-toggle-pw" data-toggle-pw="regPassword" aria-label="Toggle password">👁️</button>
+          <!-- PASSWORD (shared) -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px" class="auth-form-row">
+            <div>
+              <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">Password *</label>
+              <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                <span style="font-size:16px;margin-right:8px;flex-shrink:0">🔒</span>
+                <input type="password" id="regPassword" placeholder="Min. 8 characters" required style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
+                <button type="button" data-toggle-pw="regPassword" aria-label="Toggle password" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px;flex-shrink:0">👁️</button>
               </div>
-              <div class="password-strength-bar" id="pwStrengthBar"><div class="psb-fill" id="pwStrengthFill"></div></div>
-              <div class="psb-label" id="pwStrengthLabel"></div>
+              <div class="password-strength-bar" id="pwStrengthBar" style="height:4px;background:#e2e8f0;border-radius:2px;margin-top:6px;overflow:hidden"><div class="psb-fill" id="pwStrengthFill" style="height:100%;width:0;border-radius:2px;transition:width 0.3s,background 0.3s"></div></div>
+              <div class="psb-label" id="pwStrengthLabel" style="font-size:11px;margin-top:2px;color:#94a3b8"></div>
             </div>
-            <div class="auth-field">
-              <label>Confirm Password *</label>
-              <div class="auth-input-wrap">
-                <span class="auth-input-icon">🔒</span>
-                <input type="password" id="regConfirmPassword" class="auth-input" placeholder="Repeat password" required />
+            <div>
+              <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:4px">Confirm Password *</label>
+              <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap">
+                <span style="font-size:16px;margin-right:8px;flex-shrink:0">🔒</span>
+                <input type="password" id="regConfirmPassword" placeholder="Repeat password" required style="flex:1;border:none;background:transparent;padding:11px 0;font-size:14px;font-family:inherit;outline:none;min-width:0" class="auth-input" />
               </div>
-              <div class="pw-match-status" id="pwMatchStatus"></div>
+              <div class="pw-match-status" id="pwMatchStatus" style="font-size:11px;margin-top:4px"></div>
             </div>
           </div>
 
-          <div class="auth-terms-row">
-            <label class="auth-terms-label">
-              <input type="checkbox" id="regTerms" required />
-              <span>I agree to Virtualcare's <a href="#" class="auth-link">Terms of Service</a> and <a href="#" class="auth-link">Privacy Policy (NDPR)</a></span>
+          <!-- TERMS -->
+          <div style="margin-bottom:16px">
+            <label style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#64748b;cursor:pointer">
+              <input type="checkbox" id="regTerms" required style="margin-top:2px;accent-color:#1d6aba" />
+              <span>I agree to Virtualcare's <a href="#" style="color:#1d6aba;text-decoration:underline">Terms of Service</a> and <a href="#" style="color:#1d6aba;text-decoration:underline">Privacy Policy (NDPR)</a></span>
             </label>
           </div>
 
-          <div class="auth-error-msg" id="registerError" style="display:none"></div>
-          <button type="submit" class="btn-auth-submit" id="registerSubmitBtn">
+          <div class="auth-error-msg" id="registerError" style="display:none;background:#fef2f2;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px"></div>
+
+          <button type="submit" class="btn-auth-submit" id="registerSubmitBtn" style="width:100%;padding:14px;background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:opacity 0.2s">
             ${isPatient ? 'Create Patient Account' : 'Submit Doctor Application'}
           </button>
         </form>
 
-        <div class="auth-switch-link">
-          Already have an account? <a href="/login" data-link>Sign in →</a>
+        <div style="text-align:center;margin-top:20px;font-size:14px;color:#64748b">
+          Already have an account? <a href="/login" data-link style="color:#1d6aba;font-weight:600;text-decoration:none">Sign in →</a>
         </div>
-        <div class="auth-back-home">
-          <a href="/" data-link>← Back to Home</a>
+        <div style="text-align:center;margin-top:10px">
+          <a href="/" data-link style="font-size:13px;color:#94a3b8;text-decoration:none">← Back to Home</a>
         </div>
       </div>
     </div>

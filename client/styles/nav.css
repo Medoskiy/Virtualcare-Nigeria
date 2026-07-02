@@ -22,21 +22,22 @@
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0;
+  flex-shrink: 0;
 }
 .logo:hover { text-decoration: none; }
 .logo-text {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
-  color: var(--white);
-  letter-spacing: -0.3px;
   white-space: nowrap;
+  display: inline-block;
+}
+.logo-virt {
+  color: var(--white);
 }
 .logo-accent {
   color: var(--light-blue);
   font-weight: 800;
-  margin: 0;
-  padding: 0;
 }
 .logo-auth .logo-text {
   color: var(--deep-blue);
