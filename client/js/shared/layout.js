@@ -107,7 +107,7 @@ export function renderDoctorShell(path, contentHtml, doctor) {
         </div>
         <div class="doctor-top-banner doctor-banner">
           <div class="hex-avatar-wrap">
-            <div class="hex-avatar">${initials(doctor?.name, doctor?.surname)}</div>
+            <div class="hex-avatar" id="doc-banner-avatar">${initials(doctor?.name, doctor?.surname)}</div>
             <span class="hex-verified">✓</span>
             <span class="hex-status-ring status-ring-lg status-${st}"></span>
           </div>
@@ -231,4 +231,24 @@ export function bindShellEvents(container, roleHandlers = {}) {
       if (typeof window.showToast === 'function') window.showToast('Avatar updated!', 'success');
     });
   });
+
+  // Restore saved doctor avatar on load
+  try {
+    const saved = JSON.parse(localStorage.getItem('doctorAvatar') || 'null');
+    const vcAvatar = localStorage.getItem('vc_doctor_avatar');
+    const emoji = saved?.emoji || vcAvatar;
+    if (emoji) {
+      const bannerAvatar = container.querySelector('#doc-banner-avatar, .hex-avatar');
+      if (bannerAvatar) {
+        bannerAvatar.textContent = emoji;
+        bannerAvatar.style.fontSize = '36px';
+        bannerAvatar.style.clipPath = 'none';
+        bannerAvatar.style.borderRadius = '50%';
+      }
+      const sidebarAvatar = container.querySelector('#doctor-avatar-display');
+      if (sidebarAvatar) {
+        sidebarAvatar.innerHTML = `<span style="font-size:36px;line-height:1">${emoji}</span>`;
+      }
+    }
+  } catch { /* ignore */ }
 }

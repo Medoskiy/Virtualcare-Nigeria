@@ -743,17 +743,47 @@ function selectDocAvatar(cat, index) {
 function confirmDocAvatar() {
   if (!selectedDocAvatar) return;
 
+  const emoji = selectedDocAvatar.emoji;
+
+  // Update profile page hex avatar
   const hexAvatar = document.getElementById('docHexAvatar');
   if (hexAvatar) {
-    hexAvatar.textContent = selectedDocAvatar.emoji;
+    hexAvatar.textContent = emoji;
     hexAvatar.style.fontSize = '36px';
     hexAvatar.style.clipPath = 'none';
     hexAvatar.style.borderRadius = '50%';
   }
 
+  // Update welcome banner hex avatar in the shell
+  document.querySelectorAll('.hex-avatar, .doc-hex-avatar').forEach((el) => {
+    el.textContent = emoji;
+    el.style.fontSize = '36px';
+    el.style.clipPath = 'none';
+    el.style.borderRadius = '50%';
+  });
+
+  // Update sidebar avatar display
+  const sidebarAvatar = document.getElementById('doctor-avatar-display');
+  if (sidebarAvatar) {
+    sidebarAvatar.innerHTML = `<span style="font-size:36px;line-height:1">${emoji}</span>`;
+  }
+
+  // Save to localStorage
   localStorage.setItem('doctorAvatar', JSON.stringify(selectedDocAvatar));
+  localStorage.setItem('vc_doctor_avatar', emoji);
+
+  // Save to backend
+  try {
+    const token = localStorage.getItem('vc_token') || localStorage.getItem('token');
+    fetch('/api/doctors/profile', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ avatar: emoji })
+    });
+  } catch { /* saved locally */ }
+
   closeDoctorAvatarModal();
-  toast(`Avatar updated to ${selectedDocAvatar.emoji}!`, 'success');
+  toast(`Avatar updated to ${emoji}!`, 'success');
 }
 
 function bindProfileEvents(root) {
