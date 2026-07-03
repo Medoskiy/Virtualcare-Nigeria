@@ -624,7 +624,29 @@ function refreshDoctorList() {
 }
 
 function exportDoctors() {
-  toast('Exporting doctor list...', 'info');
+  const headers = ['ID', 'Name', 'Email', 'Phone', 'State', 'Specialty', 'MDCN Number', 'Hospital', 'Status', 'Rating', 'Reviews', 'Consultations', 'Total Earned', 'Price/Session', 'Join Date', 'Last Active'];
+  const rows = [...PENDING_DOCTORS, ...INDIVIDUAL_FEE_DOCTORS.map((d) => ({
+    id: d.id, name: d.name, email: '', phone: '', state: '',
+    specialty: d.spec, mdcn: '', hospital: '', status: 'verified',
+    rating: '', reviews: '', consultations: '', earned: '',
+    price: `NGN ${d.price.toLocaleString()}`, joinDate: '', lastActive: ''
+  }))].map((d) => [
+    d.id || '', d.name || '', d.email || '', d.phone || '',
+    d.state || '', d.specialty || d.spec || '', d.mdcn || '',
+    d.hospital || '', d.status || 'pending', d.rating || '',
+    d.reviews || '', d.consultations || '', d.earned || '',
+    d.price || '', d.joinDate || d.appliedDate || '', d.lastActive || ''
+  ]);
+
+  const csv = [headers, ...rows].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `virtualcare-doctors-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('✅ Doctor list exported!', 'success');
 }
 
 function openDoctorApprovalModal(doctorId) {

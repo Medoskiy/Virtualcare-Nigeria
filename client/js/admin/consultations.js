@@ -500,7 +500,23 @@ function confirmPending(consultId) {
 }
 
 function exportConsultations() {
-  toast('Exporting consultations to CSV...', 'info');
+  const headers = ['Patient', 'Doctor', 'Specialty', 'Date', 'Duration', 'Type', 'Amount', 'Platform', 'Doctor', 'Status', 'Rating'];
+  const rows = [
+    ['Amaka Obi', 'Dr. Okonkwo', 'Cardiology', '24 Jun 2026', '48 min', 'Video', 'NGN 15000', 'NGN 4500', 'NGN 10500', 'Completed', '5'],
+    ['Emeka Nwosu', 'Dr. Okonkwo', 'Cardiology', '24 Jun 2026', '52 min', 'Video', 'NGN 15000', 'NGN 4500', 'NGN 10500', 'Completed', '5'],
+    ['Fatima Aliyu', 'Dr. Musa', 'General Practice', '24 Jun 2026', '45 min', 'Audio', 'NGN 5000', 'NGN 1500', 'NGN 3500', 'Completed', '4'],
+    ['Ngozi Adeleke', 'Dr. Eze', 'Pediatrics', '23 Jun 2026', '50 min', 'Video', 'NGN 8000', 'NGN 2400', 'NGN 5600', 'Completed', '5'],
+    ['Chukwudi Eze', 'Dr. Nwosu', 'Dermatology', '23 Jun 2026', '47 min', 'Video', 'NGN 10000', 'NGN 3000', 'NGN 7000', 'Completed', '5']
+  ];
+  const csv = [headers, ...rows].map((r) => r.map((v) => `"${v}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `virtualcare-consultations-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('✅ Consultations exported!', 'success');
 }
 
 function refreshConsultations() {

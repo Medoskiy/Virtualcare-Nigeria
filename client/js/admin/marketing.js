@@ -1191,7 +1191,7 @@ function openCreateCampaignModal() {
     <div style="background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
       <div style="background:linear-gradient(135deg,#0a2463,#1d6aba);padding:20px 24px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between">
         <h3 style="color:#fff;margin:0;font-size:18px;font-weight:800">✉️ New Campaign</h3>
-        <button type="button" onclick="document.getElementById('create-campaign-modal').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+        <button type="button" id="close-camp-modal" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
       </div>
       <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
         <div>
@@ -1261,8 +1261,9 @@ function openCreateCampaignModal() {
       </div>
     </div>
   `;
-  modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
   document.body.appendChild(modal);
+  modal.querySelector('#close-camp-modal').addEventListener('click', () => modal.style.display = 'none');
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
 }
 
 function duplicateCampaign() {
@@ -1284,7 +1285,7 @@ function viewMarketingAnalytics() {
     <div style="background:#fff;border-radius:16px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
       <div style="background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:20px 24px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between">
         <h3 style="color:#fff;margin:0;font-size:18px;font-weight:800">📊 Marketing Analytics</h3>
-        <button type="button" onclick="document.getElementById('mkt-analytics-modal').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+        <button type="button" id="close-analytics-modal" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
       </div>
       <div style="padding:24px">
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px">
@@ -1316,12 +1317,14 @@ function viewMarketingAnalytics() {
             </div>
           `).join('')}
         </div>
-        <button type="button" onclick="document.getElementById('mkt-analytics-modal').style.display='none'" style="width:100%;padding:12px;background:#f1f5f9;color:#64748b;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Close</button>
+        <button type="button" id="close-analytics-body-btn" style="width:100%;padding:12px;background:#f1f5f9;color:#64748b;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Close</button>
       </div>
     </div>
   `;
-  modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
   document.body.appendChild(modal);
+  modal.querySelector('#close-analytics-modal').addEventListener('click', () => modal.style.display = 'none');
+  modal.querySelector('#close-analytics-body-btn').addEventListener('click', () => modal.style.display = 'none');
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
 }
 
 function previewMarketingNotif() {

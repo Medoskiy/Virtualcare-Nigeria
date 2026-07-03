@@ -610,11 +610,89 @@ function verifyMDCN() {
 }
 
 function exportUsers() {
-  toast('Exporting user list to CSV...', 'info');
+  const tab = currentUserTab;
+  const data = tab === 'patients' ? DEMO_PATIENTS_ADMIN : DEMO_DOCTORS_ADMIN;
+  const headers = tab === 'patients'
+    ? ['ID', 'Name', 'Email', 'Phone', 'State', 'Join Date', 'Status', 'Consultations', 'Total Spent', 'Last Active']
+    : ['ID', 'Name', 'Email', 'Phone', 'State', 'Specialty', 'MDCN', 'Hospital', 'Status', 'Rating', 'Consultations', 'Earned', 'Price', 'Last Active'];
+
+  const rows = tab === 'patients'
+    ? data.map((p) => [p.id, p.name, p.email, p.phone, p.state, p.joinDate, p.status, p.consultations, p.spent, p.lastActive])
+    : data.map((d) => [d.id, d.name, d.email, d.phone, d.state, d.specialty, d.mdcn, d.hospital, d.status, d.rating, d.consultations, d.earned, d.price, d.lastActive]);
+
+  const csv = [headers, ...rows].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `virtualcare-${tab}-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`✅ ${tab === 'patients' ? 'Patient' : 'Doctor'} list exported!`, 'success');
 }
 
 function sendBulkMessage() {
-  toast('Bulk message composer coming soon!', 'info');
+  const existing = document.getElementById('bulk-msg-modal');
+  if (existing) { existing.style.display = 'flex'; return; }
+
+  const modal = document.createElement('div');
+  modal.id = 'bulk-msg-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:10001;display:flex;align-items:center;justify-content:center;padding:16px';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+      <div style="background:linear-gradient(135deg,#0a2463,#1d6aba);padding:18px 20px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between">
+        <h3 style="color:#fff;margin:0;font-size:17px;font-weight:800">📢 Bulk Message</h3>
+        <button type="button" id="close-bulk-msg" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+      </div>
+      <div style="padding:20px;display:flex;flex-direction:column;gap:14px">
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:5px">Target Audience *</label>
+          <select id="bulk-audience" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;background:#fff">
+            <option>All Users (1,247)</option>
+            <option>All Patients (1,158)</option>
+            <option>All Doctors (89)</option>
+            <option>Returning Patients (284)</option>
+            <option>New Registrations (127)</option>
+            <option>Dormant Patients (189)</option>
+            <option>Pending Verification (7)</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:5px">Send Via *</label>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="accent-color:#1d6aba" /> 📱 Platform</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="accent-color:#1d6aba" /> 📧 Email</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" style="accent-color:#1d6aba" /> 💬 SMS</label>
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:5px">Subject *</label>
+          <input type="text" id="bulk-subject" placeholder="e.g. Important update from Virtualcare" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;box-sizing:border-box" />
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:5px">Message *</label>
+          <textarea id="bulk-message" rows="5" placeholder="Write your message..." style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;box-sizing:border-box;resize:vertical"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;padding-top:4px">
+          <button type="button" id="bulk-cancel-btn" style="flex:1;padding:12px;background:#f1f5f9;color:#64748b;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>
+          <button type="button" id="bulk-send-btn" style="flex:2;padding:12px;background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">📤 Send Bulk Message</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  modal.querySelector('#close-bulk-msg').onclick = () => modal.style.display = 'none';
+  modal.querySelector('#bulk-cancel-btn').onclick = () => modal.style.display = 'none';
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+  modal.querySelector('#bulk-send-btn').onclick = () => {
+    const subject = modal.querySelector('#bulk-subject').value.trim();
+    const message = modal.querySelector('#bulk-message').value.trim();
+    const audience = modal.querySelector('#bulk-audience').value;
+    if (!subject || !message) { toast('Please fill in subject and message', 'warning'); return; }
+    modal.style.display = 'none';
+    toast(`✅ Bulk message sent to ${audience}!`, 'success', 5000);
+  };
+  document.body.appendChild(modal);
 }
 
 function handleCardAction(e) {

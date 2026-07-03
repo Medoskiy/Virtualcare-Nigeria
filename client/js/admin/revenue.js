@@ -1121,15 +1121,115 @@ function downloadPayoutReceipt(payoutId) {
 }
 
 function exportArchive() {
-  toast('Exporting archive to CSV...', 'info');
+  const archived = INVOICE_DATA.filter((i) => i.archived || i.status === 'paid');
+  const headers = ['Invoice ID', 'Doctor', 'Specialty', 'Period', 'Gross', 'Platform', 'Doctor Amount', 'Status', 'Bank', 'Submitted'];
+  const rows = archived.map((inv) => [
+    inv.id, inv.doctorName, inv.specialty, inv.period,
+    `NGN ${inv.grossAmount.toLocaleString()}`,
+    `NGN ${inv.platformCut.toLocaleString()}`,
+    `NGN ${inv.doctorAmount.toLocaleString()}`,
+    inv.status, inv.bankName, inv.submittedDate
+  ]);
+  const csv = [headers, ...rows].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `virtualcare-archive-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('✅ Archive exported!', 'success');
 }
 
 function exportRevenueReport() {
-  toast('Generating revenue report...', 'info');
+  const headers = ['Invoice ID', 'Doctor', 'Specialty', 'Period', 'Consultations', 'Gross Amount', 'Platform (30%)', 'Doctor (70%)', 'Status', 'Bank', 'Due Date'];
+  const rows = INVOICE_DATA.map((inv) => [
+    inv.id, inv.doctorName, inv.specialty, inv.period,
+    inv.consultations,
+    `NGN ${inv.grossAmount.toLocaleString()}`,
+    `NGN ${inv.platformCut.toLocaleString()}`,
+    `NGN ${inv.doctorAmount.toLocaleString()}`,
+    inv.status, inv.bankName, inv.dueDate
+  ]);
+  const csv = [headers, ...rows].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `virtualcare-revenue-report-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('✅ Revenue report exported!', 'success');
 }
 
 function generateFinancialStatement() {
-  toast('Generating financial statement PDF...', 'info');
+  const totalGross = INVOICE_DATA.reduce((s, i) => s + i.grossAmount, 0);
+  const totalPlatform = INVOICE_DATA.reduce((s, i) => s + i.platformCut, 0);
+  const totalDoctors = INVOICE_DATA.reduce((s, i) => s + i.doctorAmount, 0);
+  const paid = INVOICE_DATA.filter((i) => i.status === 'paid').reduce((s, i) => s + i.doctorAmount, 0);
+  const pending = INVOICE_DATA.filter((i) => i.status === 'pending').reduce((s, i) => s + i.doctorAmount, 0);
+
+  const html = `
+    <html><head><style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; color: #1e293b; }
+      .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(-40deg); font-size: 80px; font-weight: 900; color: rgba(10,36,99,0.05); pointer-events: none; white-space: nowrap; z-index: 0; }
+      .header { background: linear-gradient(135deg, #0a2463, #1d6aba); color: #fff; padding: 32px 40px; }
+      .logo { font-size: 28px; font-weight: 900; } .logo span { color: #7ec8f7; }
+      .header h2 { margin: 8px 0 4px; font-size: 18px; opacity: 0.9; }
+      .header p { margin: 0; font-size: 13px; opacity: 0.7; }
+      .body { padding: 32px 40px; position: relative; z-index: 1; }
+      .kpi-row { display: flex; gap: 16px; margin-bottom: 24px; }
+      .kpi { flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; text-align: center; }
+      .kpi-val { font-size: 22px; font-weight: 800; color: #0a2463; }
+      .kpi-lbl { font-size: 11px; color: #64748b; margin-top: 4px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+      th { background: #0a2463; color: #fff; padding: 10px 12px; font-size: 12px; text-align: left; }
+      td { padding: 9px 12px; font-size: 12px; border-bottom: 1px solid #f1f5f9; }
+      tr:nth-child(even) td { background: #f8fafc; }
+      .footer { background: #0a2463; color: rgba(255,255,255,0.7); padding: 16px 40px; font-size: 11px; text-align: center; margin-top: 32px; }
+      .footer strong { color: #7ec8f7; }
+    </style></head><body>
+      <div class="watermark">Virtualcare Nigeria</div>
+      <div class="header">
+        <div class="logo">Virtual<span>care</span> Nigeria</div>
+        <h2>Financial Statement — June 2026</h2>
+        <p>Generated: ${new Date().toLocaleDateString('en-NG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} · Confidential</p>
+      </div>
+      <div class="body">
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-val">₦${totalGross.toLocaleString('en-NG')}</div><div class="kpi-lbl">Total Gross Revenue</div></div>
+          <div class="kpi"><div class="kpi-val">₦${totalPlatform.toLocaleString('en-NG')}</div><div class="kpi-lbl">Platform Revenue (30%)</div></div>
+          <div class="kpi"><div class="kpi-val">₦${totalDoctors.toLocaleString('en-NG')}</div><div class="kpi-lbl">Doctor Payouts (70%)</div></div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-val" style="color:#16a34a">₦${paid.toLocaleString('en-NG')}</div><div class="kpi-lbl">Paid Out</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:#d97706">₦${pending.toLocaleString('en-NG')}</div><div class="kpi-lbl">Pending Payment</div></div>
+          <div class="kpi"><div class="kpi-val">${INVOICE_DATA.length}</div><div class="kpi-lbl">Total Invoices</div></div>
+        </div>
+        <h3 style="color:#0a2463;margin:20px 0 10px">Invoice Breakdown</h3>
+        <table>
+          <tr><th>Invoice ID</th><th>Doctor</th><th>Specialty</th><th>Consultations</th><th>Gross</th><th>Platform</th><th>Doctor</th><th>Status</th></tr>
+          ${INVOICE_DATA.map((inv) => `
+            <tr>
+              <td>${inv.id}</td><td>${inv.doctorName}</td><td>${inv.specialty}</td>
+              <td>${inv.consultations}</td>
+              <td>₦${inv.grossAmount.toLocaleString('en-NG')}</td>
+              <td>₦${inv.platformCut.toLocaleString('en-NG')}</td>
+              <td>₦${inv.doctorAmount.toLocaleString('en-NG')}</td>
+              <td>${inv.status.toUpperCase()}</td>
+            </tr>
+          `).join('')}
+        </table>
+      </div>
+      <div class="footer">© ${new Date().getFullYear()} <strong>Virtualcare Nigeria</strong> · virtualcare.me · NDPR Compliant · Confidential Financial Document</div>
+    </body></html>
+  `;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank');
+  if (win) setTimeout(() => win.print(), 800);
+  toast('✅ Financial statement ready — print or save as PDF!', 'success', 5000);
 }
 
 function handleRevAction(e) {
