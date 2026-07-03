@@ -84,9 +84,9 @@ export function renderDoctorShell(path, contentHtml, doctor) {
           </div>
         </div>
         <div class="status-toggle-group">
-          <button data-st="green" class="${st === 'green' ? 'active' : ''}">🟢 Free</button>
-          <button data-st="amber" class="${st === 'amber' ? 'active' : ''}">🟡 Busy</button>
-          <button data-st="red" class="${st === 'red' ? 'active' : ''}">🔴 Away</button>
+          <button data-st="green" data-tooltip="Available for consultations" class="${st === 'green' ? 'active' : ''}">🟢 Free</button>
+          <button data-st="amber" data-tooltip="Temporarily busy" class="${st === 'amber' ? 'active' : ''}">🟡 Busy</button>
+          <button data-st="red" data-tooltip="Away / Offline" class="${st === 'red' ? 'active' : ''}">🔴 Away</button>
         </div>
         <nav class="sidebar-nav">
           ${nav.map((n) => `<a href="${n.path}" data-link class="${path === n.path ? 'active' : ''}"><span class="nav-icon" style="font-size:18px;width:24px;flex-shrink:0;display:inline-block">${n.icon}</span><span style="display:inline;font-size:14px">${n.label}</span></a>`).join('')}

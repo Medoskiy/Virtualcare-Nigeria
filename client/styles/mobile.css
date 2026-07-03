@@ -2442,3 +2442,578 @@ body:has(#mobile-bottom-nav.is-visible) {
     min-height: 48px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   DOCTOR DASHBOARD — ALL PAGES MOBILE RESPONSIVE
+   + Sidebar redesign with hover effects
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Sidebar nav item hover & active effects ─────────────── */
+#doctor-sidebar .sidebar-nav a {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 13px 20px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #334155 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  border-radius: 0 !important;
+  border-left: 3px solid transparent !important;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.15s ease !important;
+  position: relative !important;
+}
+
+#doctor-sidebar .sidebar-nav a:hover {
+  background: #eff6ff !important;
+  color: #1d6aba !important;
+  border-left-color: #1d6aba !important;
+  transform: translateX(4px) !important;
+}
+
+#doctor-sidebar .sidebar-nav a.active {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe) !important;
+  color: #1d6aba !important;
+  border-left-color: #1d6aba !important;
+  font-weight: 700 !important;
+}
+
+#doctor-sidebar .sidebar-nav a .nav-icon {
+  font-size: 18px !important;
+  width: 26px !important;
+  flex-shrink: 0 !important;
+  display: inline-block !important;
+  text-align: center !important;
+}
+
+/* ── Back to Home button — redesigned ───────────────────── */
+#doctor-sidebar .btn-back-to-home,
+#doctor-sidebar #sidebar-home {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 12px 20px !important;
+  margin: 8px 12px 4px !important;
+  width: calc(100% - 24px) !important;
+  background: #f0fdf4 !important;
+  color: #166534 !important;
+  border: 1.5px solid #bbf7d0 !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background 0.2s, transform 0.15s !important;
+  min-height: 44px !important;
+}
+
+#doctor-sidebar .btn-back-to-home:hover,
+#doctor-sidebar #sidebar-home:hover {
+  background: #dcfce7 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Sign Out button — redesigned ───────────────────────── */
+#doctor-sidebar .sidebar-logout,
+#doctor-sidebar #sidebar-logout {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 12px 20px !important;
+  margin: 4px 12px 20px !important;
+  width: calc(100% - 24px) !important;
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  border: 1.5px solid #fecaca !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background 0.2s, transform 0.15s !important;
+  min-height: 44px !important;
+}
+
+#doctor-sidebar .sidebar-logout:hover,
+#doctor-sidebar #sidebar-logout:hover {
+  background: #fee2e2 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Status toggle redesign with hover popups ────────────── */
+.doctor-shell .status-toggle-group {
+  display: flex !important;
+  gap: 6px !important;
+  padding: 10px 16px !important;
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.doctor-shell .status-toggle-group button {
+  flex: 1 !important;
+  padding: 8px 6px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  background: #fff !important;
+  color: #64748b !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+  min-height: 36px !important;
+  min-width: unset !important;
+}
+
+.doctor-shell .status-toggle-group button::after {
+  content: attr(data-tooltip);
+  position: absolute !important;
+  bottom: calc(100% + 6px) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: #0a2463 !important;
+  color: #fff !important;
+  font-size: 11px !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s !important;
+  z-index: 10 !important;
+}
+
+.doctor-shell .status-toggle-group button:hover::after {
+  opacity: 1 !important;
+}
+
+.doctor-shell .status-toggle-group button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(10,36,99,0.12) !important;
+}
+
+.doctor-shell .status-toggle-group button[data-st="green"].active,
+.doctor-shell .status-toggle-group button[data-st="green"]:hover {
+  background: #dcfce7 !important;
+  border-color: #22c55e !important;
+  color: #166534 !important;
+}
+
+.doctor-shell .status-toggle-group button[data-st="amber"].active,
+.doctor-shell .status-toggle-group button[data-st="amber"]:hover {
+  background: #fef3c7 !important;
+  border-color: #f59e0b !important;
+  color: #92400e !important;
+}
+
+.doctor-shell .status-toggle-group button[data-st="red"].active,
+.doctor-shell .status-toggle-group button[data-st="red"]:hover {
+  background: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  color: #991b1b !important;
+}
+
+@media (max-width: 768px) {
+
+  /* ── Patients page ─────────────────────────────────────── */
+  .patients-table-wrap,
+  .table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .patients-table {
+    min-width: 560px !important;
+    font-size: 13px !important;
+  }
+
+  .patients-page-header h2 {
+    font-size: 20px !important;
+  }
+
+  .patients-search-bar {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .patients-search-bar .search-input-wrap {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  .patient-search-input {
+    width: 100% !important;
+    font-size: 16px !important;
+  }
+
+  .btn-clear-search {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  /* ── Medical records ───────────────────────────────────── */
+  .mrec-stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .mrec-stat-card {
+    padding: 14px 12px !important;
+    border-radius: 12px !important;
+  }
+
+  .mrec-stat-value {
+    font-size: 20px !important;
+  }
+
+  .mrec-card {
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .mrec-card-header {
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: flex-start !important;
+  }
+
+  .mrec-card-right {
+    width: 100% !important;
+    display: flex !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .mrec-filters {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 6px !important;
+    padding-bottom: 4px !important;
+  }
+
+  .mrec-filter-btn {
+    flex-shrink: 0 !important;
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+    white-space: nowrap !important;
+  }
+
+  /* ── Payouts & Earnings ────────────────────────────────── */
+  .payout-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .payout-kpi-card {
+    padding: 14px 12px !important;
+    border-radius: 12px !important;
+  }
+
+  .payout-kpi-value {
+    font-size: 18px !important;
+  }
+
+  .payout-kpi-sub,
+  .payout-kpi-trend {
+    font-size: 11px !important;
+  }
+
+  .payout-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .payout-table {
+    min-width: 520px !important;
+    font-size: 13px !important;
+  }
+
+  .payout-actions {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .payout-actions .btn {
+    width: 100% !important;
+  }
+
+  .payout-chart-wrap {
+    overflow-x: auto !important;
+    padding: 0 !important;
+  }
+
+  /* ── Prescriptions ─────────────────────────────────────── */
+  .rx-filters,
+  .rx-filter-row {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    padding-bottom: 4px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .rx-filter-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+  }
+
+  .rx-patient-card {
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .rx-card-actions {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .rx-card-actions .btn {
+    flex: 1 !important;
+    min-width: 120px !important;
+    text-align: center !important;
+    font-size: 12px !important;
+  }
+
+  .rx-med-row {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+  }
+
+  /* ── Schedule ──────────────────────────────────────────── */
+  .schedule-grid-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 12px !important;
+  }
+
+  .schedule-grid {
+    min-width: 480px !important;
+    font-size: 12px !important;
+  }
+
+  .schedule-slot {
+    padding: 6px 4px !important;
+    font-size: 11px !important;
+    min-height: 44px !important;
+  }
+
+  .schedule-card {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .schedule-legend {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    font-size: 12px !important;
+  }
+
+  .schedule-controls {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .schedule-controls .btn {
+    width: 100% !important;
+  }
+
+  /* ── Messages ──────────────────────────────────────────── */
+  .doc-messages-layout,
+  .messages-layout {
+    flex-direction: column !important;
+    height: auto !important;
+  }
+
+  .msg-sidebar,
+  .messages-sidebar,
+  .conversations-panel {
+    width: 100% !important;
+    max-height: 280px !important;
+    overflow-y: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .msg-thread,
+  .messages-thread,
+  .chat-panel {
+    width: 100% !important;
+    min-height: 320px !important;
+  }
+
+  .msg-input-row,
+  .message-input-wrap {
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+
+  .msg-input,
+  .message-input {
+    font-size: 16px !important;
+    flex: 1 !important;
+  }
+
+  /* ── Profile stats ─────────────────────────────────────── */
+  .profile-stats-grid,
+  .doc-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .profile-stat-card,
+  .doc-stat-card {
+    padding: 14px 12px !important;
+    border-radius: 12px !important;
+  }
+
+  .profile-stat-value {
+    font-size: 20px !important;
+  }
+
+  .profile-section {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .profile-field-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .profile-field-row .form-group {
+    width: 100% !important;
+  }
+
+  .profile-avatar-section {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 12px !important;
+  }
+
+  /* ── Reviews ───────────────────────────────────────────── */
+  .review-stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .review-card {
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .review-card-header {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .review-filters {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    padding-bottom: 4px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .review-filter-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 12px !important;
+  }
+
+  /* ── Settings ──────────────────────────────────────────── */
+  .settings-section {
+    padding: 16px !important;
+    border-radius: 12px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .settings-section h3 {
+    font-size: 16px !important;
+  }
+
+  .settings-field-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .settings-field-row .form-group {
+    width: 100% !important;
+  }
+
+  .settings-toggle-row {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .settings-actions {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .settings-actions .btn {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .availability-grid,
+  .schedule-days-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* ── Credentials ───────────────────────────────────────── */
+  .credentials-section {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .credential-upload-area {
+    padding: 20px 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .credential-file-list {
+    font-size: 13px !important;
+  }
+
+  /* ── General content padding ───────────────────────────── */
+  .doctor-shell .dash-content {
+    padding: 12px !important;
+  }
+
+  .doctor-shell .dash-content > * {
+    max-width: 100% !important;
+  }
+
+  /* Tables — all scrollable on mobile */
+  .doctor-shell table {
+    display: block !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    min-width: unset !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .payout-kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .mrec-stats-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .review-stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .profile-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
