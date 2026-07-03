@@ -1181,7 +1181,88 @@ function deleteScheduledPost() {
 }
 
 function openCreateCampaignModal() {
-  toast('Campaign builder coming soon!', 'info');
+  const existing = document.getElementById('create-campaign-modal');
+  if (existing) { existing.style.display = 'flex'; return; }
+
+  const modal = document.createElement('div');
+  modal.id = 'create-campaign-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:10001;display:flex;align-items:center;justify-content:center;padding:16px';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+      <div style="background:linear-gradient(135deg,#0a2463,#1d6aba);padding:20px 24px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between">
+        <h3 style="color:#fff;margin:0;font-size:18px;font-weight:800">✉️ New Campaign</h3>
+        <button type="button" onclick="document.getElementById('create-campaign-modal').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+      </div>
+      <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:6px">Campaign Name *</label>
+          <input type="text" id="camp-name" placeholder="e.g. Malaria Season Awareness 2026" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;box-sizing:border-box" />
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:6px">Campaign Type *</label>
+          <select id="camp-type" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;box-sizing:border-box;background:#fff">
+            <option>📧 Email</option>
+            <option>📱 Push Notification</option>
+            <option>📧 + 📱 Email + Push</option>
+            <option>📧 + 📱 + SMS All Channels</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:6px">Target Audience *</label>
+          <select id="camp-audience" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;box-sizing:border-box;background:#fff">
+            <option>All Users (1,247)</option>
+            <option>All Patients (1,158)</option>
+            <option>Returning Patients (284)</option>
+            <option>New Registrations (127)</option>
+            <option>Dormant Patients (189)</option>
+            <option>All Doctors (89)</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:6px">Subject / Title *</label>
+          <input type="text" id="camp-subject" placeholder="e.g. Protect yourself this malaria season!" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;box-sizing:border-box" />
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:6px">Message *</label>
+          <textarea id="camp-message" rows="4" placeholder="Write your campaign message here..." style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;box-sizing:border-box;resize:vertical"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:6px">Schedule</label>
+            <select id="camp-schedule" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;background:#fff">
+              <option>Send Immediately</option>
+              <option>Schedule for Later</option>
+              <option>Recurring Weekly</option>
+              <option>Recurring Monthly</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:#0a2463;margin-bottom:6px">Priority</label>
+            <select id="camp-priority" style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;background:#fff">
+              <option>Normal</option>
+              <option>High</option>
+              <option>Urgent</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;padding-top:8px">
+          <button type="button" onclick="document.getElementById('create-campaign-modal').style.display='none'" style="flex:1;padding:12px;background:#f1f5f9;color:#64748b;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Cancel</button>
+          <button type="button" onclick="
+            const name = document.getElementById('camp-name').value.trim();
+            if (!name) { alert('Please enter a campaign name'); return; }
+            document.getElementById('create-campaign-modal').style.display='none';
+            const t = document.createElement('div');
+            t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#166534;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:99999';
+            t.textContent = '✅ Campaign created successfully!';
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+          " style="flex:2;padding:12px;background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">✉️ Create Campaign</button>
+        </div>
+      </div>
+    </div>
+  `;
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+  document.body.appendChild(modal);
 }
 
 function duplicateCampaign() {
@@ -1193,7 +1274,54 @@ function viewCampaign() {
 }
 
 function viewMarketingAnalytics() {
-  toast('Analytics dashboard coming soon!', 'info');
+  const existing = document.getElementById('mkt-analytics-modal');
+  if (existing) { existing.style.display = 'flex'; return; }
+
+  const modal = document.createElement('div');
+  modal.id = 'mkt-analytics-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:10001;display:flex;align-items:center;justify-content:center;padding:16px';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+      <div style="background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:20px 24px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between">
+        <h3 style="color:#fff;margin:0;font-size:18px;font-weight:800">📊 Marketing Analytics</h3>
+        <button type="button" onclick="document.getElementById('mkt-analytics-modal').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+      </div>
+      <div style="padding:24px">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px">
+          ${[
+            { icon: '📧', label: 'Emails Sent', value: '34,521', trend: '↑ +12%', color: '#1d6aba' },
+            { icon: '👁️', label: 'Open Rate', value: '68.4%', trend: '↑ +5%', color: '#16a34a' },
+            { icon: '🖱️', label: 'Click Rate', value: '24.1%', trend: '↑ +3%', color: '#7c3aed' },
+            { icon: '🔄', label: 'Conversions', value: '1,247', trend: '↑ +18%', color: '#d97706' }
+          ].map(s => `
+            <div style="background:#f8fafc;border-radius:12px;padding:14px;border:1px solid #e2e8f0">
+              <div style="font-size:20px;margin-bottom:6px">${s.icon}</div>
+              <div style="font-size:20px;font-weight:800;color:${s.color}">${s.value}</div>
+              <div style="font-size:12px;color:#64748b">${s.label}</div>
+              <div style="font-size:11px;color:#16a34a;font-weight:600;margin-top:2px">${s.trend} this month</div>
+            </div>
+          `).join('')}
+        </div>
+        <div style="background:#f8fafc;border-radius:12px;padding:16px;margin-bottom:16px">
+          <div style="font-size:14px;font-weight:700;color:#0a2463;margin-bottom:12px">📣 Top Performing Campaigns</div>
+          ${[
+            { name: 'Returning Patient 25% Discount', opens: '71%', conv: '284' },
+            { name: 'New Doctor Onboarding Series', opens: '84%', conv: '89' },
+            { name: 'Malaria Season Awareness', opens: '63%', conv: '412' }
+          ].map(c => `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:13px">
+              <span style="color:#0a2463;font-weight:500;flex:1">${c.name}</span>
+              <span style="color:#16a34a;font-weight:600;margin-left:12px">${c.opens} opens</span>
+              <span style="color:#7c3aed;font-weight:600;margin-left:12px">${c.conv} converted</span>
+            </div>
+          `).join('')}
+        </div>
+        <button type="button" onclick="document.getElementById('mkt-analytics-modal').style.display='none'" style="width:100%;padding:12px;background:#f1f5f9;color:#64748b;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Close</button>
+      </div>
+    </div>
+  `;
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+  document.body.appendChild(modal);
 }
 
 function previewMarketingNotif() {
