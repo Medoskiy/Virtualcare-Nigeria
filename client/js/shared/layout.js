@@ -57,34 +57,27 @@ export function renderDoctorShell(path, contentHtml, doctor) {
     { path: '/doctor/settings', icon: '⚙️', label: 'Settings' }
   ];
   const st = doctor?.availabilityStatus || 'red';
-  const doctorAvatar = doctor?.avatar
-    ? (doctor.avatar.startsWith('http')
-        ? `<img src="${escapeHtml(doctor.avatar)}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.3)" alt="Avatar">`
-        : `<div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:36px;border:3px solid rgba(255,255,255,0.3)">${escapeHtml(doctor.avatar)}</div>`)
-    : `<div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;border:3px solid rgba(255,255,255,0.3)">${initials(doctor?.name, doctor?.surname)}</div>`;
 
   return `
     <div class="dash-shell doctor-shell">
-      <!-- Sidebar overlay for mobile -->
-      <div id="doctor-sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998"></div>
 
-      <aside class="dash-sidebar doctor-sidebar" id="doctor-sidebar">
+      <div id="doctor-sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9998"></div>
+
+      <aside id="doctor-sidebar" class="dash-sidebar doctor-sidebar" style="transition:left 0.3s ease">
         <div class="sidebar-profile doctor-sidebar-profile" style="padding:20px 16px 12px;text-align:center">
-          <!-- Avatar with change button -->
           <div style="position:relative;display:inline-block;margin-bottom:10px">
-            <div class="sidebar-avatar doctor-sidebar-avatar" id="doctor-avatar-display" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1d6aba,#0a2463);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto;cursor:pointer">
+            <div id="doctor-avatar-display" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1d6aba,#0a2463);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto;cursor:pointer;border:3px solid rgba(255,255,255,0.2)">
               ${initials(doctor?.name, doctor?.surname)}
             </div>
-            <button type="button" id="doctor-change-avatar-btn" style="position:absolute;bottom:-2px;right:-2px;background:#1d6aba;border:2px solid #fff;border-radius:50%;width:24px;height:24px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff" title="Change avatar">✏️</button>
+            <button type="button" id="doctor-change-avatar-btn" title="Change avatar" style="position:absolute;bottom:0;right:0;background:#1d6aba;border:2px solid #fff;border-radius:50%;width:24px;height:24px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;padding:0">✏️</button>
           </div>
           <strong class="doctor-sidebar-name" style="display:block;font-size:14px;color:var(--deep-blue)">${escapeHtml(formatDoctorName(doctor))}</strong>
           <small class="doctor-specialty" style="color:var(--muted);font-size:12px">${escapeHtml(doctor?.specialty || '')}</small>
-          <!-- Avatar picker (hidden by default) -->
           <div id="doctor-avatar-picker" style="display:none;margin-top:12px;padding:10px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
-            <p style="font-size:11px;color:#64748b;margin:0 0 8px;font-weight:600">Pick an avatar:</p>
+            <p style="font-size:11px;color:#64748b;margin:0 0 8px;font-weight:600;text-align:left">Pick your avatar:</p>
             <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">
-              ${['👨‍⚕️','👩‍⚕️','🧑‍⚕️','👨🏿‍⚕️','👩🏿‍⚕️','👨🏾‍⚕️','👩🏾‍⚕️','👨🏽‍⚕️','👩🏽‍⚕️','🩺','💊','🏥'].map(emoji => `
-                <button type="button" class="doctor-avatar-emoji" data-emoji="${emoji}" style="font-size:24px;background:#fff;border:1.5px solid #e2e8f0;border-radius:8px;padding:4px 6px;cursor:pointer;transition:border-color 0.2s">${emoji}</button>
+              ${['👨‍⚕️','👩‍⚕️','🧑‍⚕️','👨🏿‍⚕️','👩🏿‍⚕️','👨🏾‍⚕️','👩🏾‍⚕️','👨🏽‍⚕️','👩🏽‍⚕️','🩺','💊','🏥','👨‍💼','👩‍💼'].map((emoji) => `
+                <button type="button" class="doctor-avatar-emoji" data-emoji="${emoji}" style="font-size:22px;background:#fff;border:1.5px solid #e2e8f0;border-radius:8px;padding:4px 6px;cursor:pointer">${emoji}</button>
               `).join('')}
             </div>
             <button type="button" id="doctor-avatar-cancel" style="margin-top:8px;width:100%;padding:6px;background:transparent;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;cursor:pointer;color:#64748b">Cancel</button>
@@ -96,22 +89,20 @@ export function renderDoctorShell(path, contentHtml, doctor) {
           <button data-st="red" class="${st === 'red' ? 'active' : ''}">🔴 Away</button>
         </div>
         <nav class="sidebar-nav">
-          ${nav.map((n) => `<a href="${n.path}" data-link class="${path === n.path ? 'active' : ''}">
-            <span class="nav-icon">${n.icon}</span> ${n.label}</a>`).join('')}
+          ${nav.map((n) => `<a href="${n.path}" data-link class="${path === n.path ? 'active' : ''}"><span class="nav-icon">${n.icon}</span> ${n.label}</a>`).join('')}
         </nav>
         <button type="button" class="btn-back-to-home" id="sidebar-home">🏠 Back to Home</button>
         <button class="sidebar-logout" id="sidebar-logout">🚪 Sign Out</button>
       </aside>
 
       <div class="dash-main">
-        <!-- Mobile header bar -->
-        <div id="doctor-mobile-header" style="display:none;align-items:center;justify-content:space-between;padding:12px 16px;background:#0a2463;color:#fff;position:sticky;top:0;z-index:100;gap:12px">
-          <button type="button" id="doctor-menu-btn" style="background:rgba(255,255,255,0.15);border:none;border-radius:8px;padding:8px 12px;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0;line-height:1">☰</button>
+        <div id="doctor-mobile-header" style="display:none;align-items:center;justify-content:space-between;padding:12px 16px;background:#0a2463;color:#fff;position:sticky;top:0;z-index:100;gap:10px;min-height:52px">
+          <button type="button" id="doctor-menu-btn" style="background:rgba(255,255,255,0.18);border:none;border-radius:8px;width:40px;height:40px;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">☰</button>
           <span style="font-size:15px;font-weight:700;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Dr. ${escapeHtml(doctor?.name || '')}</span>
           <div style="display:flex;gap:4px;flex-shrink:0">
-            <button data-st="green" style="background:${st === 'green' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.15)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:11px;font-weight:600;cursor:pointer">🟢</button>
-            <button data-st="amber" style="background:${st === 'amber' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.15)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:11px;font-weight:600;cursor:pointer">🟡</button>
-            <button data-st="red" style="background:${st === 'red' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.15)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:11px;font-weight:600;cursor:pointer">🔴</button>
+            <button data-mobile-st="green" style="background:${st === 'green' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer">🟢</button>
+            <button data-mobile-st="amber" style="background:${st === 'amber' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer">🟡</button>
+            <button data-mobile-st="red" style="background:${st === 'red' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer">🔴</button>
           </div>
         </div>
 
@@ -169,7 +160,6 @@ export function renderAdminShell(path, contentHtml) {
 }
 
 export function bindShellEvents(container, roleHandlers = {}) {
-  // Book flow buttons
   container.querySelectorAll('[data-book-flow]').forEach((el) => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
@@ -177,68 +167,94 @@ export function bindShellEvents(container, roleHandlers = {}) {
     });
   });
 
-  // Data-link navigation
   container.querySelectorAll('[data-link]').forEach((a) => {
     a.addEventListener('click', (e) => {
       e.preventDefault();
       window.location.hash = a.getAttribute('href');
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
     });
   });
 
-  // Sidebar logout and home
   container.querySelector('#sidebar-logout')?.addEventListener('click', () => logout());
   container.querySelector('#sidebar-home')?.addEventListener('click', () => returnToHome());
 
-  // Status toggle (sidebar desktop)
   container.querySelectorAll('.status-toggle-group button').forEach((btn) => {
     btn.addEventListener('click', () => roleHandlers.onStatus?.(btn.dataset.st));
   });
 
-  // ── DOCTOR MOBILE: hamburger menu ──────────────────────
-  const menuBtn = container.querySelector('#doctor-menu-btn');
-  const sidebar = container.querySelector('#doctor-sidebar');
-  const overlay = container.querySelector('#doctor-sidebar-overlay');
-  const mobileHeader = container.querySelector('#doctor-mobile-header');
+  const sidebar   = container.querySelector('#doctor-sidebar');
+  const overlay   = container.querySelector('#doctor-sidebar-overlay');
+  const menuBtn   = container.querySelector('#doctor-menu-btn');
+  const mobileHdr = container.querySelector('#doctor-mobile-header');
 
-  // Show mobile header on small screens
-  if (mobileHeader && window.innerWidth <= 768) {
-    mobileHeader.style.display = 'flex';
+  function openSidebar() {
+    if (!sidebar) return;
+    sidebar.style.left = '0px';
+    if (overlay) overlay.style.display = 'block';
   }
-  window.addEventListener('resize', () => {
-    if (!mobileHeader) return;
-    mobileHeader.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
-  });
 
-  if (menuBtn && sidebar) {
-    menuBtn.addEventListener('click', () => {
-      const isOpen = sidebar.classList.toggle('is-open');
-      if (overlay) overlay.style.display = isOpen ? 'block' : 'none';
-    });
-    overlay?.addEventListener('click', () => {
-      sidebar.classList.remove('is-open');
+  function closeSidebar() {
+    if (!sidebar) return;
+    sidebar.style.left = '-300px';
+    if (overlay) overlay.style.display = 'none';
+  }
+
+  function applyMobileLayout() {
+    if (!sidebar || !mobileHdr) return;
+    if (window.innerWidth <= 768) {
+      mobileHdr.style.display = 'flex';
+      sidebar.style.position  = 'fixed';
+      sidebar.style.top       = '0';
+      sidebar.style.left      = '-300px';
+      sidebar.style.height    = '100vh';
+      sidebar.style.width     = '280px';
+      sidebar.style.zIndex    = '9999';
+      sidebar.style.overflowY = 'auto';
+      sidebar.style.boxShadow = '4px 0 20px rgba(0,0,0,0.2)';
+      sidebar.style.background = 'var(--white, #ffffff)';
+    } else {
+      mobileHdr.style.display = 'none';
+      sidebar.style.position  = '';
+      sidebar.style.top       = '';
+      sidebar.style.left      = '';
+      sidebar.style.height    = '';
+      sidebar.style.width     = '';
+      sidebar.style.zIndex    = '';
+      sidebar.style.overflowY = '';
+      sidebar.style.boxShadow = '';
       if (overlay) overlay.style.display = 'none';
-    });
-    sidebar.querySelectorAll('a[data-link]').forEach((a) => {
-      a.addEventListener('click', () => {
-        sidebar.classList.remove('is-open');
-        if (overlay) overlay.style.display = 'none';
-      });
-    });
+    }
   }
 
-  // Mobile header status buttons
-  container.querySelectorAll('#doctor-mobile-header button[data-st]').forEach((btn) => {
-    btn.addEventListener('click', () => roleHandlers.onStatus?.(btn.dataset.st));
+  applyMobileLayout();
+  window.addEventListener('resize', applyMobileLayout);
+
+  menuBtn?.addEventListener('click', () => {
+    const isOpen = sidebar?.style.left === '0px';
+    isOpen ? closeSidebar() : openSidebar();
   });
 
-  // ── DOCTOR AVATAR PICKER ────────────────────────────────
-  const avatarBtn = container.querySelector('#doctor-change-avatar-btn');
-  const avatarPicker = container.querySelector('#doctor-avatar-picker');
-  const avatarDisplay = container.querySelector('#doctor-avatar-display');
-  const avatarCancel = container.querySelector('#doctor-avatar-cancel');
+  overlay?.addEventListener('click', closeSidebar);
 
-  avatarBtn?.addEventListener('click', () => {
-    if (avatarPicker) avatarPicker.style.display = avatarPicker.style.display === 'none' ? 'block' : 'none';
+  sidebar?.querySelectorAll('a[data-link]').forEach((a) => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+
+  container.querySelectorAll('[data-mobile-st]').forEach((btn) => {
+    btn.addEventListener('click', () => roleHandlers.onStatus?.(btn.dataset.mobileSt));
+  });
+
+  const avatarBtn     = container.querySelector('#doctor-change-avatar-btn');
+  const avatarPicker  = container.querySelector('#doctor-avatar-picker');
+  const avatarDisplay = container.querySelector('#doctor-avatar-display');
+  const avatarCancel  = container.querySelector('#doctor-avatar-cancel');
+
+  avatarBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!avatarPicker) return;
+    avatarPicker.style.display = avatarPicker.style.display === 'none' ? 'block' : 'none';
   });
 
   avatarCancel?.addEventListener('click', () => {
@@ -249,15 +265,10 @@ export function bindShellEvents(container, roleHandlers = {}) {
     btn.addEventListener('click', async () => {
       const emoji = btn.dataset.emoji;
       if (avatarDisplay) {
-        avatarDisplay.textContent = emoji;
-        avatarDisplay.style.fontSize = '36px';
+        avatarDisplay.innerHTML = `<span style="font-size:36px;line-height:1">${emoji}</span>`;
       }
       if (avatarPicker) avatarPicker.style.display = 'none';
-
-      // Save to localStorage
       localStorage.setItem('vc_doctor_avatar', emoji);
-
-      // Save to backend
       try {
         const token = localStorage.getItem('vc_token') || localStorage.getItem('token');
         await fetch('/api/doctors/profile', {
@@ -266,8 +277,6 @@ export function bindShellEvents(container, roleHandlers = {}) {
           body: JSON.stringify({ avatar: emoji })
         });
       } catch { /* saved locally */ }
-
-      // Toast
       if (typeof window.showToast === 'function') window.showToast('Avatar updated!', 'success');
     });
   });
