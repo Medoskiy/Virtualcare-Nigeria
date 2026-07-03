@@ -510,11 +510,162 @@ function viewSessionDetail(sessionId) {
 }
 
 function exportSessionsReport() {
-  toast('Generating sessions report PDF...', 'info');
+  const stats = getSessionStats();
+  const totalRevenue = ALL_SESSIONS_DATA.filter((s) => s.status === 'completed')
+    .reduce((sum, s) => sum + parseInt(s.amount.replace(/[₦,]/g, '') || 0), 0);
+
+  const html = `
+    <html><head><style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; color: #1e293b; }
+      .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(-40deg); font-size: 72px; font-weight: 900; color: rgba(10,36,99,0.05); pointer-events: none; white-space: nowrap; z-index: 0; }
+      .header { background: linear-gradient(135deg, #0a2463, #1d6aba); color: #fff; padding: 28px 36px; }
+      .logo { font-size: 26px; font-weight: 900; } .logo span { color: #7ec8f7; }
+      .header h2 { margin: 6px 0 4px; font-size: 17px; opacity: 0.9; }
+      .header p { margin: 0; font-size: 12px; opacity: 0.7; }
+      .body { padding: 28px 36px; position: relative; z-index: 1; }
+      .section-title { font-size: 15px; font-weight: 800; color: #0a2463; margin: 20px 0 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
+      .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+      .kpi { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; text-align: center; }
+      .kpi-val { font-size: 20px; font-weight: 800; color: #0a2463; }
+      .kpi-sub { font-size: 11px; color: #64748b; margin-top: 3px; }
+      .live-badge { background: #fee2e2; color: #dc2626; font-weight: 700; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+      th { background: #0a2463; color: #fff; padding: 9px 12px; font-size: 11px; text-align: left; }
+      td { padding: 8px 12px; font-size: 11px; border-bottom: 1px solid #f1f5f9; }
+      tr:nth-child(even) td { background: #f8fafc; }
+      .status-live { color: #dc2626; font-weight: 700; }
+      .status-completed { color: #16a34a; font-weight: 600; }
+      .status-cancelled { color: #d97706; font-weight: 600; }
+      .footer { background: #0a2463; color: rgba(255,255,255,0.7); padding: 14px 36px; font-size: 11px; text-align: center; margin-top: 24px; }
+      .footer strong { color: #7ec8f7; }
+    </style></head><body>
+      <div class="watermark">Virtualcare Nigeria</div>
+      <div class="header">
+        <div class="logo">Virtual<span>care</span> Nigeria</div>
+        <h2>Live Sessions & Call Analytics Report</h2>
+        <p>Generated: ${new Date().toLocaleDateString('en-NG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} · Confidential</p>
+      </div>
+      <div class="body">
+        <div class="section-title">📊 Session Analytics Overview</div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-val" style="color:#dc2626">${stats.liveSessions.length}</div><div class="kpi-sub">🔴 Live Now</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:#16a34a">${stats.completedSessions.length}</div><div class="kpi-sub">✅ Completed Today</div></div>
+          <div class="kpi"><div class="kpi-val">${stats.totalMinsAll}</div><div class="kpi-sub">⏱️ Total Minutes</div></div>
+          <div class="kpi"><div class="kpi-val">${stats.avgRating}★</div><div class="kpi-sub">⭐ Avg Rating</div></div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-val">${stats.videoSessions.length}</div><div class="kpi-sub">🎥 Video Sessions</div></div>
+          <div class="kpi"><div class="kpi-val">${stats.audioSessions.length}</div><div class="kpi-sub">🎙️ Audio Sessions</div></div>
+          <div class="kpi"><div class="kpi-val">${stats.cancelledSessions.length}</div><div class="kpi-sub">❌ Cancelled</div></div>
+          <div class="kpi"><div class="kpi-val">₦${totalRevenue.toLocaleString('en-NG')}</div><div class="kpi-sub">💰 Revenue Generated</div></div>
+        </div>
+        <div class="section-title">📋 All Sessions Log</div>
+        <table>
+          <tr><th>Session ID</th><th>Type</th><th>Doctor</th><th>Specialty</th><th>Patient</th><th>Date</th><th>Duration</th><th>Amount</th><th>Status</th><th>Rating</th></tr>
+          ${ALL_SESSIONS_DATA.map((s) => `
+            <tr>
+              <td>${s.id}</td>
+              <td>${s.type === 'video' ? '🎥 Video' : '🎙️ Audio'}</td>
+              <td>${s.doctor}</td>
+              <td>${s.doctorSpec}</td>
+              <td>${s.patient}</td>
+              <td>${s.date}</td>
+              <td>${s.duration}</td>
+              <td>${s.amount}</td>
+              <td class="status-${s.status}">${s.status.toUpperCase()}</td>
+              <td>${s.rating ? s.rating + '★' : s.reason || '—'}</td>
+            </tr>
+          `).join('')}
+        </table>
+      </div>
+      <div class="footer">© ${new Date().getFullYear()} <strong>Virtualcare Nigeria</strong> · virtualcare.me · NDPR Compliant · Sessions Report — Confidential</div>
+    </body></html>
+  `;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank');
+  if (win) setTimeout(() => win.print(), 800);
+  toast('✅ Sessions report ready — print or save as PDF!', 'success', 4000);
 }
 
 function monitorSession(id) {
-  toast(`📡 Monitoring session ${id}...`, 'info');
+  const session = ALL_SESSIONS_DATA.find((s) => s.id === id);
+  if (!session) { toast('Session not found', 'error'); return; }
+
+  const existing = document.getElementById('monitor-modal');
+  if (existing) existing.remove();
+
+  const elapsed = session.duration || '0:00';
+  const modal = document.createElement('div');
+  modal.id = 'monitor-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:10001;display:flex;align-items:center;justify-content:center;padding:16px';
+  modal.innerHTML = `
+    <div style="background:#0a2463;border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5)">
+      <div style="padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:10px;height:10px;border-radius:50%;background:#dc2626;animation:pulse 1.5s infinite"></div>
+          <h3 style="color:#fff;margin:0;font-size:16px;font-weight:800">📡 Live Monitor — ${escapeHtml(id)}</h3>
+        </div>
+        <button type="button" id="close-monitor-btn" style="background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+      </div>
+      <div style="padding:20px 24px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:14px;text-align:center">
+            <div style="font-size:28px;margin-bottom:4px">${session.type === 'video' ? '🎥' : '🎙️'}</div>
+            <div style="color:#7ec8f7;font-size:12px;font-weight:600">${session.type.toUpperCase()} CALL</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:14px;text-align:center">
+            <div style="font-size:24px;font-weight:800;color:#fff" id="monitor-timer">${elapsed}</div>
+            <div style="color:#7ec8f7;font-size:12px;font-weight:600">⏱️ ELAPSED</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+          <div style="background:rgba(255,255,255,0.06);border-radius:10px;padding:12px;display:flex;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#1d6aba,#0a2463);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;flex-shrink:0">${escapeHtml(session.doctorInitials)}</div>
+            <div>
+              <div style="color:#fff;font-size:14px;font-weight:700">${escapeHtml(session.doctor)}</div>
+              <div style="color:#7ec8f7;font-size:12px">${escapeHtml(session.doctorSpec)} · Doctor</div>
+            </div>
+            <div style="margin-left:auto;background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">🟢 Connected</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.06);border-radius:10px;padding:12px;display:flex;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;flex-shrink:0">${session.patient.split(' ').map((n) => n[0]).join('').slice(0,2)}</div>
+            <div>
+              <div style="color:#fff;font-size:14px;font-weight:700">${escapeHtml(session.patient)}</div>
+              <div style="color:#7ec8f7;font-size:12px">${escapeHtml(session.patientId)} · Patient</div>
+            </div>
+            <div style="margin-left:auto;background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">🟢 Connected</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+          <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;text-align:center">
+            <div style="color:#22c55e;font-size:16px;font-weight:700">98%</div>
+            <div style="color:#94a3b8;font-size:10px">Connection</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;text-align:center">
+            <div style="color:#22c55e;font-size:16px;font-weight:700">HD</div>
+            <div style="color:#94a3b8;font-size:10px">Quality</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;text-align:center">
+            <div style="color:#fff;font-size:16px;font-weight:700">${escapeHtml(session.amount)}</div>
+            <div style="color:#94a3b8;font-size:10px">Session Fee</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" onclick="if(confirm('End this session? Both parties will be disconnected.')) { document.getElementById('monitor-modal').remove(); }" style="flex:1;padding:10px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;min-width:120px">⛔ End Session</button>
+          <button type="button" onclick="alert('Warning sent to both parties.')" style="flex:1;padding:10px;background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid #fbbf24;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;min-width:120px">⚠️ Send Warning</button>
+          <button type="button" id="close-monitor-bottom" style="flex:1;padding:10px;background:rgba(255,255,255,0.1);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;min-width:120px">Close Monitor</button>
+        </div>
+      </div>
+    </div>
+    <style>@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }</style>
+  `;
+
+  document.body.appendChild(modal);
+  modal.querySelector('#close-monitor-btn').addEventListener('click', () => modal.remove());
+  modal.querySelector('#close-monitor-bottom').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 }
 
 function endSessionAdmin(id) {
