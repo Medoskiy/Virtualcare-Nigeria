@@ -131,29 +131,57 @@ export function renderDoctorShell(path, contentHtml, doctor) {
 
 export function renderAdminShell(path, contentHtml) {
   const nav = [
-    { path: '/admin/dashboard', label: 'Dashboard' },
-    { path: '/admin/users', label: 'Users' },
-    { path: '/admin/doctors', label: 'Doctors' },
-    { path: '/admin/consultations', label: 'Consultations' },
+    { path: '/admin/dashboard', icon: '📊', label: 'Dashboard' },
+    { path: '/admin/users', icon: '👥', label: 'Users' },
+    { path: '/admin/doctors', icon: '👨‍⚕️', label: 'Doctors' },
+    { path: '/admin/consultations', icon: '🎥', label: 'Consultations' },
     { path: '/admin/live-sessions', icon: '🔴', label: 'Live Sessions', badge: '3' },
     { path: '/admin/marketing', icon: '📣', label: 'Marketing' },
-    { path: '/admin/revenue', label: 'Revenue' },
+    { path: '/admin/revenue', icon: '💰', label: 'Revenue' },
     { path: '/admin/notifications', icon: '🔔', label: 'Notifications', badge: '4', badgeClass: 'sidebar-notif-badge' }
   ];
+
   return `
     <div class="dash-shell admin-shell">
-      <aside class="dash-sidebar admin-sidebar">
-        <div class="admin-brand">Admin Panel</div>
-        <nav class="sidebar-nav">${nav.map((n) => {
-          const label = n.icon ? `${n.icon} ${n.label}` : n.label;
-          const badge = n.badge
-            ? `<span class="${n.badgeClass || 'sidebar-badge'}">${n.badge}</span>`
-            : '';
-          return `<a href="${n.path}" data-link class="${path === n.path ? 'active' : ''}">${label}${badge}</a>`;
-        }).join('')}</nav>
-        <button class="sidebar-logout" id="sidebar-logout">Sign Out</button>
+
+      <div id="admin-sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9998"></div>
+
+      <aside id="admin-sidebar" class="dash-sidebar admin-sidebar" style="transition:left 0.3s ease">
+        <div class="admin-brand" style="padding:20px 16px 12px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:22px;font-weight:900;color:#0a2463">Virtual</span><span style="font-size:22px;font-weight:900;color:#1d6aba">care</span>
+          <span style="font-size:10px;background:#dc2626;color:#fff;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:auto">ADMIN</span>
+        </div>
+        <nav class="sidebar-nav">
+          ${nav.map((n) => {
+            const badge = n.badge
+              ? `<span class="${n.badgeClass || 'sidebar-badge'}" style="margin-left:auto">${n.badge}</span>`
+              : '';
+            return `<a href="${n.path}" data-link class="${path === n.path ? 'active' : ''}" style="display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:14px;font-weight:500;color:#334155;text-decoration:none;border-left:3px solid transparent;transition:all 0.2s">
+              <span style="font-size:16px;width:22px;text-align:center;flex-shrink:0">${n.icon}</span>
+              <span>${n.label}</span>
+              ${badge}
+            </a>`;
+          }).join('')}
+        </nav>
+        <div style="padding:12px">
+          <a href="/" data-link style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f0fdf4;color:#166534;border:1.5px solid #bbf7d0;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:8px;transition:background 0.2s">🏠 Back to Home</a>
+          <button class="sidebar-logout" id="sidebar-logout" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fef2f2;color:#dc2626;border:1.5px solid #fecaca;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;width:100%;transition:background 0.2s">🚪 Sign Out</button>
+        </div>
       </aside>
-      <div class="dash-main"><div class="dash-content container-fluid">${contentHtml}</div></div>
+
+      <div class="dash-main">
+        <!-- Admin mobile header -->
+        <div id="admin-mobile-header" style="display:none;align-items:center;justify-content:space-between;padding:12px 16px;background:#0a2463;color:#fff;position:sticky;top:0;z-index:100;gap:10px;min-height:52px">
+          <button type="button" id="admin-menu-btn" style="background:rgba(255,255,255,0.18);border:none;border-radius:8px;width:40px;height:40px;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;min-height:unset;min-width:unset">☰</button>
+          <div style="flex:1;text-align:center">
+            <span style="font-size:16px;font-weight:900;color:#fff">Virtual</span><span style="font-size:16px;font-weight:900;color:#7ec8f7">care</span>
+            <span style="font-size:10px;background:#dc2626;color:#fff;padding:1px 6px;border-radius:4px;font-weight:700;margin-left:6px">ADMIN</span>
+          </div>
+          <div style="width:40px;flex-shrink:0"></div>
+        </div>
+
+        <div class="dash-content container-fluid">${contentHtml}</div>
+      </div>
     </div>
   `;
 }
@@ -251,4 +279,59 @@ export function bindShellEvents(container, roleHandlers = {}) {
       }
     }
   } catch { /* ignore */ }
+
+  // ── ADMIN MOBILE MENU ──────────────────────────────────
+  const adminSidebar   = container.querySelector('#admin-sidebar');
+  const adminOverlay   = container.querySelector('#admin-sidebar-overlay');
+  const adminMenuBtn   = container.querySelector('#admin-menu-btn');
+  const adminMobileHdr = container.querySelector('#admin-mobile-header');
+
+  function openAdminSidebar() {
+    if (!adminSidebar) return;
+    adminSidebar.style.left = '0px';
+    if (adminOverlay) adminOverlay.style.display = 'block';
+  }
+  function closeAdminSidebar() {
+    if (!adminSidebar) return;
+    adminSidebar.style.left = '-300px';
+    if (adminOverlay) adminOverlay.style.display = 'none';
+  }
+  function applyAdminMobileLayout() {
+    if (!adminSidebar || !adminMobileHdr) return;
+    if (window.innerWidth <= 768) {
+      adminMobileHdr.style.display = 'flex';
+      adminSidebar.style.position  = 'fixed';
+      adminSidebar.style.top       = '0';
+      adminSidebar.style.left      = '-300px';
+      adminSidebar.style.height    = '100vh';
+      adminSidebar.style.width     = '280px';
+      adminSidebar.style.zIndex    = '9999';
+      adminSidebar.style.overflowY = 'auto';
+      adminSidebar.style.boxShadow = '4px 0 20px rgba(0,0,0,0.2)';
+      adminSidebar.style.background = '#ffffff';
+    } else {
+      adminMobileHdr.style.display = 'none';
+      adminSidebar.style.position  = '';
+      adminSidebar.style.top       = '';
+      adminSidebar.style.left      = '';
+      adminSidebar.style.height    = '';
+      adminSidebar.style.width     = '';
+      adminSidebar.style.zIndex    = '';
+      adminSidebar.style.overflowY = '';
+      adminSidebar.style.boxShadow = '';
+      if (adminOverlay) adminOverlay.style.display = 'none';
+    }
+  }
+
+  applyAdminMobileLayout();
+  window.addEventListener('resize', applyAdminMobileLayout);
+
+  adminMenuBtn?.addEventListener('click', () => {
+    const isOpen = adminSidebar?.style.left === '0px';
+    isOpen ? closeAdminSidebar() : openAdminSidebar();
+  });
+  adminOverlay?.addEventListener('click', closeAdminSidebar);
+  adminSidebar?.querySelectorAll('a[data-link]').forEach((a) => {
+    a.addEventListener('click', () => { if (window.innerWidth <= 768) closeAdminSidebar(); });
+  });
 }
