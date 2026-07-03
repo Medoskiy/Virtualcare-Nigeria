@@ -2357,3 +2357,88 @@ body:has(#mobile-bottom-nav.is-visible) {
     padding: 0 16px !important;
   }
 }
+
+/* ═══ DOCTOR SIDEBAR MOBILE FIXES ═══ */
+@media (max-width: 768px) {
+
+  /* Sidebar nav labels — force visible */
+  #doctor-sidebar .sidebar-nav a {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 13px 20px !important;
+    font-size: 14px !important;
+    color: var(--deep-blue) !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+    min-height: 48px !important;
+  }
+
+  #doctor-sidebar .sidebar-nav a .nav-icon {
+    font-size: 18px !important;
+    width: 24px !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+  }
+
+  #doctor-sidebar .sidebar-nav a.active {
+    background: #eff6ff !important;
+    color: #1d6aba !important;
+    border-right: 3px solid #1d6aba !important;
+    font-weight: 700 !important;
+  }
+
+  /* Overlay visible when open */
+  #doctor-sidebar-overlay.open {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0,0,0,0.55) !important;
+    z-index: 9998 !important;
+  }
+
+  /* Sidebar open state */
+  #doctor-sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  /* Mobile header always flex on mobile */
+  #doctor-mobile-header {
+    display: flex !important;
+  }
+
+  /* Status toggle fits on one row */
+  .doctor-shell .status-toggle-group {
+    display: flex !important;
+    gap: 4px !important;
+    padding: 8px 16px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .doctor-shell .status-toggle-group button {
+    flex: 1 !important;
+    font-size: 12px !important;
+    padding: 8px 4px !important;
+    white-space: nowrap !important;
+    min-height: 36px !important;
+    min-width: unset !important;
+  }
+
+  /* Avatar area */
+  #doctor-avatar-display {
+    margin: 0 auto 8px !important;
+  }
+
+  /* Back to home and logout buttons */
+  #doctor-sidebar .btn-back-to-home,
+  #doctor-sidebar .sidebar-logout {
+    display: flex !important;
+    align-items: center !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    width: 100% !important;
+    text-align: left !important;
+    min-height: 48px !important;
+  }
+}

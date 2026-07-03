@@ -89,7 +89,7 @@ export function renderDoctorShell(path, contentHtml, doctor) {
           <button data-st="red" class="${st === 'red' ? 'active' : ''}">🔴 Away</button>
         </div>
         <nav class="sidebar-nav">
-          ${nav.map((n) => `<a href="${n.path}" data-link class="${path === n.path ? 'active' : ''}"><span class="nav-icon">${n.icon}</span> ${n.label}</a>`).join('')}
+          ${nav.map((n) => `<a href="${n.path}" data-link class="${path === n.path ? 'active' : ''}"><span class="nav-icon" style="font-size:18px;width:24px;flex-shrink:0;display:inline-block">${n.icon}</span><span style="display:inline;font-size:14px">${n.label}</span></a>`).join('')}
         </nav>
         <button type="button" class="btn-back-to-home" id="sidebar-home">🏠 Back to Home</button>
         <button class="sidebar-logout" id="sidebar-logout">🚪 Sign Out</button>
@@ -97,7 +97,7 @@ export function renderDoctorShell(path, contentHtml, doctor) {
 
       <div class="dash-main">
         <div id="doctor-mobile-header">
-          <button type="button" id="doctor-menu-btn" style="background:rgba(255,255,255,0.18);border:none;border-radius:8px;width:40px;height:40px;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;min-height:unset;min-width:unset">☰</button>
+          <button type="button" id="doctor-menu-btn" style="background:rgba(255,255,255,0.18);border:none;border-radius:8px;width:44px;height:44px;color:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;min-height:44px;min-width:44px;line-height:1">☰</button>
           <span style="font-size:15px;font-weight:700;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Dr. ${escapeHtml(doctor?.name || '')}</span>
           <div style="display:flex;gap:4px;flex-shrink:0">
             <button data-mobile-st="green" style="background:${st === 'green' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer;min-height:unset;min-width:unset">🟢</button>
