@@ -79,6 +79,17 @@ export function renderDoctorShell(path, contentHtml, doctor) {
         <button class="sidebar-logout" id="sidebar-logout">🚪 Sign Out</button>
       </aside>
       <div class="dash-main">
+        <!-- Mobile header bar (hidden on desktop) -->
+        <div class="doctor-mobile-header" style="display:none">
+          <button type="button" class="doctor-mobile-menu-btn" id="doctor-menu-btn">☰</button>
+          <span class="doctor-mobile-header-title">Dr. ${escapeHtml(formatDoctorName(doctor))}</span>
+          <div class="doctor-mobile-status">
+            <button data-st="green" class="${st === 'green' ? 'active' : ''}">🟢</button>
+            <button data-st="amber" class="${st === 'amber' ? 'active' : ''}">🟡</button>
+            <button data-st="red" class="${st === 'red' ? 'active' : ''}">🔴</button>
+          </div>
+        </div>
+        <div id="doctor-sidebar-overlay" class="doctor-sidebar-overlay"></div>
         <div class="doctor-top-banner doctor-banner">
           <div class="hex-avatar-wrap">
             <div class="hex-avatar">${initials(doctor?.name, doctor?.surname)}</div>
@@ -150,4 +161,26 @@ export function bindShellEvents(container, roleHandlers = {}) {
   container.querySelectorAll('.status-toggle-group button').forEach((btn) => {
     btn.addEventListener('click', () => roleHandlers.onStatus?.(btn.dataset.st));
   });
+
+  // Doctor mobile menu toggle
+  const menuBtn = container.querySelector('#doctor-menu-btn');
+  const sidebar = container.querySelector('.doctor-sidebar');
+  const overlay = container.querySelector('#doctor-sidebar-overlay');
+  if (menuBtn && sidebar) {
+    menuBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('is-open');
+      overlay?.classList.toggle('is-open');
+    });
+    overlay?.addEventListener('click', () => {
+      sidebar.classList.remove('is-open');
+      overlay.classList.remove('is-open');
+    });
+    // Close sidebar when nav link clicked
+    sidebar.querySelectorAll('a[data-link]').forEach((a) => {
+      a.addEventListener('click', () => {
+        sidebar.classList.remove('is-open');
+        overlay?.classList.remove('is-open');
+      });
+    });
+  }
 }

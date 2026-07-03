@@ -1909,3 +1909,342 @@ body:has(#mobile-bottom-nav.is-visible) {
     margin-bottom: 12px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   DOCTOR DASHBOARD — FULL MOBILE RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── Shell layout ──────────────────────────────────────── */
+  .doctor-shell {
+    flex-direction: column !important;
+    min-height: 100vh !important;
+  }
+
+  /* ── Sidebar hidden by default on mobile ─────────────── */
+  .doctor-shell .dash-sidebar,
+  .doctor-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 280px !important;
+    height: 100vh !important;
+    z-index: 9999 !important;
+    overflow-y: auto !important;
+    transition: left 0.3s ease !important;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15) !important;
+    padding-bottom: 80px !important;
+  }
+
+  .doctor-shell .dash-sidebar.is-open,
+  .doctor-sidebar.is-open {
+    left: 0 !important;
+  }
+
+  /* ── Sidebar overlay ───────────────────────────────────── */
+  .doctor-sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9998;
+  }
+
+  .doctor-sidebar-overlay.is-open {
+    display: block !important;
+  }
+
+  /* ── Mobile header bar for doctor ─────────────────────── */
+  .doctor-mobile-header {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #0a2463;
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 12px;
+  }
+
+  .doctor-mobile-header-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    flex: 1;
+  }
+
+  .doctor-mobile-menu-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .doctor-mobile-status {
+    display: flex;
+    gap: 4px;
+  }
+
+  .doctor-mobile-status button {
+    font-size: 10px;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .doctor-mobile-status button.active {
+    background: rgba(255,255,255,0.35) !important;
+  }
+
+  /* ── Main content area ─────────────────────────────────── */
+  .doctor-shell .dash-main {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding-bottom: 24px !important;
+  }
+
+  /* ── Doctor top banner ─────────────────────────────────── */
+  .doctor-top-banner,
+  .doctor-banner {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 20px 16px !important;
+    gap: 12px !important;
+  }
+
+  .doctor-banner-info {
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .doctor-name {
+    font-size: 20px !important;
+  }
+
+  .doctor-subtitle,
+  .doctor-hospital {
+    font-size: 13px !important;
+  }
+
+  .doc-stat-pills,
+  .banner-pills {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .stat-pill,
+  .banner-pill {
+    font-size: 12px !important;
+    padding: 4px 10px !important;
+  }
+
+  .hex-avatar-wrap {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  .hex-avatar {
+    width: 72px !important;
+    height: 72px !important;
+    font-size: 22px !important;
+  }
+
+  /* ── KPI grid — 2x2 on mobile ──────────────────────────── */
+  .doctor-shell .kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 16px !important;
+  }
+
+  .doctor-shell .kpi-card {
+    padding: 14px 12px !important;
+    border-radius: 12px !important;
+  }
+
+  .doctor-shell .kpi-value {
+    font-size: 18px !important;
+  }
+
+  .doctor-shell .kpi-label {
+    font-size: 11px !important;
+  }
+
+  .doctor-shell .kpi-icon {
+    font-size: 20px !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* ── Queue list ────────────────────────────────────────── */
+  .doctor-shell h2 {
+    font-size: 16px !important;
+    padding: 0 16px !important;
+    margin: 16px 0 10px !important;
+  }
+
+  .queue-list {
+    padding: 0 16px !important;
+  }
+
+  .queue-item {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 12px !important;
+    border-radius: 12px !important;
+  }
+
+  .queue-position {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 11px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .queue-avatar {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 12px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .queue-info {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .queue-name {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .queue-details {
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+  }
+
+  .queue-wait {
+    display: none !important;
+  }
+
+  .queue-risk {
+    font-size: 10px !important;
+    padding: 3px 8px !important;
+  }
+
+  .queue-actions {
+    width: 100% !important;
+    display: flex !important;
+    gap: 8px !important;
+    margin-top: 4px !important;
+  }
+
+  .btn-queue-start,
+  .btn-queue-complete {
+    flex: 1 !important;
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+    text-align: center !important;
+    border-radius: 8px !important;
+  }
+
+  /* Video/Audio call buttons in queue */
+  .queue-item [style*="display:flex;gap:8px;margin-top:12px"] {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  .queue-item [onclick*="startCall"] {
+    flex: 1 !important;
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+    justify-content: center !important;
+    border-radius: 8px !important;
+    min-width: 100px !important;
+  }
+
+  /* ── Earnings chart ────────────────────────────────────── */
+  .chart-container {
+    padding: 0 16px !important;
+    gap: 4px !important;
+    height: 120px !important;
+    overflow-x: auto !important;
+  }
+
+  .bar-group {
+    min-width: 36px !important;
+  }
+
+  .bar-label {
+    font-size: 10px !important;
+  }
+
+  /* ── Status toggle ─────────────────────────────────────── */
+  .status-toggle-group {
+    gap: 4px !important;
+    padding: 8px 12px !important;
+  }
+
+  .status-toggle-group button {
+    font-size: 11px !important;
+    padding: 6px 8px !important;
+  }
+
+  /* ── Sidebar nav items ─────────────────────────────────── */
+  .doctor-sidebar .sidebar-nav a {
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+    gap: 10px !important;
+  }
+
+  .doctor-sidebar .sidebar-profile {
+    padding: 20px 16px 12px !important;
+  }
+
+  .doctor-sidebar-name {
+    font-size: 15px !important;
+  }
+
+  .doctor-specialty {
+    font-size: 12px !important;
+  }
+
+  /* ── Content padding ───────────────────────────────────── */
+  .doctor-shell .dash-content {
+    padding: 0 0 24px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .doctor-shell .kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    padding: 12px !important;
+  }
+
+  .queue-item {
+    padding: 10px !important;
+  }
+
+  .doctor-name {
+    font-size: 18px !important;
+  }
+}
