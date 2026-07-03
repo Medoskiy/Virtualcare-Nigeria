@@ -61,26 +61,26 @@ export function renderDoctorShell(path, contentHtml, doctor) {
   return `
     <div class="dash-shell doctor-shell">
 
-      <div id="doctor-sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9998"></div>
+      <div id="doctor-sidebar-overlay"></div>
 
-      <aside id="doctor-sidebar" class="dash-sidebar doctor-sidebar" style="transition:left 0.3s ease">
+      <aside id="doctor-sidebar" class="dash-sidebar doctor-sidebar">
         <div class="sidebar-profile doctor-sidebar-profile" style="padding:20px 16px 12px;text-align:center">
           <div style="position:relative;display:inline-block;margin-bottom:10px">
-            <div id="doctor-avatar-display" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1d6aba,#0a2463);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto;cursor:pointer;border:3px solid rgba(255,255,255,0.2)">
+            <div id="doctor-avatar-display" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1d6aba,#0a2463);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto;border:3px solid rgba(255,255,255,0.2)">
               ${initials(doctor?.name, doctor?.surname)}
             </div>
-            <button type="button" id="doctor-change-avatar-btn" title="Change avatar" style="position:absolute;bottom:0;right:0;background:#1d6aba;border:2px solid #fff;border-radius:50%;width:24px;height:24px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;padding:0">✏️</button>
+            <button type="button" id="doctor-change-avatar-btn" title="Change avatar" style="position:absolute;bottom:0;right:0;background:#1d6aba;border:2px solid #fff;border-radius:50%;width:26px;height:26px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;padding:0;min-height:unset;min-width:unset">✏️</button>
           </div>
-          <strong class="doctor-sidebar-name" style="display:block;font-size:14px;color:var(--deep-blue)">${escapeHtml(formatDoctorName(doctor))}</strong>
-          <small class="doctor-specialty" style="color:var(--muted);font-size:12px">${escapeHtml(doctor?.specialty || '')}</small>
+          <strong style="display:block;font-size:14px;color:#0a2463;margin-bottom:2px">${escapeHtml(formatDoctorName(doctor))}</strong>
+          <small style="color:#64748b;font-size:12px">${escapeHtml(doctor?.specialty || '')}</small>
           <div id="doctor-avatar-picker" style="display:none;margin-top:12px;padding:10px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
             <p style="font-size:11px;color:#64748b;margin:0 0 8px;font-weight:600;text-align:left">Pick your avatar:</p>
             <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">
-              ${['👨‍⚕️','👩‍⚕️','🧑‍⚕️','👨🏿‍⚕️','👩🏿‍⚕️','👨🏾‍⚕️','👩🏾‍⚕️','👨🏽‍⚕️','👩🏽‍⚕️','🩺','💊','🏥','👨‍💼','👩‍💼'].map((emoji) => `
-                <button type="button" class="doctor-avatar-emoji" data-emoji="${emoji}" style="font-size:22px;background:#fff;border:1.5px solid #e2e8f0;border-radius:8px;padding:4px 6px;cursor:pointer">${emoji}</button>
-              `).join('')}
+              ${['👨‍⚕️','👩‍⚕️','🧑‍⚕️','👨🏿‍⚕️','👩🏿‍⚕️','👨🏾‍⚕️','👩🏾‍⚕️','👨🏽‍⚕️','👩🏽‍⚕️','🩺','💊','🏥'].map((e) =>
+                `<button type="button" class="doctor-avatar-emoji" data-emoji="${e}" style="font-size:22px;background:#fff;border:1.5px solid #e2e8f0;border-radius:8px;padding:4px 6px;cursor:pointer;min-height:unset;min-width:unset">${e}</button>`
+              ).join('')}
             </div>
-            <button type="button" id="doctor-avatar-cancel" style="margin-top:8px;width:100%;padding:6px;background:transparent;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;cursor:pointer;color:#64748b">Cancel</button>
+            <button type="button" id="doctor-avatar-cancel" style="margin-top:8px;width:100%;padding:6px;background:transparent;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;cursor:pointer;color:#64748b;min-height:unset">Cancel</button>
           </div>
         </div>
         <div class="status-toggle-group">
@@ -96,16 +96,15 @@ export function renderDoctorShell(path, contentHtml, doctor) {
       </aside>
 
       <div class="dash-main">
-        <div id="doctor-mobile-header" style="display:none;align-items:center;justify-content:space-between;padding:12px 16px;background:#0a2463;color:#fff;position:sticky;top:0;z-index:100;gap:10px;min-height:52px">
-          <button type="button" id="doctor-menu-btn" style="background:rgba(255,255,255,0.18);border:none;border-radius:8px;width:40px;height:40px;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">☰</button>
+        <div id="doctor-mobile-header">
+          <button type="button" id="doctor-menu-btn" style="background:rgba(255,255,255,0.18);border:none;border-radius:8px;width:40px;height:40px;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;min-height:unset;min-width:unset">☰</button>
           <span style="font-size:15px;font-weight:700;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Dr. ${escapeHtml(doctor?.name || '')}</span>
           <div style="display:flex;gap:4px;flex-shrink:0">
-            <button data-mobile-st="green" style="background:${st === 'green' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer">🟢</button>
-            <button data-mobile-st="amber" style="background:${st === 'amber' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer">🟡</button>
-            <button data-mobile-st="red" style="background:${st === 'red' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer">🔴</button>
+            <button data-mobile-st="green" style="background:${st === 'green' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer;min-height:unset;min-width:unset">🟢</button>
+            <button data-mobile-st="amber" style="background:${st === 'amber' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer;min-height:unset;min-width:unset">🟡</button>
+            <button data-mobile-st="red" style="background:${st === 'red' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer;min-height:unset;min-width:unset">🔴</button>
           </div>
         </div>
-
         <div class="doctor-top-banner doctor-banner">
           <div class="hex-avatar-wrap">
             <div class="hex-avatar">${initials(doctor?.name, doctor?.surname)}</div>
@@ -161,12 +160,8 @@ export function renderAdminShell(path, contentHtml) {
 
 export function bindShellEvents(container, roleHandlers = {}) {
   container.querySelectorAll('[data-book-flow]').forEach((el) => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.openBookingFlow?.();
-    });
+    el.addEventListener('click', (e) => { e.preventDefault(); window.openBookingFlow?.(); });
   });
-
   container.querySelectorAll('[data-link]').forEach((a) => {
     a.addEventListener('click', (e) => {
       e.preventDefault();
@@ -174,99 +169,55 @@ export function bindShellEvents(container, roleHandlers = {}) {
       window.dispatchEvent(new HashChangeEvent('hashchange'));
     });
   });
-
   container.querySelector('#sidebar-logout')?.addEventListener('click', () => logout());
   container.querySelector('#sidebar-home')?.addEventListener('click', () => returnToHome());
-
   container.querySelectorAll('.status-toggle-group button').forEach((btn) => {
     btn.addEventListener('click', () => roleHandlers.onStatus?.(btn.dataset.st));
   });
 
-  const sidebar   = container.querySelector('#doctor-sidebar');
-  const overlay   = container.querySelector('#doctor-sidebar-overlay');
-  const menuBtn   = container.querySelector('#doctor-menu-btn');
-  const mobileHdr = container.querySelector('#doctor-mobile-header');
-
-  function openSidebar() {
-    if (!sidebar) return;
-    sidebar.style.left = '0px';
-    if (overlay) overlay.style.display = 'block';
-  }
-
-  function closeSidebar() {
-    if (!sidebar) return;
-    sidebar.style.left = '-300px';
-    if (overlay) overlay.style.display = 'none';
-  }
-
-  function applyMobileLayout() {
-    if (!sidebar || !mobileHdr) return;
-    if (window.innerWidth <= 768) {
-      mobileHdr.style.display = 'flex';
-      sidebar.style.position  = 'fixed';
-      sidebar.style.top       = '0';
-      sidebar.style.left      = '-300px';
-      sidebar.style.height    = '100vh';
-      sidebar.style.width     = '280px';
-      sidebar.style.zIndex    = '9999';
-      sidebar.style.overflowY = 'auto';
-      sidebar.style.boxShadow = '4px 0 20px rgba(0,0,0,0.2)';
-      sidebar.style.background = 'var(--white, #ffffff)';
-    } else {
-      mobileHdr.style.display = 'none';
-      sidebar.style.position  = '';
-      sidebar.style.top       = '';
-      sidebar.style.left      = '';
-      sidebar.style.height    = '';
-      sidebar.style.width     = '';
-      sidebar.style.zIndex    = '';
-      sidebar.style.overflowY = '';
-      sidebar.style.boxShadow = '';
-      if (overlay) overlay.style.display = 'none';
-    }
-  }
-
-  applyMobileLayout();
-  window.addEventListener('resize', applyMobileLayout);
+  // Doctor mobile hamburger
+  const menuBtn  = container.querySelector('#doctor-menu-btn');
+  const sidebar  = container.querySelector('#doctor-sidebar');
+  const overlay  = container.querySelector('#doctor-sidebar-overlay');
 
   menuBtn?.addEventListener('click', () => {
-    const isOpen = sidebar?.style.left === '0px';
-    isOpen ? closeSidebar() : openSidebar();
+    sidebar?.classList.toggle('open');
+    overlay?.classList.toggle('open');
   });
-
-  overlay?.addEventListener('click', closeSidebar);
-
+  overlay?.addEventListener('click', () => {
+    sidebar?.classList.remove('open');
+    overlay?.classList.remove('open');
+  });
   sidebar?.querySelectorAll('a[data-link]').forEach((a) => {
     a.addEventListener('click', () => {
-      if (window.innerWidth <= 768) closeSidebar();
+      sidebar.classList.remove('open');
+      overlay?.classList.remove('open');
     });
   });
 
+  // Mobile status buttons
   container.querySelectorAll('[data-mobile-st]').forEach((btn) => {
     btn.addEventListener('click', () => roleHandlers.onStatus?.(btn.dataset.mobileSt));
   });
 
-  const avatarBtn     = container.querySelector('#doctor-change-avatar-btn');
-  const avatarPicker  = container.querySelector('#doctor-avatar-picker');
+  // Doctor avatar picker
+  const avatarBtn    = container.querySelector('#doctor-change-avatar-btn');
+  const avatarPicker = container.querySelector('#doctor-avatar-picker');
   const avatarDisplay = container.querySelector('#doctor-avatar-display');
-  const avatarCancel  = container.querySelector('#doctor-avatar-cancel');
+  const avatarCancel = container.querySelector('#doctor-avatar-cancel');
 
   avatarBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!avatarPicker) return;
     avatarPicker.style.display = avatarPicker.style.display === 'none' ? 'block' : 'none';
   });
-
   avatarCancel?.addEventListener('click', () => {
     if (avatarPicker) avatarPicker.style.display = 'none';
   });
-
   container.querySelectorAll('.doctor-avatar-emoji').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const emoji = btn.dataset.emoji;
-      if (avatarDisplay) {
-        avatarDisplay.innerHTML = `<span style="font-size:36px;line-height:1">${emoji}</span>`;
-      }
+      if (avatarDisplay) avatarDisplay.innerHTML = `<span style="font-size:36px;line-height:1">${emoji}</span>`;
       if (avatarPicker) avatarPicker.style.display = 'none';
       localStorage.setItem('vc_doctor_avatar', emoji);
       try {
