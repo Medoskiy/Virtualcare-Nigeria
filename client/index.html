@@ -9,6 +9,18 @@
   gtag('js', new Date());
   gtag('config', 'G-M51JC9WWE0');
 </script>
+<!-- Sentry Error Monitoring -->
+<script
+  src="https://browser.sentry-cdn.com/7.99.0/bundle.min.js"
+  integrity="sha384-pSxBkQIjQpBPpkMcNZ9MqBZC8pOSPH/4V0bHKlNJxBBbCFxMCBkxGgxqxJaHVAB"
+  crossorigin="anonymous"
+></script>
+<script>
+  Sentry.init({
+    dsn: "https://85c4f818fdd6257162d0d56f8ce28770@o4511678926028800.ingest.de.sentry.io/4511679089999952",
+    tracesSampleRate: 1.0,
+  });
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
   <meta name="theme-color" content="#0a2463">
@@ -68,7 +80,7 @@
 
   <script src="https://js.paystack.co/v1/inline.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <script type="module" src="/js/app.js?v=48"></script>
+  <script type="module" src="/js/app.js?v=49"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
