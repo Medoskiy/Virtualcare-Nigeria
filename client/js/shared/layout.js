@@ -85,7 +85,7 @@ export function renderDoctorShell(path, contentHtml, doctor) {
         <button class="sidebar-logout" id="sidebar-logout" style="display:flex;align-items:center;gap:8px;padding:10px 14px;margin:4px 12px 20px;width:calc(100% - 24px);background:#fef2f2;color:#dc2626;border:1.5px solid #fecaca;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;box-sizing:border-box">🚪 Sign Out</button>
       </aside>
       <div class="dash-main">
-        <div id="doctor-mobile-header" style="display:none;align-items:center;justify-content:space-between;padding:12px 16px;background:#0a2463;color:#fff;position:sticky;top:0;z-index:100;gap:10px;min-height:52px">
+        <div id="doctor-mobile-header" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#0a2463;color:#fff;position:sticky;top:0;z-index:100;gap:10px;min-height:52px">
           <button type="button" id="doctor-menu-btn" style="background:rgba(255,255,255,0.18);border:none;border-radius:8px;width:40px;height:40px;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;min-height:unset;min-width:unset;line-height:1">☰</button>
           <span style="font-size:15px;font-weight:700;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Dr. ${escapeHtml(doctor?.name || '')}</span>
           <div style="display:flex;gap:4px;flex-shrink:0">
@@ -149,7 +149,7 @@ export function renderAdminShell(path, contentHtml) {
         </div>
       </aside>
       <div class="dash-main">
-        <div id="admin-mobile-header" style="display:none;align-items:center;justify-content:space-between;padding:12px 16px;background:#0a2463;color:#fff;position:sticky;top:0;z-index:100;gap:10px;min-height:52px">
+        <div id="admin-mobile-header" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#0a2463;color:#fff;position:sticky;top:0;z-index:100;gap:10px;min-height:52px">
           <button type="button" id="admin-menu-btn" style="background:rgba(255,255,255,0.18);border:none;border-radius:8px;width:40px;height:40px;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;min-height:unset;min-width:unset;line-height:1">☰</button>
           <div style="flex:1;text-align:center">
             <span style="font-size:16px;font-weight:900;color:#fff">Virtual</span><span style="font-size:16px;font-weight:900;color:#7ec8f7">care</span>
