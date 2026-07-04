@@ -420,6 +420,27 @@
 .sidebar-logout { margin: 16px; padding: 12px; background: rgba(255,255,255,.1); border: none; color: #fff; border-radius: 8px; cursor: pointer; }
 
 .dash-main { flex: 1; min-width: 0; background: var(--off-white); }
+
+/* Doctor dashboard — desktop: sidebar left, content right */
+.doctor-shell {
+  display: flex;
+  flex-direction: row;
+}
+.doctor-shell #doctor-sidebar {
+  position: relative;
+  width: 260px;
+  min-height: 100vh;
+  flex-shrink: 0;
+}
+.doctor-shell .dash-main {
+  flex: 1;
+  overflow: hidden;
+}
+#doctor-mobile-header,
+#doctor-sidebar-overlay {
+  display: none;
+}
+
 .container-fluid { padding: 24px 32px 80px; max-width: 1200px; }
 .doctor-top-banner {
   background: linear-gradient(135deg, #0f3460, #16213e);

@@ -1925,39 +1925,6 @@ body:has(#mobile-bottom-nav.is-visible) {
     min-height: 100vh !important;
   }
 
-  /* ── Sidebar hidden by default on mobile ─────────────── */
-  .doctor-shell .dash-sidebar,
-  .doctor-sidebar {
-    position: fixed !important;
-    top: 0 !important;
-    left: -100% !important;
-    width: 280px !important;
-    height: 100vh !important;
-    z-index: 9999 !important;
-    overflow-y: auto !important;
-    transition: left 0.3s ease !important;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.15) !important;
-    padding-bottom: 80px !important;
-  }
-
-  .doctor-shell .dash-sidebar.is-open,
-  .doctor-sidebar.is-open {
-    left: 0 !important;
-  }
-
-  /* ── Sidebar overlay ───────────────────────────────────── */
-  .doctor-sidebar-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 9998;
-  }
-
-  .doctor-sidebar-overlay.is-open {
-    display: block !important;
-  }
-
   /* ── Mobile header bar for doctor ─────────────────────── */
   .doctor-mobile-header {
     display: flex !important;
