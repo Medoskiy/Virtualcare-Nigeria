@@ -140,10 +140,7 @@ export function renderAdminShell(path, contentHtml) {
         <nav class="sidebar-nav" style="padding:8px 0">
           ${nav.map((n) => {
             const badge = n.badge ? `<span class="${n.badgeClass || 'sidebar-badge'}" style="margin-left:auto">${n.badge}</span>` : '';
-            return `<a href="${n.path}" data-link class="${path === n.path ? 'active' : ''}" style="display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13.5px;font-weight:500;color:#334155;text-decoration:none;border-left:3px solid transparent;transition:all 0.2s">
-              <span style="font-size:16px;width:22px;text-align:center;flex-shrink:0">${n.icon}</span>
-              <span style="flex:1">${n.label}</span>${badge}
-            </a>`;
+            return `<a href="${n.path}" data-link class="${path === n.path ? 'active' : ''}" style="display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13.5px;font-weight:500;color:#334155;text-decoration:none;border-left:3px solid transparent;transition:all 0.2s"><span style="font-size:16px;width:22px;text-align:center;flex-shrink:0">${n.icon}</span><span style="flex:1">${n.label}</span>${badge}</a>`;
           }).join('')}
         </nav>
         <div style="padding:8px 12px 16px">
@@ -183,77 +180,114 @@ export function bindShellEvents(container, roleHandlers = {}) {
     btn.addEventListener('click', () => roleHandlers.onStatus?.(btn.dataset.st));
   });
 
-  // ── DOCTOR MOBILE MENU ────────────────────────────────────
-  const docSidebar  = container.querySelector('#doctor-sidebar');
-  const docOverlay  = container.querySelector('#doctor-sidebar-overlay');
-  const docMenuBtn  = container.querySelector('#doctor-menu-btn');
+  // DOCTOR MOBILE MENU
+  const docSidebar   = container.querySelector('#doctor-sidebar');
+  const docOverlay   = container.querySelector('#doctor-sidebar-overlay');
+  const docMenuBtn   = container.querySelector('#doctor-menu-btn');
   const docMobileHdr = container.querySelector('#doctor-mobile-header');
 
-  function openDocSidebar()  { if (docSidebar) { docSidebar.style.left = '0px'; if (docOverlay) docOverlay.style.display = 'block'; } }
-  function closeDocSidebar() { if (docSidebar) { docSidebar.style.left = '-300px'; if (docOverlay) docOverlay.style.display = 'none'; } }
+  function openDocSidebar()  { if (docSidebar) { docSidebar.style.left = '0px';    if (docOverlay) docOverlay.style.display = 'block'; } }
+  function closeDocSidebar() { if (docSidebar) { docSidebar.style.left = '-300px'; if (docOverlay) docOverlay.style.display = 'none';  } }
+
   function applyDocMobile() {
     if (!docSidebar || !docMobileHdr) return;
     if (window.innerWidth <= 768) {
       docMobileHdr.style.display = 'flex';
-      docSidebar.style.position = 'fixed'; docSidebar.style.top = '0'; docSidebar.style.left = '-300px';
-      docSidebar.style.height = '100vh'; docSidebar.style.width = '280px'; docSidebar.style.zIndex = '9999';
-      docSidebar.style.overflowY = 'auto'; docSidebar.style.boxShadow = '4px 0 20px rgba(0,0,0,0.2)'; docSidebar.style.background = '#fff';
+      docSidebar.style.position  = 'fixed';
+      docSidebar.style.top       = '0';
+      docSidebar.style.left      = '-300px';
+      docSidebar.style.height    = '100vh';
+      docSidebar.style.width     = '260px';
+      docSidebar.style.zIndex    = '9999';
+      docSidebar.style.overflowY = 'auto';
+      docSidebar.style.boxShadow = '4px 0 20px rgba(0,0,0,0.2)';
+      docSidebar.style.background = '#ffffff';
     } else {
       docMobileHdr.style.display = 'none';
-      docSidebar.style.position = ''; docSidebar.style.top = ''; docSidebar.style.left = '';
-      docSidebar.style.height = ''; docSidebar.style.width = ''; docSidebar.style.zIndex = '';
-      docSidebar.style.overflowY = ''; docSidebar.style.boxShadow = '';
+      docSidebar.style.position  = '';
+      docSidebar.style.top       = '';
+      docSidebar.style.left      = '';
+      docSidebar.style.height    = '';
+      docSidebar.style.width     = '';
+      docSidebar.style.zIndex    = '';
+      docSidebar.style.overflowY = '';
+      docSidebar.style.boxShadow = '';
       if (docOverlay) docOverlay.style.display = 'none';
     }
   }
+
   applyDocMobile();
   window.addEventListener('resize', applyDocMobile);
   docMenuBtn?.addEventListener('click', () => { docSidebar?.style.left === '0px' ? closeDocSidebar() : openDocSidebar(); });
   docOverlay?.addEventListener('click', closeDocSidebar);
-  docSidebar?.querySelectorAll('a[data-link]').forEach((a) => { a.addEventListener('click', () => { if (window.innerWidth <= 768) closeDocSidebar(); }); });
-  container.querySelectorAll('[data-mobile-st]').forEach((btn) => { btn.addEventListener('click', () => roleHandlers.onStatus?.(btn.dataset.mobileSt)); });
+  docSidebar?.querySelectorAll('a[data-link]').forEach((a) => {
+    a.addEventListener('click', () => { if (window.innerWidth <= 768) closeDocSidebar(); });
+  });
+  container.querySelectorAll('[data-mobile-st]').forEach((btn) => {
+    btn.addEventListener('click', () => roleHandlers.onStatus?.(btn.dataset.mobileSt));
+  });
 
-  // ── ADMIN MOBILE MENU ─────────────────────────────────────
-  const adminSidebar  = container.querySelector('#admin-sidebar');
-  const adminOverlay  = container.querySelector('#admin-sidebar-overlay');
-  const adminMenuBtn  = container.querySelector('#admin-menu-btn');
+  // ADMIN MOBILE MENU
+  const adminSidebar   = container.querySelector('#admin-sidebar');
+  const adminOverlay   = container.querySelector('#admin-sidebar-overlay');
+  const adminMenuBtn   = container.querySelector('#admin-menu-btn');
   const adminMobileHdr = container.querySelector('#admin-mobile-header');
 
-  function openAdminSidebar()  { if (adminSidebar) { adminSidebar.style.left = '0px'; if (adminOverlay) adminOverlay.style.display = 'block'; } }
-  function closeAdminSidebar() { if (adminSidebar) { adminSidebar.style.left = '-300px'; if (adminOverlay) adminOverlay.style.display = 'none'; } }
+  function openAdminSidebar()  { if (adminSidebar) { adminSidebar.style.left = '0px';    if (adminOverlay) adminOverlay.style.display = 'block'; } }
+  function closeAdminSidebar() { if (adminSidebar) { adminSidebar.style.left = '-300px'; if (adminOverlay) adminOverlay.style.display = 'none';  } }
+
   function applyAdminMobile() {
     if (!adminSidebar || !adminMobileHdr) return;
     if (window.innerWidth <= 768) {
-      adminMobileHdr.style.display = 'flex';
-      adminSidebar.style.position = 'fixed'; adminSidebar.style.top = '0'; adminSidebar.style.left = '-300px';
-      adminSidebar.style.height = '100vh'; adminSidebar.style.width = '280px'; adminSidebar.style.zIndex = '9999';
-      adminSidebar.style.overflowY = 'auto'; adminSidebar.style.boxShadow = '4px 0 20px rgba(0,0,0,0.2)'; adminSidebar.style.background = '#fff';
+      adminMobileHdr.style.display  = 'flex';
+      adminSidebar.style.position   = 'fixed';
+      adminSidebar.style.top        = '0';
+      adminSidebar.style.left       = '-300px';
+      adminSidebar.style.height     = '100vh';
+      adminSidebar.style.width      = '260px';
+      adminSidebar.style.zIndex     = '9999';
+      adminSidebar.style.overflowY  = 'auto';
+      adminSidebar.style.boxShadow  = '4px 0 20px rgba(0,0,0,0.2)';
+      adminSidebar.style.background = '#ffffff';
     } else {
       adminMobileHdr.style.display = 'none';
-      adminSidebar.style.position = ''; adminSidebar.style.top = ''; adminSidebar.style.left = '';
-      adminSidebar.style.height = ''; adminSidebar.style.width = ''; adminSidebar.style.zIndex = '';
-      adminSidebar.style.overflowY = ''; adminSidebar.style.boxShadow = '';
+      adminSidebar.style.position  = '';
+      adminSidebar.style.top       = '';
+      adminSidebar.style.left      = '';
+      adminSidebar.style.height    = '';
+      adminSidebar.style.width     = '';
+      adminSidebar.style.zIndex    = '';
+      adminSidebar.style.overflowY = '';
+      adminSidebar.style.boxShadow = '';
       if (adminOverlay) adminOverlay.style.display = 'none';
     }
   }
+
   applyAdminMobile();
   window.addEventListener('resize', applyAdminMobile);
   adminMenuBtn?.addEventListener('click', () => { adminSidebar?.style.left === '0px' ? closeAdminSidebar() : openAdminSidebar(); });
   adminOverlay?.addEventListener('click', closeAdminSidebar);
-  adminSidebar?.querySelectorAll('a[data-link]').forEach((a) => { a.addEventListener('click', () => { if (window.innerWidth <= 768) closeAdminSidebar(); }); });
+  adminSidebar?.querySelectorAll('a[data-link]').forEach((a) => {
+    a.addEventListener('click', () => { if (window.innerWidth <= 768) closeAdminSidebar(); });
+  });
 
-  // ── DOCTOR AVATAR PICKER ──────────────────────────────────
-  const avatarBtn    = container.querySelector('#doctor-change-avatar-btn');
-  const avatarPicker = container.querySelector('#doctor-avatar-picker');
+  // DOCTOR AVATAR PICKER
+  const avatarBtn     = container.querySelector('#doctor-change-avatar-btn');
+  const avatarPicker  = container.querySelector('#doctor-avatar-picker');
   const avatarDisplay = container.querySelector('#doctor-avatar-display');
-  const avatarCancel = container.querySelector('#doctor-avatar-cancel');
-  avatarBtn?.addEventListener('click', (e) => { e.stopPropagation(); if (avatarPicker) avatarPicker.style.display = avatarPicker.style.display === 'none' ? 'block' : 'none'; });
+  const avatarCancel  = container.querySelector('#doctor-avatar-cancel');
+
+  avatarBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!avatarPicker) return;
+    avatarPicker.style.display = avatarPicker.style.display === 'none' ? 'block' : 'none';
+  });
   avatarCancel?.addEventListener('click', () => { if (avatarPicker) avatarPicker.style.display = 'none'; });
   container.querySelectorAll('.doctor-avatar-emoji').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const emoji = btn.dataset.emoji;
       if (avatarDisplay) avatarDisplay.innerHTML = `<span style="font-size:36px;line-height:1">${emoji}</span>`;
-      const bannerAvatar = container.querySelector('#doc-banner-avatar');
+      const bannerAvatar = container.querySelector('#doc-banner-avatar, .hex-avatar');
       if (bannerAvatar) { bannerAvatar.textContent = emoji; bannerAvatar.style.fontSize = '36px'; bannerAvatar.style.clipPath = 'none'; bannerAvatar.style.borderRadius = '50%'; }
       if (avatarPicker) avatarPicker.style.display = 'none';
       localStorage.setItem('vc_doctor_avatar', emoji);
@@ -265,15 +299,15 @@ export function bindShellEvents(container, roleHandlers = {}) {
     });
   });
 
-  // ── RESTORE SAVED DOCTOR AVATAR ───────────────────────────
+  // RESTORE SAVED DOCTOR AVATAR
   try {
-    const saved = JSON.parse(localStorage.getItem('doctorAvatar') || 'null');
+    const saved    = JSON.parse(localStorage.getItem('doctorAvatar') || 'null');
     const vcAvatar = localStorage.getItem('vc_doctor_avatar');
-    const emoji = saved?.emoji || vcAvatar;
+    const emoji    = saved?.emoji || vcAvatar;
     if (emoji) {
-      const bannerAvatar = container.querySelector('#doc-banner-avatar, .hex-avatar');
-      if (bannerAvatar) { bannerAvatar.textContent = emoji; bannerAvatar.style.fontSize = '36px'; bannerAvatar.style.clipPath = 'none'; bannerAvatar.style.borderRadius = '50%'; }
+      const bannerAvatar  = container.querySelector('#doc-banner-avatar, .hex-avatar');
       const sidebarAvatar = container.querySelector('#doctor-avatar-display');
+      if (bannerAvatar)  { bannerAvatar.textContent = emoji; bannerAvatar.style.fontSize = '36px'; bannerAvatar.style.clipPath = 'none'; bannerAvatar.style.borderRadius = '50%'; }
       if (sidebarAvatar) sidebarAvatar.innerHTML = `<span style="font-size:36px;line-height:1">${emoji}</span>`;
     }
   } catch { /* ignore */ }
