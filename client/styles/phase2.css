@@ -830,8 +830,8 @@
   .dash-shell {
     flex-direction: column;
   }
-  .sidebar,
-  .dash-sidebar {
+  .patient-sidebar,
+  .dash-sidebar:not(#doctor-sidebar):not(#admin-sidebar) {
     display: none;
   }
   .dash-content,

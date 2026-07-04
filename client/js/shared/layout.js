@@ -192,8 +192,8 @@ export function bindShellEvents(container, roleHandlers = {}) {
   function applyDocMobile() {
     if (!docSidebar || !docMobileHdr) return;
     if (window.innerWidth <= 768) {
-      docMobileHdr.style.display  = 'flex';
       docSidebar.style.display    = 'block';
+      docMobileHdr.style.display  = 'flex';
       docSidebar.style.position   = 'fixed';
       docSidebar.style.top        = '0';
       docSidebar.style.left       = '-300px';
@@ -240,8 +240,8 @@ export function bindShellEvents(container, roleHandlers = {}) {
   function applyAdminMobile() {
     if (!adminSidebar || !adminMobileHdr) return;
     if (window.innerWidth <= 768) {
-      adminMobileHdr.style.display  = 'flex';
       adminSidebar.style.display    = 'block';
+      adminMobileHdr.style.display  = 'flex';
       adminSidebar.style.position   = 'fixed';
       adminSidebar.style.top        = '0';
       adminSidebar.style.left       = '-300px';
