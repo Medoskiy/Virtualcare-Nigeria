@@ -63,8 +63,8 @@ export function renderDoctorShell(path, contentHtml, doctor) {
             <div id="doctor-avatar-display" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1d6aba,#0a2463);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto;border:3px solid rgba(255,255,255,0.2)">${initials(doctor?.name, doctor?.surname)}</div>
             <button type="button" id="doctor-change-avatar-btn" title="Change avatar" style="position:absolute;bottom:0;right:0;background:#1d6aba;border:2px solid #fff;border-radius:50%;width:26px;height:26px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;padding:0;min-height:unset;min-width:unset">✏️</button>
           </div>
-          <strong style="display:block;font-size:14px;color:#0a2463;margin-bottom:2px">${escapeHtml(formatDoctorName(doctor))}</strong>
-          <small style="color:#64748b;font-size:12px">${escapeHtml(doctor?.specialty || '')}</small>
+          <strong style="display:block;font-size:14px;color:#ffffff;margin-bottom:2px">${escapeHtml(formatDoctorName(doctor))}</strong>
+          <small style="color:#94a3b8;font-size:12px">${escapeHtml(doctor?.specialty || '')}</small>
           <div id="doctor-avatar-picker" style="display:none;margin-top:12px;padding:10px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
             <p style="font-size:11px;color:#64748b;margin:0 0 8px;font-weight:600;text-align:left">Pick your avatar:</p>
             <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">
