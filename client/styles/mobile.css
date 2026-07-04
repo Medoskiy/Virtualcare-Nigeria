@@ -4235,3 +4235,31 @@ body:has(#mobile-bottom-nav.is-visible) {
     z-index: 9998 !important;
   }
 }
+
+@media (max-width: 768px) {
+  .admin-shell .dash-sidebar,
+  #admin-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: -100% !important;
+    height: 100vh !important;
+    z-index: 9999 !important;
+    overflow-y: auto !important;
+    transition: left 0.3s ease !important;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15) !important;
+  }
+  .admin-shell .dash-sidebar.is-open,
+  #admin-sidebar.is-open {
+    left: 0 !important;
+  }
+  #admin-sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9998;
+  }
+  #admin-sidebar-overlay.is-open {
+    display: block !important;
+  }
+}

@@ -186,40 +186,22 @@ export function bindShellEvents(container, roleHandlers = {}) {
   const docMenuBtn   = container.querySelector('#doctor-menu-btn');
   const docMobileHdr = container.querySelector('#doctor-mobile-header');
 
-  function openDocSidebar()  { if (docSidebar) { docSidebar.style.left = '0px';    if (docOverlay) docOverlay.style.display = 'block'; } }
-  function closeDocSidebar() { if (docSidebar) { docSidebar.style.left = '-300px'; if (docOverlay) docOverlay.style.display = 'none';  } }
+  function openDocSidebar()  { if (docSidebar) { docSidebar.classList.add('is-open');    if (docOverlay) docOverlay.style.display = 'block'; } }
+  function closeDocSidebar() { if (docSidebar) { docSidebar.classList.remove('is-open'); if (docOverlay) docOverlay.style.display = 'none';  } }
 
   function applyDocMobile() {
     if (!docSidebar || !docMobileHdr) return;
     if (window.innerWidth <= 768) {
-      docSidebar.style.display    = 'block';
-      docMobileHdr.style.display  = 'flex';
-      docSidebar.style.position   = 'fixed';
-      docSidebar.style.top        = '0';
-      docSidebar.style.left       = '-300px';
-      docSidebar.style.height     = '100vh';
-      docSidebar.style.width      = '260px';
-      docSidebar.style.zIndex     = '9999';
-      docSidebar.style.overflowY  = 'auto';
-      docSidebar.style.boxShadow  = '4px 0 20px rgba(0,0,0,0.2)';
-      docSidebar.style.background = '#ffffff';
+      docMobileHdr.style.display = 'flex';
     } else {
       docMobileHdr.style.display = 'none';
-      docSidebar.style.position  = '';
-      docSidebar.style.top       = '';
-      docSidebar.style.left      = '';
-      docSidebar.style.height    = '';
-      docSidebar.style.width     = '';
-      docSidebar.style.zIndex    = '';
-      docSidebar.style.overflowY = '';
-      docSidebar.style.boxShadow = '';
-      if (docOverlay) docOverlay.style.display = 'none';
+      closeDocSidebar();
     }
   }
 
   applyDocMobile();
   window.addEventListener('resize', applyDocMobile);
-  docMenuBtn?.addEventListener('click', () => { docSidebar?.style.left === '0px' ? closeDocSidebar() : openDocSidebar(); });
+  docMenuBtn?.addEventListener('click', () => { docSidebar?.classList.contains('is-open') ? closeDocSidebar() : openDocSidebar(); });
   docOverlay?.addEventListener('click', closeDocSidebar);
   docSidebar?.querySelectorAll('a[data-link]').forEach((a) => {
     a.addEventListener('click', () => { if (window.innerWidth <= 768) closeDocSidebar(); });
@@ -234,40 +216,22 @@ export function bindShellEvents(container, roleHandlers = {}) {
   const adminMenuBtn   = container.querySelector('#admin-menu-btn');
   const adminMobileHdr = container.querySelector('#admin-mobile-header');
 
-  function openAdminSidebar()  { if (adminSidebar) { adminSidebar.style.left = '0px';    if (adminOverlay) adminOverlay.style.display = 'block'; } }
-  function closeAdminSidebar() { if (adminSidebar) { adminSidebar.style.left = '-300px'; if (adminOverlay) adminOverlay.style.display = 'none';  } }
+  function openAdminSidebar()  { if (adminSidebar) { adminSidebar.classList.add('is-open');    if (adminOverlay) adminOverlay.style.display = 'block'; } }
+  function closeAdminSidebar() { if (adminSidebar) { adminSidebar.classList.remove('is-open'); if (adminOverlay) adminOverlay.style.display = 'none';  } }
 
   function applyAdminMobile() {
     if (!adminSidebar || !adminMobileHdr) return;
     if (window.innerWidth <= 768) {
-      adminSidebar.style.display    = 'block';
-      adminMobileHdr.style.display  = 'flex';
-      adminSidebar.style.position   = 'fixed';
-      adminSidebar.style.top        = '0';
-      adminSidebar.style.left       = '-300px';
-      adminSidebar.style.height     = '100vh';
-      adminSidebar.style.width      = '260px';
-      adminSidebar.style.zIndex     = '9999';
-      adminSidebar.style.overflowY  = 'auto';
-      adminSidebar.style.boxShadow  = '4px 0 20px rgba(0,0,0,0.2)';
-      adminSidebar.style.background = '#ffffff';
+      adminMobileHdr.style.display = 'flex';
     } else {
       adminMobileHdr.style.display = 'none';
-      adminSidebar.style.position  = '';
-      adminSidebar.style.top       = '';
-      adminSidebar.style.left      = '';
-      adminSidebar.style.height    = '';
-      adminSidebar.style.width     = '';
-      adminSidebar.style.zIndex    = '';
-      adminSidebar.style.overflowY = '';
-      adminSidebar.style.boxShadow = '';
-      if (adminOverlay) adminOverlay.style.display = 'none';
+      closeAdminSidebar();
     }
   }
 
   applyAdminMobile();
   window.addEventListener('resize', applyAdminMobile);
-  adminMenuBtn?.addEventListener('click', () => { adminSidebar?.style.left === '0px' ? closeAdminSidebar() : openAdminSidebar(); });
+  adminMenuBtn?.addEventListener('click', () => { adminSidebar?.classList.contains('is-open') ? closeAdminSidebar() : openAdminSidebar(); });
   adminOverlay?.addEventListener('click', closeAdminSidebar);
   adminSidebar?.querySelectorAll('a[data-link]').forEach((a) => {
     a.addEventListener('click', () => { if (window.innerWidth <= 768) closeAdminSidebar(); });
