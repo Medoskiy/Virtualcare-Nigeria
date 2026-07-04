@@ -624,6 +624,7 @@ body:has(#mobile-bottom-nav.is-visible) {
   .nav-drawer,
   .mobile-menu,
   .mobile-drawer {
+    display: block !important;
     position: fixed;
     top: 0;
     right: 0;
@@ -636,15 +637,17 @@ body:has(#mobile-bottom-nav.is-visible) {
     padding: 20px;
     overflow-y: auto;
     z-index: 10000;
-    transform: translateX(100%);
+    transform: translateX(110%);
     transition: transform 0.3s ease;
     box-sizing: border-box;
+    visibility: hidden;
   }
 
   .nav-drawer.open,
   .mobile-menu.open,
   .mobile-drawer.open {
-    transform: translateX(0);
+    transform: translateX(0) !important;
+    visibility: visible !important;
   }
 
   /* Drawer buttons full width */
@@ -4002,5 +4005,128 @@ body:has(#mobile-bottom-nav.is-visible) {
   /* New campaign modal grid */
   #create-campaign-modal > div > div:last-child > div[style*="grid-template-columns"] {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ADMIN DASHBOARD — ALL DEVICES RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+
+/* Admin pages — tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .admin-shell .dash-sidebar {
+    width: 200px !important;
+    min-width: 200px !important;
+  }
+
+  .admin-shell .dash-sidebar .sidebar-nav a {
+    font-size: 13px !important;
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+
+  .admin-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .admin-two-col-grid,
+  .admin-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-dash-header {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .admin-header-actions {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .doctor-mgmt-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .revenue-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .consult-stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .marketing-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .sessions-analytics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .ls-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .fee-tiers-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .promos-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .payout-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .admin-users-table-wrap,
+  .admin-doctors-table-wrap,
+  .admin-table-wrap,
+  .payout-table-wrap,
+  .consult-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* Admin pages — large desktop (1280px+) */
+@media (min-width: 1280px) {
+  .admin-kpi-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  .admin-shell .dash-sidebar {
+    width: 240px !important;
+    min-width: 240px !important;
+  }
+
+  .admin-two-col-grid,
+  .admin-grid-2 {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+  }
+}
+
+/* Monitor modal responsive */
+@media (max-width: 768px) {
+  #monitor-modal > div {
+    max-width: 100% !important;
+    border-radius: 12px !important;
+    margin: 8px !important;
+  }
+
+  #monitor-modal > div > div:last-child > div[style*="grid-template-columns:repeat(3"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* Campaign and analytics modals responsive */
+@media (max-width: 480px) {
+  #create-campaign-modal > div,
+  #mkt-analytics-modal > div {
+    border-radius: 12px !important;
+    max-height: 95vh !important;
   }
 }

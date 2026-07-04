@@ -256,8 +256,6 @@ async function router() {
   } else { app.innerHTML = '<div class="page-loading"><p>Page not found. <a href="/" data-link>Go home</a></p></div>'; bindLinks(); }
 }
 
-document.getElementById('nav-toggle')?.addEventListener('click', () => {});
-
 window.addEventListener('hashchange', router);
 window.addEventListener('load', () => {
   if (!window.location.hash) window.location.hash = '/';
