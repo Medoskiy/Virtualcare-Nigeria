@@ -18,6 +18,11 @@ router.get('/token/:appointmentId', auth, async (req, res) => {
       return sendError(res, 'Unauthorized', 403);
     }
 
+    // Block patient from joining if payment not confirmed
+    if (isPatient && appointment.status !== 'confirmed') {
+      return sendError(res, 'Payment required to join this call', 403);
+    }
+
     // Doctor is uid 1 (host), Patient is uid 2 (guest)
     const uid = isDoctor ? 1 : 2;
     const callMode = req.query.mode || 'video'; // 'video' or 'audio'
@@ -49,6 +54,13 @@ router.get('/room/:appointmentId', auth, async (req, res) => {
     if (!appointment) return sendError(res, 'Appointment not found', 404);
 
     const isDoctor = req.user.role === 'doctor';
+    const isPatient = req.user.role === 'patient';
+
+    // Block patient from joining if payment not confirmed
+    if (isPatient && appointment.status !== 'confirmed') {
+      return sendError(res, 'Payment required to join this call', 403);
+    }
+
     const uid = isDoctor ? 1 : 2;
     const callMode = req.query.mode || 'video';
 

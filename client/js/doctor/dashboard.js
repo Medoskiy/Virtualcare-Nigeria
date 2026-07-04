@@ -42,7 +42,7 @@ const RISK_COLORS = {
 };
 
 function isCallEligible(status) {
-  return status === 'confirmed' || status === 'upcoming';
+  return status === 'confirmed';
 }
 
 function renderCallButtons(appointmentId) {
