@@ -192,15 +192,16 @@ export function bindShellEvents(container, roleHandlers = {}) {
   function applyDocMobile() {
     if (!docSidebar || !docMobileHdr) return;
     if (window.innerWidth <= 768) {
-      docMobileHdr.style.display = 'flex';
-      docSidebar.style.position  = 'fixed';
-      docSidebar.style.top       = '0';
-      docSidebar.style.left      = '-300px';
-      docSidebar.style.height    = '100vh';
-      docSidebar.style.width     = '260px';
-      docSidebar.style.zIndex    = '9999';
-      docSidebar.style.overflowY = 'auto';
-      docSidebar.style.boxShadow = '4px 0 20px rgba(0,0,0,0.2)';
+      docMobileHdr.style.display  = 'flex';
+      docSidebar.style.display    = 'block';
+      docSidebar.style.position   = 'fixed';
+      docSidebar.style.top        = '0';
+      docSidebar.style.left       = '-300px';
+      docSidebar.style.height     = '100vh';
+      docSidebar.style.width      = '260px';
+      docSidebar.style.zIndex     = '9999';
+      docSidebar.style.overflowY  = 'auto';
+      docSidebar.style.boxShadow  = '4px 0 20px rgba(0,0,0,0.2)';
       docSidebar.style.background = '#ffffff';
     } else {
       docMobileHdr.style.display = 'none';
@@ -240,6 +241,7 @@ export function bindShellEvents(container, roleHandlers = {}) {
     if (!adminSidebar || !adminMobileHdr) return;
     if (window.innerWidth <= 768) {
       adminMobileHdr.style.display  = 'flex';
+      adminSidebar.style.display    = 'block';
       adminSidebar.style.position   = 'fixed';
       adminSidebar.style.top        = '0';
       adminSidebar.style.left       = '-300px';
