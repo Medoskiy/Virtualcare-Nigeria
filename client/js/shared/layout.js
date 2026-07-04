@@ -186,8 +186,8 @@ export function bindShellEvents(container, roleHandlers = {}) {
   const docMenuBtn   = container.querySelector('#doctor-menu-btn');
   const docMobileHdr = container.querySelector('#doctor-mobile-header');
 
-  function openDocSidebar()  { if (docSidebar) { docSidebar.classList.add('open');    if (docOverlay) docOverlay.classList.add('open'); } }
-  function closeDocSidebar() { if (docSidebar) { docSidebar.classList.remove('open'); if (docOverlay) docOverlay.classList.remove('open'); } }
+  function openDocSidebar()  { if (docSidebar) { docSidebar.classList.add('open');    if (docOverlay) docOverlay.style.display = 'block'; } }
+  function closeDocSidebar() { if (docSidebar) { docSidebar.classList.remove('open'); if (docOverlay) docOverlay.style.display = 'none';  } }
 
   function applyDocMobile() {
     if (!docSidebar || !docMobileHdr) return;
