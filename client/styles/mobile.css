@@ -2277,12 +2277,7 @@ body:has(#mobile-bottom-nav.is-visible) {
     min-height: 52px;
   }
 
-  /* Hide desktop sidebar on mobile */
-  .doctor-shell .dash-sidebar {
-    display: none !important;
-  }
-
-  /* Doctor sidebar as drawer — hidden by default */
+  /* Doctor sidebar as drawer — hidden off-screen by default, shown via JS */
   #doctor-sidebar {
     display: block !important;
     position: fixed !important;
