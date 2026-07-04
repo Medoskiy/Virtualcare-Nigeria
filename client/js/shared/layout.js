@@ -186,8 +186,8 @@ export function bindShellEvents(container, roleHandlers = {}) {
   const docMenuBtn   = container.querySelector('#doctor-menu-btn');
   const docMobileHdr = container.querySelector('#doctor-mobile-header');
 
-  function openDocSidebar()  { if (docSidebar) { docSidebar.style.left = '0px';    if (docOverlay) docOverlay.style.display = 'block'; } }
-  function closeDocSidebar() { if (docSidebar) { docSidebar.style.left = '-300px'; if (docOverlay) docOverlay.style.display = 'none';  } }
+  function openDocSidebar()  { if (docSidebar) { docSidebar.classList.add('open');    if (docOverlay) docOverlay.style.display = 'block'; } }
+  function closeDocSidebar() { if (docSidebar) { docSidebar.classList.remove('open'); if (docOverlay) docOverlay.style.display = 'none';  } }
 
   function applyDocMobile() {
     if (!docSidebar || !docMobileHdr) return;
@@ -219,7 +219,7 @@ export function bindShellEvents(container, roleHandlers = {}) {
 
   applyDocMobile();
   window.addEventListener('resize', applyDocMobile);
-  docMenuBtn?.addEventListener('click', () => { docSidebar?.style.left === '0px' ? closeDocSidebar() : openDocSidebar(); });
+  docMenuBtn?.addEventListener('click', () => { docSidebar?.classList.contains('open') ? closeDocSidebar() : openDocSidebar(); });
   docOverlay?.addEventListener('click', closeDocSidebar);
   docSidebar?.querySelectorAll('a[data-link]').forEach((a) => {
     a.addEventListener('click', () => { if (window.innerWidth <= 768) closeDocSidebar(); });
