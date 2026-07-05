@@ -65,12 +65,19 @@ export async function initVideoCall(container, appointmentId) {
     endSession(appointmentId, role === 'doctor' ? user._id : undefined);
     if (role === 'doctor') setDoctorAvailableAfterSession();    container.innerHTML = `<div class="post-call"><h2>Session Complete</h2><p>Thank you for using Virtualcare.</p>
       ${getRole() === 'patient' ? '<p>How was your consultation?</p><div>⭐⭐⭐⭐⭐</div><textarea placeholder="Leave a comment…" rows="3" style="width:100%;margin:12px 0"></textarea>' : ''}
-      <a href="${getRole() === 'doctor' ? '/doctor/dashboard' : '/patient/upcoming'}" data-link class="btn btn-primary">Done</a>
-      ${getRole() === 'patient' ? '<a href="/patient/book" data-link class="btn btn-secondary">Book Follow-up</a>' : ''}
+      <button type="button" id="post-call-done" class="btn btn-primary">Done</button>
+      ${getRole() === 'patient' ? '<button type="button" id="post-call-followup" class="btn btn-secondary">Book Follow-up</button>' : ''}
     </div>`;
-    container.querySelectorAll('[data-link]').forEach((a) => {
-      a.onclick = (e) => { e.preventDefault(); window.location.hash = a.getAttribute('href'); window.dispatchEvent(new HashChangeEvent('hashchange')); };
-    });
+    setTimeout(() => {
+      document.getElementById('post-call-done')?.addEventListener('click', () => {
+        window.location.hash = getRole() === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard';
+        window.dispatchEvent(new HashChangeEvent('hashchange'));
+      });
+      document.getElementById('post-call-followup')?.addEventListener('click', () => {
+        window.location.hash = '/book';
+        window.dispatchEvent(new HashChangeEvent('hashchange'));
+      });
+    }, 100);
     document.getElementById('site-header')?.classList.remove('hidden');
   }
 
