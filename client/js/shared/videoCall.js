@@ -7,6 +7,18 @@ let isCallActive = false;
 
 export async function joinCall(appointmentId, mode = 'video') {
   try {
+    // Leave any existing call first to avoid UID_CONFLICT
+    if (agoraClient && isCallActive) {
+      try {
+        if (localAudioTrack) { localAudioTrack.stop(); localAudioTrack.close(); }
+        if (localVideoTrack) { localVideoTrack.stop(); localVideoTrack.close(); }
+        await agoraClient.leave();
+      } catch(e) { console.warn('Cleanup error:', e); }
+      agoraClient = null;
+      localAudioTrack = null;
+      localVideoTrack = null;
+      isCallActive = false;
+    }
     // Get token from backend
     const res = await fetch(`/api/video/token/${appointmentId}?mode=${mode}`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
