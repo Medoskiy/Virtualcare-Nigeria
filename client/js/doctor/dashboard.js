@@ -63,16 +63,22 @@ function renderCallButtons(appointmentId) {
     </div>`;
 }
 
-if (!window.startCall) {
-  window.startCall = async (appointmentId, mode) => {
+window.startCall = async (appointmentId, mode) => {
+  try {
+    console.log('[startCall] Starting', mode, 'call for', appointmentId);
     document.body.insertAdjacentHTML('beforeend', renderCallUI(appointmentId, mode));
     const result = await joinCall(appointmentId, mode);
+    console.log('[startCall] Result:', result);
     if (!result.success) {
       document.getElementById('vc-call-container')?.remove();
-      alert('Could not start call: ' + result.error);
+      toast('Could not start call: ' + (result.error || 'Unknown error'), 'error');
     }
-  };
-}
+  } catch(e) {
+    console.error('[startCall] Error:', e);
+    document.getElementById('vc-call-container')?.remove();
+    toast('Call error: ' + e.message, 'error');
+  }
+};
 
 function buildQueueItems(appointments) {
   const risks = ['Low', 'Medium', 'High'];
