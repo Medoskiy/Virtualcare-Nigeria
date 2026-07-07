@@ -126,6 +126,27 @@ const uploadLimiter = rateLimit({
 });
 
 app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), handlePaystackWebhook);
+app.post('/api/payments/webhook/internal', express.json(), async (req, res) => {
+  const secret = req.headers['x-internal-secret'];
+  if (secret !== process.env.INTERNAL_WEBHOOK_SECRET) {
+    return res.status(401).json({ ok: false, error: 'unauthorized' });
+  }
+  try {
+    const { completePaymentByReference } = require('./routes/payments');
+    const io = req.app.get('io');
+    if (req.body?.event === 'charge.success') {
+      const reference = req.body?.data?.reference;
+      if (reference) {
+        await completePaymentByReference(reference, io);
+        return res.json({ ok: true, reference });
+      }
+    }
+    res.json({ ok: true, ignored: true });
+  } catch (err) {
+    console.error('Internal webhook error:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
