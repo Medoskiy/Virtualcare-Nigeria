@@ -58,20 +58,12 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", 'https://js.paystack.co', 'https://fonts.googleapis.com', 'https://download.agora.io'],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://js.paystack.co', 'https://fonts.googleapis.com', 'https://download.agora.io', 'https://www.googletagmanager.com', 'https://browser.sentry-cdn.com'],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
       imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
-      connectSrc: [
-        "'self'",
-        'https://api.paystack.co',
-        'https://api.anthropic.com',
-        'https://*.agora.io',
-        'wss://*.agora.io',
-        'https://v3.api.termii.com',
-        process.env.CLIENT_URL || 'http://localhost:3000'
-      ],
-      frameSrc: ["'self'"]
+      connectSrc: ["'self'", 'https://api.paystack.co', 'https://api.anthropic.com', 'https://*.agora.io', 'wss://*.agora.io', 'https://v3.api.termii.com', 'https://www.google-analytics.com', 'https://*.sentry.io', 'https://o4511678926028800.ingest.de.sentry.io', process.env.CLIENT_URL || 'http://localhost:3000'],
+      frameSrc: ["'self'", 'https://checkout.paystack.com']
     }
   },
   crossOriginEmbedderPolicy: false
