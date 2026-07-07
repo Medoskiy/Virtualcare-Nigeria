@@ -103,6 +103,7 @@ router.post('/initialize', auth, requireRole('patient'), async (req, res) => {
       email: patient.email,
       amount: paymentData.finalAmount,
       metadata: {
+        project: 'virtualcare',
         appointmentId: appointment._id.toString(),
         patientId: patient._id.toString(),
         doctorId: appointment.doctor._id.toString()
