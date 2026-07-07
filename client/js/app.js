@@ -226,7 +226,6 @@ async function router() {
   }
 
   if (path.startsWith('/payment/verify')) {
-    if (!requireAuth(['patient'])) return;
     await renderPaymentVerify(app);
     return;
   }
