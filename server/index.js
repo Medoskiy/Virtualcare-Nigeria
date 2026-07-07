@@ -58,7 +58,8 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", 'https://js.paystack.co', 'https://fonts.googleapis.com', 'https://download.agora.io'],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://js.paystack.co', 'https://fonts.googleapis.com', 'https://download.agora.io', 'https://www.googletagmanager.com', 'https://browser.sentry-cdn.com'],
+      scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
       imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
@@ -71,7 +72,7 @@ app.use(helmet({
         'https://v3.api.termii.com',
         process.env.CLIENT_URL || 'http://localhost:3000'
       ],
-      frameSrc: ["'self'"]
+      frameSrc: ["'self'", 'https://checkout.paystack.com']
     }
   },
   crossOriginEmbedderPolicy: false
