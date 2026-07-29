@@ -4,7 +4,6 @@ import { joinAppointment, startSessionTimer, onSessionWarning, onSessionEnd, end
 import { toast } from '../shared/toast.js';
 import { formatDoctorName } from '../shared/utils.js';
 import { setDoctorInSession, setDoctorAvailableAfterSession } from '../doctor/status.js';
-import { joinCall, leaveCall, toggleMute as agoraToggleMute, toggleVideo as agoraToggleVideo } from '../shared/videoCall.js';
 const SESSION_END_MIN = 55;
 const WARN_45 = 45;
 const WARN_50 = 50;
@@ -20,8 +19,8 @@ export async function initVideoCall(container, appointmentId) {
         <span class="live-badge">🔴 Live · HD</span>
       </div>
       <div class="video-main" id="video-main">
-        <div id="remote-video" class="video-area"></div>
-        <div id="local-video" class="self-preview" id="self-preview"></div>
+        <div id="daily-container" class="video-area"></div>
+        <div class="self-preview" id="self-preview">You</div>
         <div id="session-warn" class="session-warn hidden"></div>
       </div>
       <p class="session-note">Session time: 45–55 minutes</p>
@@ -59,14 +58,12 @@ export async function initVideoCall(container, appointmentId) {
     toast(msg, 'warning');
   }
 
-  async function endCall() {
+  function endCall() {
     clearInterval(timer);
     const user = getUser();
     const role = getRole();
-    await leaveCall(appointmentId);
     endSession(appointmentId, role === 'doctor' ? user._id : undefined);
-    if (role === 'doctor') setDoctorAvailableAfterSession();
-    container.innerHTML = `<div class="post-call"><h2>Session Complete</h2><p>Thank you for using Virtualcare.</p>
+    if (role === 'doctor') setDoctorAvailableAfterSession();    container.innerHTML = `<div class="post-call"><h2>Session Complete</h2><p>Thank you for using Virtualcare.</p>
       ${getRole() === 'patient' ? '<p>How was your consultation?</p><div>⭐⭐⭐⭐⭐</div><textarea placeholder="Leave a comment…" rows="3" style="width:100%;margin:12px 0"></textarea>' : ''}
       <a href="${getRole() === 'doctor' ? '/doctor/dashboard' : '/patient/upcoming'}" data-link class="btn btn-primary">Done</a>
       ${getRole() === 'patient' ? '<a href="/patient/book" data-link class="btn btn-secondary">Book Follow-up</a>' : ''}
@@ -90,27 +87,36 @@ export async function initVideoCall(container, appointmentId) {
       await setDoctorInSession({ notify: !alreadyInSession });
     }
 
-    joinAppointment(appointmentId);
-    startSessionTimer(appointmentId);
+    joinAppointment(appointmentId);    startSessionTimer(appointmentId);
     onSessionWarning((p) => showWarn(p.message, 'warn-yellow'));
     onSessionEnd(() => endCall());
 
-    const result = await joinCall(appointmentId, 'video');
-    if (!result.success) {
-      container.querySelector('#remote-video').innerHTML = `<p style="color:#fff;padding:40px">${result.error}</p>`;
-    }
+    const roomRes = await appointmentsApi.videoRoom(appointmentId);
+    await loadDaily(roomRes.data.videoRoomUrl);
   } catch (e) {
-    container.querySelector('#remote-video').innerHTML = `<p style="color:#fff;padding:40px">${e.message}</p>`;
+    container.querySelector('#daily-container').innerHTML = `<p style="color:#fff;padding:40px">${e.message}</p>`;
   }
 
-  container.querySelector('#vc-mute').onclick = async () => {
-    muted = await agoraToggleMute();
-    toast(muted ? 'Muted' : 'Unmuted', 'info');
-  };
-  container.querySelector('#vc-cam').onclick = async () => {
-    const disabled = await agoraToggleVideo();
-    camOn = !disabled;
-    toast(camOn ? 'Camera on' : 'Camera off', 'info');
-  };
+  container.querySelector('#vc-mute').onclick = () => { muted = !muted; toast(muted ? 'Muted' : 'Unmuted', 'info'); };
+  container.querySelector('#vc-cam').onclick = () => { camOn = !camOn; toast(camOn ? 'Camera on' : 'Camera off', 'info'); };
   container.querySelector('#vc-end').onclick = endCall;
+}
+
+async function loadDaily(url) {
+  const el = document.getElementById('daily-container');
+  if (!url) { el.innerHTML = '<p style="color:#fff">Video room unavailable</p>'; return; }
+  if (!window.DailyIframe) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://unpkg.com/@daily-co/daily-js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+  try {
+    const frame = window.DailyIframe.createFrame(el, { iframeStyle: { width: '100%', height: '100%', border: 'none' } });
+    await frame.join({ url });
+  } catch {
+    el.innerHTML = `<iframe src="${url}" allow="camera;microphone;fullscreen" style="width:100%;height:100%;border:none"></iframe>`;
+  }
 }
