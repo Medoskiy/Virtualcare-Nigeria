@@ -10,6 +10,7 @@ export async function joinCall(appointmentId, mode = 'video') {
     console.warn('joinCall called while a call is already active — ignoring duplicate join');
     return { success: false, error: 'Call already in progress' };
   }
+  isCallActive = true;
   try {
     // Get token from backend
     const res = await fetch(`/api/video/token/${appointmentId}?mode=${mode}`, {
@@ -71,6 +72,7 @@ export async function joinCall(appointmentId, mode = 'video') {
     return { success: true, channelName, mode };
   } catch (err) {
     console.error('Join call failed:', err.message);
+    isCallActive = false;
     return { success: false, error: err.message };
   }
 }

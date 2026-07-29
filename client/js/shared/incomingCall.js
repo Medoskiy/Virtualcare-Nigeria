@@ -70,9 +70,10 @@ function ensureBanner() {
 
   bannerEl.querySelector('#incoming-call-accept').addEventListener('click', () => {
     if (!currentInvite) return;
-    acceptCall(currentInvite.appointmentId);
+    const apptId = currentInvite.appointmentId;
+    acceptCall(apptId);
     hideBanner();
-    window.location.hash = `/video/${currentInvite.appointmentId}`;
+    window.location.hash = `/video/${apptId}`;
     window.dispatchEvent(new HashChangeEvent('hashchange'));
   });
 
