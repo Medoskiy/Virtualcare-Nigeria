@@ -9,7 +9,14 @@ const SESSION_END_MIN = 55;
 const WARN_45 = 45;
 const WARN_50 = 50;
 
+let activeVideoCallId = null;
+
 export async function initVideoCall(container, appointmentId) {
+  if (activeVideoCallId === appointmentId) {
+    console.warn('initVideoCall already active for this appointment — ignoring duplicate');
+    return;
+  }
+  activeVideoCallId = appointmentId;
   document.getElementById('site-header')?.classList.add('hidden');
 
   container.innerHTML = `
@@ -63,6 +70,7 @@ export async function initVideoCall(container, appointmentId) {
     clearInterval(timer);
     const user = getUser();
     const role = getRole();
+    activeVideoCallId = null;
     await leaveCall(appointmentId);
     endSession(appointmentId, role === 'doctor' ? user._id : undefined);
     if (role === 'doctor') setDoctorAvailableAfterSession();

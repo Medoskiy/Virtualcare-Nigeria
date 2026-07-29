@@ -26,21 +26,26 @@ export async function joinCall(appointmentId, mode = 'video') {
       await loadAgoraSDK();
     }
 
-    // Create Agora client
-    agoraClient = window.AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+    // Create Agora client (local ref to avoid races with concurrent joins/cleanups)
+    const client = window.AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+    agoraClient = client;
 
     // Join channel
-    await agoraClient.join(appId, channelName, token, uid);
+    await client.join(appId, channelName, token, uid);
 
-    // Create and publish local tracks
+    // Create local tracks
+    let audioTrack, videoTrack;
     if (mode === 'video') {
-      [localAudioTrack, localVideoTrack] = await window.AgoraRTC.createMicrophoneAndCameraTracks();
+      [audioTrack, videoTrack] = await window.AgoraRTC.createMicrophoneAndCameraTracks();
     } else {
-      localAudioTrack = await window.AgoraRTC.createMicrophoneAudioTrack();
+      audioTrack = await window.AgoraRTC.createMicrophoneAudioTrack();
     }
+    localAudioTrack = audioTrack;
+    localVideoTrack = videoTrack;
 
-    await agoraClient.publish(
-      mode === 'video' ? [localAudioTrack, localVideoTrack] : [localAudioTrack]
+    // Publish against the same client we joined with
+    await client.publish(
+      mode === 'video' ? [audioTrack, videoTrack] : [audioTrack]
     );
 
     // Play local video
