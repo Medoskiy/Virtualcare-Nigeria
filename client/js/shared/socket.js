@@ -31,9 +31,18 @@ export function connectSocket(user, role) {
     if (user) socket.emit('join:user', { userId: user._id, role });
     if (role === 'doctor') socket.emit('join:doctor', user._id);
     joinAllAppointmentRooms(role);
+    // Re-bind persistent event listeners on every (re)connect so they survive reconnects
+    persistentListeners.forEach(({ event, cb }) => { socket.off(event, cb); socket.on(event, cb); });
   });
 
   return socket;
+}
+
+// Listeners that must survive socket reconnects (e.g. incoming call ring)
+const persistentListeners = [];
+function onPersistent(event, cb) {
+  persistentListeners.push({ event, cb });
+  getSocket()?.on(event, cb);
 }
 
 export function getSocket() {
@@ -68,7 +77,7 @@ export function inviteCall(appointmentId, mode, callerName, callerRole) {
 }
 export function acceptCall(appointmentId) { getSocket()?.emit('call:accept', { appointmentId }); }
 export function declineCall(appointmentId) { getSocket()?.emit('call:decline', { appointmentId }); }
-export function onCallIncoming(cb) { getSocket()?.on('call:incoming', cb); }
-export function onCallAccepted(cb) { getSocket()?.on('call:accepted', cb); }
-export function onCallDeclined(cb) { getSocket()?.on('call:declined', cb); }
-export function onCallMissed(cb) { getSocket()?.on('call:missed', cb); }
+export function onCallIncoming(cb) { onPersistent('call:incoming', cb); }
+export function onCallAccepted(cb) { onPersistent('call:accepted', cb); }
+export function onCallDeclined(cb) { onPersistent('call:declined', cb); }
+export function onCallMissed(cb) { onPersistent('call:missed', cb); }
