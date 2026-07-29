@@ -4,7 +4,7 @@ import { joinAppointment, startSessionTimer, onSessionWarning, onSessionEnd, end
 import { toast } from '../shared/toast.js';
 import { formatDoctorName } from '../shared/utils.js';
 import { setDoctorInSession, setDoctorAvailableAfterSession } from '../doctor/status.js';
-import { joinCall, leaveCall, toggleMute as agoraToggleMute, toggleVideo as agoraToggleVideo } from '../shared/videoCall.js';
+import { joinCall, leaveCall, forceCleanup, toggleMute as agoraToggleMute, toggleVideo as agoraToggleVideo } from '../shared/videoCall.js';
 const SESSION_END_MIN = 55;
 const WARN_45 = 45;
 const WARN_50 = 50;
@@ -95,6 +95,7 @@ export async function initVideoCall(container, appointmentId) {
     onSessionWarning((p) => showWarn(p.message, 'warn-yellow'));
     onSessionEnd(() => endCall());
 
+    await forceCleanup();
     const result = await joinCall(appointmentId, 'video');
     if (!result.success) {
       container.querySelector('#remote-video').innerHTML = `<p style="color:#fff;padding:40px">${result.error}</p>`;

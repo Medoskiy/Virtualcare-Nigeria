@@ -103,6 +103,20 @@ export async function leaveCall(appointmentId) {
   }
 }
 
+export async function forceCleanup() {
+  try {
+    if (localAudioTrack) { localAudioTrack.stop(); localAudioTrack.close(); }
+    if (localVideoTrack) { localVideoTrack.stop(); localVideoTrack.close(); }
+    if (agoraClient) await agoraClient.leave();
+  } catch (e) {
+    console.warn('forceCleanup error (ignored):', e.message);
+  }
+  agoraClient = null;
+  localAudioTrack = null;
+  localVideoTrack = null;
+  isCallActive = false;
+}
+
 export async function toggleMute() {
   if (localAudioTrack) {
     const muted = localAudioTrack.muted;
