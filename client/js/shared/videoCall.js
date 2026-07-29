@@ -6,6 +6,10 @@ let localVideoTrack = null;
 let isCallActive = false;
 
 export async function joinCall(appointmentId, mode = 'video') {
+  if (isCallActive) {
+    console.warn('joinCall called while a call is already active — ignoring duplicate join');
+    return { success: false, error: 'Call already in progress' };
+  }
   try {
     // Get token from backend
     const res = await fetch(`/api/video/token/${appointmentId}?mode=${mode}`, {

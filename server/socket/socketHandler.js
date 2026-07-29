@@ -73,7 +73,7 @@ function initSocket(io) {
       const timer = sessionTimers.get(appointmentId);
       if (timer) { clearInterval(timer); sessionTimers.delete(appointmentId); }
       io.to(`appointment:${appointmentId}`).emit('session:ended', { appointmentId });
-      io.to(`appointment:${appointmentId}`).emit('session:end', { appointmentId });
+      socket.broadcast.to(`appointment:${appointmentId}`).emit('session:end', { appointmentId });
       if (doctorId) {
         io.emit('doctor:status-changed', { doctorId, status: 'green' });
         io.emit('doctor:status-update', { doctorId, status: 'green' });
