@@ -4,6 +4,7 @@ import { renderPatientShell, bindShellEvents } from '../shared/layout.js';
 import { formatDate, formatCurrency, formatShortDate, statusBadge, escapeHtml, initials, isJoinable, initMessageInput, MAX_RECORD_FILE_SIZE, formatDoctorName } from '../shared/utils.js';
 import { joinAppointment, onMessageNew, emitTypingStart, emitTypingStop, onTypingStart, onTypingStop } from '../shared/socket.js';
 import { inviteCall } from '../shared/socket.js';
+import { setOutgoingCall } from '../shared/incomingCall.js';
 import { toast } from '../shared/toast.js';
 import { bindBookFlow } from '../shared/bookingFlow.js';
 import { renderAiChat } from './aiChat.js';
@@ -35,6 +36,7 @@ if (!window.callAppointment) {
   window.callAppointment = (appointmentId, mode) => {
     const user = getUser();
     const callerName = user ? `${user.name || ''} ${user.surname || ''}`.trim() || 'Patient' : 'Patient';
+    setOutgoingCall(appointmentId);
     inviteCall(appointmentId, mode, callerName, 'patient');
     toast('Calling\u2026 waiting for the doctor to accept', 'info');
   };

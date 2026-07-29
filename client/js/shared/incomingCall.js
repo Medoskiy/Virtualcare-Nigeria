@@ -1,8 +1,9 @@
-import { onCallIncoming, onCallMissed, onCallDeclined, acceptCall, declineCall } from './socket.js';
+import { onCallIncoming, onCallMissed, onCallDeclined, onCallAccepted, acceptCall, declineCall } from './socket.js';
 import { getUser } from './api.js';
 
 let bannerEl = null;
 let currentInvite = null;
+let outgoingCallId = null;
 let ringAudioCtx = null;
 let ringIntervalId = null;
 let vibrateIntervalId = null;
@@ -100,6 +101,11 @@ function hideBanner() {
   stopRingTone();
 }
 
+// Called by the caller (patient or doctor) when they initiate an outgoing call
+export function setOutgoingCall(appointmentId) {
+  outgoingCallId = appointmentId;
+}
+
 export function initIncomingCallListener() {
   onCallIncoming((payload) => {
     const user = getUser();
@@ -109,9 +115,20 @@ export function initIncomingCallListener() {
 
   onCallMissed(({ appointmentId }) => {
     if (currentInvite?.appointmentId === appointmentId) hideBanner();
+    if (outgoingCallId === appointmentId) outgoingCallId = null;
   });
 
   onCallDeclined(({ appointmentId }) => {
     if (currentInvite?.appointmentId === appointmentId) hideBanner();
+    if (outgoingCallId === appointmentId) outgoingCallId = null;
+  });
+
+  // Caller side: when the other party accepts, navigate the caller into the call
+  onCallAccepted(({ appointmentId }) => {
+    if (outgoingCallId === appointmentId) {
+      outgoingCallId = null;
+      window.location.hash = `/video/${appointmentId}`;
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    }
   });
 }

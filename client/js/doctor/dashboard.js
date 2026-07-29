@@ -15,6 +15,7 @@ import { renderDoctorShell, bindShellEvents } from '../shared/layout.js';
 import { formatDate, formatCurrency, statusBadge, escapeHtml, formatDoctorName } from '../shared/utils.js';
 import { connectSocket, joinDoctor, emitDoctorStatus } from '../shared/socket.js';
 import { inviteCall } from '../shared/socket.js';
+import { setOutgoingCall } from '../shared/incomingCall.js';
 import { toast } from '../shared/toast.js';
 
 const DEMO_QUEUE_PATIENTS = [
@@ -66,6 +67,7 @@ if (!window.callAppointment) {
   window.callAppointment = (appointmentId, mode) => {
     const user = getUser();
     const callerName = user ? `${user.name || ''} ${user.surname || ''}`.trim() || 'Doctor' : 'Doctor';
+    setOutgoingCall(appointmentId);
     inviteCall(appointmentId, mode, callerName, 'doctor');
     toast('Calling… waiting for the patient to accept', 'info');
   };
