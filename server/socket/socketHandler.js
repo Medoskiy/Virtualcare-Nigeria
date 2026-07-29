@@ -4,6 +4,8 @@ const SESSION_END_MIN = 55;
 
 function initSocket(io) {
   const sessionTimers = new Map();
+  const callInviteTimers = new Map();
+  const CALL_INVITE_TIMEOUT_MS = 30000;
 
   io.use((socket, next) => {
     const token = socket.handshake.auth?.token;
@@ -79,6 +81,30 @@ function initSocket(io) {
         io.emit('doctor:status-update', { doctorId, status: 'green' });
         io.emit('doctor:available', { doctorId });
       }
+    });
+
+    socket.on('call:invite', ({ appointmentId, mode, callerName, callerRole }) => {
+      if (callInviteTimers.has(appointmentId)) return;
+      socket.broadcast.to(`appointment:${appointmentId}`).emit('call:incoming', {
+        appointmentId, mode, callerName, callerRole
+      });
+      const timer = setTimeout(() => {
+        callInviteTimers.delete(appointmentId);
+        io.to(`appointment:${appointmentId}`).emit('call:missed', { appointmentId });
+      }, CALL_INVITE_TIMEOUT_MS);
+      callInviteTimers.set(appointmentId, timer);
+    });
+
+    socket.on('call:accept', ({ appointmentId }) => {
+      const timer = callInviteTimers.get(appointmentId);
+      if (timer) { clearTimeout(timer); callInviteTimers.delete(appointmentId); }
+      io.to(`appointment:${appointmentId}`).emit('call:accepted', { appointmentId });
+    });
+
+    socket.on('call:decline', ({ appointmentId }) => {
+      const timer = callInviteTimers.get(appointmentId);
+      if (timer) { clearTimeout(timer); callInviteTimers.delete(appointmentId); }
+      io.to(`appointment:${appointmentId}`).emit('call:declined', { appointmentId });
     });
 
     socket.on('notification:new', (payload) => {

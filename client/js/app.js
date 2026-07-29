@@ -2,6 +2,7 @@ import { getUser, getRole } from './shared/api.js';
 import { notificationsApi } from './shared/api.js';
 import { connectSocket } from './shared/socket.js';
 import { onDoctorStatusChanged } from './shared/socket.js';
+import { initIncomingCallListener } from './shared/incomingCall.js';
 import { initToast } from './shared/toast.js';
 import { renderHome } from './pages/home.js';
 import { renderFindDoctor } from './pages/findDoctor.js';
@@ -261,6 +262,7 @@ window.addEventListener('load', () => {
   if (!window.location.hash) window.location.hash = '/';
   else router();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/public/sw.js').catch(() => {});
+  initIncomingCallListener();
 
   const AVAIL_LABELS = { green: 'Available Now', amber: 'Busy Soon', red: 'Unavailable' };
   onDoctorStatusChanged(({ doctorId, status }) => {

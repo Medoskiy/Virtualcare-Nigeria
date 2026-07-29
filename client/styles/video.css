@@ -67,3 +67,47 @@
   margin-top: 16px;
   justify-content: center;
 }
+
+/* Incoming call banner */
+.incoming-call-banner {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  width: calc(100% - 32px);
+  max-width: 420px;
+}
+.incoming-call-banner.hidden { display: none; }
+.incoming-call-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #0a2463;
+  color: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+.incoming-call-icon { font-size: 24px; }
+.incoming-call-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+.incoming-call-text strong { font-size: 15px; }
+.incoming-call-actions {
+  display: flex;
+  gap: 8px;
+}
+.btn-call-accept, .btn-call-decline {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-call-accept { background: #22c55e; color: #fff; }
+.btn-call-decline { background: #ef4444; color: #fff; }

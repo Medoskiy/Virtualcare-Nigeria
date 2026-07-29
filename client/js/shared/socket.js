@@ -1,6 +1,18 @@
-import { getToken } from './api.js';
+import { getToken, doctorsApi, patientsApi } from './api.js';
 
 let socket = null;
+
+async function joinAllAppointmentRooms(role) {
+  try {
+    const api = role === 'doctor' ? doctorsApi : role === 'patient' ? patientsApi : null;
+    if (!api) return;
+    const res = await api.upcoming();
+    const appointments = res?.data?.appointments || [];
+    appointments.forEach((a) => joinAppointment(a._id));
+  } catch {
+    // ignore - non-critical, appointment rooms will still be joined when opening the appointment directly
+  }
+}
 
 export function connectSocket(user, role) {
   if (socket?.connected) return socket;
@@ -17,6 +29,7 @@ export function connectSocket(user, role) {
   socket.on('connect', () => {
     if (user) socket.emit('join:user', { userId: user._id, role });
     if (role === 'doctor') socket.emit('join:doctor', user._id);
+    joinAllAppointmentRooms(role);
   });
 
   return socket;
@@ -47,3 +60,14 @@ export function endSession(id, doctorId) { getSocket()?.emit('session:end', { ap
 export function onDoctorStatusUpdate(cb) { getSocket()?.on('doctor:status-update', cb); }
 export function onNotificationNew(cb) { getSocket()?.on('notification:new', cb); }
 export function onAppointmentIncoming(cb) { getSocket()?.on('appointment:incoming', cb); }
+
+// Call invite (ring/accept/decline)
+export function inviteCall(appointmentId, mode, callerName, callerRole) {
+  getSocket()?.emit('call:invite', { appointmentId, mode, callerName, callerRole });
+}
+export function acceptCall(appointmentId) { getSocket()?.emit('call:accept', { appointmentId }); }
+export function declineCall(appointmentId) { getSocket()?.emit('call:decline', { appointmentId }); }
+export function onCallIncoming(cb) { getSocket()?.on('call:incoming', cb); }
+export function onCallAccepted(cb) { getSocket()?.on('call:accepted', cb); }
+export function onCallDeclined(cb) { getSocket()?.on('call:declined', cb); }
+export function onCallMissed(cb) { getSocket()?.on('call:missed', cb); }

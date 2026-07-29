@@ -118,74 +118,6 @@ export async function toggleVideo() {
   }
   return false;
 }
-
-export function renderCallUI(appointmentId, mode = 'video') {
-  return `
-    <div id="vc-call-container" style="
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      background:#0a0a0a;z-index:9999;display:flex;
-      flex-direction:column;align-items:center;justify-content:center;">
-
-      <!-- Videos -->
-      <div style="position:relative;width:100%;max-width:900px;height:60vh;">
-        <!-- Remote video (Doctor/Patient) -->
-        <div id="remote-video" style="
-          width:100%;height:100%;background:#1a1a2e;border-radius:12px;
-          display:flex;align-items:center;justify-content:center;">
-          <div style="text-align:center;color:#64748b;">
-            <div style="font-size:48px;">👨‍⚕️</div>
-            <p style="margin:8px 0;color:#94a3b8;">Waiting for other participant...</p>
-          </div>
-        </div>
-
-        <!-- Local video (You) -->
-        ${mode === 'video' ? `
-        <div id="local-video" style="
-          position:absolute;bottom:16px;right:16px;
-          width:180px;height:120px;background:#0f172a;
-          border-radius:8px;border:2px solid #0066cc;overflow:hidden;">
-        </div>` : ''}
-
-        <!-- Audio only indicator -->
-        ${mode === 'audio' ? `
-        <div style="text-align:center;color:#ffffff;">
-          <div style="font-size:64px;margin-bottom:16px;">🎙️</div>
-          <p style="font-size:18px;color:#94a3b8;">Audio Call Active</p>
-        </div>` : ''}
-      </div>
-
-      <!-- Call info -->
-      <div style="margin:16px 0;color:#94a3b8;font-size:14px;">
-        🔴 Live · ${mode === 'video' ? 'Video' : 'Audio'} Consultation · Virtualcare Nigeria
-      </div>
-
-      <!-- Controls -->
-      <div style="display:flex;gap:16px;margin-top:8px;">
-        <button id="btn-mute" onclick="window.vcToggleMute()" style="
-          background:#1e293b;border:none;border-radius:50%;
-          width:56px;height:56px;cursor:pointer;font-size:20px;
-          color:#ffffff;transition:background 0.2s;" title="Mute/Unmute">
-          🎙️
-        </button>
-
-        ${mode === 'video' ? `
-        <button id="btn-video" onclick="window.vcToggleVideo()" style="
-          background:#1e293b;border:none;border-radius:50%;
-          width:56px;height:56px;cursor:pointer;font-size:20px;
-          color:#ffffff;transition:background 0.2s;" title="Toggle Video">
-          📷
-        </button>` : ''}
-
-        <button onclick="window.vcEndCall('${appointmentId}')" style="
-          background:#ef4444;border:none;border-radius:50%;
-          width:56px;height:56px;cursor:pointer;font-size:20px;
-          color:#ffffff;" title="End Call">
-          📵
-        </button>
-      </div>
-    </div>`;
-}
-
 async function loadAgoraSDK() {
   return new Promise((resolve, reject) => {
     if (window.AgoraRTC) return resolve();
@@ -197,18 +129,3 @@ async function loadAgoraSDK() {
   });
 }
 
-// Global helpers for inline onclick handlers
-window.vcToggleMute = async () => {
-  const muted = await toggleMute();
-  document.getElementById('btn-mute').textContent = muted ? '🔇' : '🎙️';
-};
-
-window.vcToggleVideo = async () => {
-  const disabled = await toggleVideo();
-  document.getElementById('btn-video').textContent = disabled ? '📷‍' : '📷';
-};
-
-window.vcEndCall = async (appointmentId) => {
-  await leaveCall(appointmentId);
-  document.getElementById('vc-call-container')?.remove();
-};

@@ -14,7 +14,7 @@ import { setDoctorInSession, updateDoctorStatusUI } from './status.js';
 import { renderDoctorShell, bindShellEvents } from '../shared/layout.js';
 import { formatDate, formatCurrency, statusBadge, escapeHtml, formatDoctorName } from '../shared/utils.js';
 import { connectSocket, joinDoctor, emitDoctorStatus } from '../shared/socket.js';
-import { joinCall, renderCallUI } from '../shared/videoCall.js';
+import { inviteCall } from '../shared/socket.js';
 import { toast } from '../shared/toast.js';
 
 const DEMO_QUEUE_PATIENTS = [
@@ -48,13 +48,13 @@ function isCallEligible(status) {
 function renderCallButtons(appointmentId) {
   return `
     <div style="display:flex;gap:8px;margin-top:12px;">
-      <button type="button" onclick="window.startCall('${appointmentId}', 'video')" style="
+      <button type="button" onclick="window.callAppointment('${appointmentId}', 'video')" style="
         background:#0066cc;color:#fff;border:none;border-radius:8px;
         padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;
         display:flex;align-items:center;gap:6px;">
         🎥 Video Call
       </button>
-      <button type="button" onclick="window.startCall('${appointmentId}', 'audio')" style="
+      <button type="button" onclick="window.callAppointment('${appointmentId}', 'audio')" style="
         background:#22c55e;color:#fff;border:none;border-radius:8px;
         padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;
         display:flex;align-items:center;gap:6px;">
@@ -62,15 +62,12 @@ function renderCallButtons(appointmentId) {
       </button>
     </div>`;
 }
-
-if (!window.startCall) {
-  window.startCall = async (appointmentId, mode) => {
-    document.body.insertAdjacentHTML('beforeend', renderCallUI(appointmentId, mode));
-    const result = await joinCall(appointmentId, mode);
-    if (!result.success) {
-      document.getElementById('vc-call-container')?.remove();
-      alert('Could not start call: ' + result.error);
-    }
+if (!window.callAppointment) {
+  window.callAppointment = (appointmentId, mode) => {
+    const user = getUser();
+    const callerName = user ? `${user.name || ''} ${user.surname || ''}`.trim() || 'Doctor' : 'Doctor';
+    inviteCall(appointmentId, mode, callerName, 'doctor');
+    toast('Calling… waiting for the patient to accept', 'info');
   };
 }
 
