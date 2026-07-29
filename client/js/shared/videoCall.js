@@ -54,12 +54,13 @@ export async function joinCall(appointmentId, mode = 'video') {
     }
 
     // Handle remote users
-    agoraClient.on('user-published', async (user, mediaType) => {
-      await agoraClient.subscribe(user, mediaType);
+    client.on('user-published', async (user, mediaType) => {
+      await client.subscribe(user, mediaType);
       if (mediaType === 'video') {
         user.videoTrack.play('remote-video');
       }
       if (mediaType === 'audio') {
+        user.audioTrack.setVolume(100);
         user.audioTrack.play();
       }
     });
