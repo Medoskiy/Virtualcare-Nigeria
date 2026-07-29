@@ -101,7 +101,7 @@ function renderQueueItem(patient, index) {
   const isDemo = String(patient.id).startsWith('demo');
   const startBtn = isDemo
     ? `<button type="button" class="btn-queue-start" data-session-start data-demo>▶ Start</button>`
-    : `<a href="/video/${patient.id}" class="btn-queue-start" data-session-start>▶ Start</a>`;
+    : `<button type="button" class="btn-queue-start" onclick="window.callAppointment('${patient.id}', 'video')">▶ Start</button>`;
   const completeBtn = isDemo
     ? `<button type="button" class="btn-queue-complete" data-demo-done>✓ Done</button>`
     : `<button type="button" class="btn-queue-complete" data-done="${patient.id}">✓ Done</button>`;

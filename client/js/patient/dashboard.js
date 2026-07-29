@@ -157,16 +157,11 @@ function apptStatusClass(status) {
 
 function renderApptCard(a) {
   const d = formatShortDate(a.scheduledAt);
-  const canJoin = isJoinable(a.scheduledAt) || a.status === 'active';
-  const joinBtn = canJoin
-    ? `<a href="/video/${a._id}" data-link class="btn btn-primary btn-sm">Join Session</a>`
-    : `<button class="btn btn-secondary btn-sm" disabled title="Available 10 min before">Join Session</button>`;
   return `<div class="appt-card upcoming-card appointment-card ${apptStatusClass(a.status)}">
     <div class="appt-date-block date-block"><div class="day">${d.day}</div><div class="month">${d.month}</div></div>
     <div style="flex:1"><strong>${escapeHtml(formatDoctorName(a.doctor, { surnameOnly: true }))}</strong> · ${escapeHtml(a.specialty)}
     <div class="text-muted">${d.time} · ${a.sessionType}</div></div>
     ${statusBadge(a.status)}
-    ${joinBtn}
     <a href="/patient/messages" data-link class="btn btn-secondary btn-sm">Message</a>
     ${isCallEligible(a.status) ? renderCallButtons(a._id) : ''}
   </div>`;
@@ -176,13 +171,8 @@ async function renderUpcoming(el) {
   const res = await patientsApi.upcoming();
   const list = res.data.appointments || [];
   el.innerHTML = `<h1>Upcoming Appointments</h1>${list.map((a) => {
-    const canJoin = isJoinable(a.scheduledAt) || a.status === 'active';
-    const joinBtn = canJoin
-      ? `<a href="/video/${a._id}" data-link class="btn btn-primary btn-sm">Join Session</a>`
-      : `<button class="btn btn-secondary btn-sm" disabled title="Available 10 min before">Join Session</button>`;
     return `${renderApptCard(a)}
     <div style="margin:-8px 0 16px 76px;display:flex;gap:8px">
-      ${joinBtn}
       <button class="btn btn-secondary btn-sm" data-cancel="${a._id}">Cancel</button>
     </div>`;
   }).join('') || '<div class="empty-state card">No upcoming appointments</div>'}`;
