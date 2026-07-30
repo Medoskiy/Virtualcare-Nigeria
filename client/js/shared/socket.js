@@ -8,7 +8,6 @@ async function joinAllAppointmentRooms(role) {
     if (!api) return;
     const res = await api.upcoming();
     const appointments = res?.data?.appointments || [];
-    console.log('[joinAllAppointmentRooms] joining rooms:', appointments.map((a) => a._id).join(', '));
     appointments.forEach((a) => joinAppointment(a._id));
   } catch {
     // ignore - non-critical, appointment rooms will still be joined when opening the appointment directly

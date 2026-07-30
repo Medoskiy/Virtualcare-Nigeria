@@ -44,7 +44,8 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
       <div class="video-controls-bar">
         <button class="vc-btn" id="vc-mute">🎤</button>
         <button class="vc-btn" id="vc-cam">📹</button>
-        <button class="vc-btn vc-end" id="vc-end">📞 End</button>
+        <button class="vc-btn vc-leave" id="vc-leave">👋 Leave</button>
+        ${getRole() === 'doctor' ? '<button class="vc-btn vc-end" id="vc-end">📞 End Session</button>' : ''}
       </div>
     </div>
   `;
@@ -76,9 +77,29 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
   }
 
   let hasEnded = false;
+  let hasLeft = false;
+  async function leaveCall() {
+    if (hasLeft || hasEnded) return;
+    hasLeft = true;
+    clearInterval(timer);
+    activeVideoCallId = null;
+    try {
+      if (frame) { await frame.leave(); await frame.destroy(); }
+    } catch (e) { console.warn('frame cleanup error:', e.message); }
+    const dest = getRole() === 'doctor' ? '/doctor/dashboard' : '/patient/upcoming';
+    container.innerHTML = `<div class="post-call"><h2>You left the session</h2><p>The session is still active. You can rejoin until the scheduled time ends.</p>
+      <a href="${dest}" data-link class="btn btn-primary">Back to Dashboard</a>
+      <a href="/video/${appointmentId}/${mode}" data-link class="btn btn-secondary">Rejoin</a>
+    </div>`;
+    container.querySelectorAll('[data-link]').forEach((a) => {
+      a.onclick = (e) => { e.preventDefault(); window.location.hash = a.getAttribute('href'); window.dispatchEvent(new HashChangeEvent('hashchange')); };
+    });
+    document.getElementById('site-header')?.classList.remove('hidden');
+  }
   async function endCall() {
     if (hasEnded) return;
     hasEnded = true;
+    hasLeft = true;
     clearInterval(timer);
     activeVideoCallId = null;
     const role = getRole();
@@ -141,7 +162,7 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
     frame.on('error', (e) => console.error('[daily] error:', e?.errorMsg || JSON.stringify(e)));
     frame.on('left-meeting', () => {
       console.log('[daily] left-meeting event');
-      endCall();
+      leaveCall();
     });
     await frame.join();
     console.log('[daily] join() resolved');
@@ -161,5 +182,6 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
     if (frame) await frame.setLocalVideo(camOn);
     toast(camOn ? 'Camera on' : 'Camera off', 'info');
   };
-  container.querySelector('#vc-end').onclick = endCall;
+  container.querySelector('#vc-leave').onclick = leaveCall;
+  container.querySelector('#vc-end')?.addEventListener('click', endCall);
 }

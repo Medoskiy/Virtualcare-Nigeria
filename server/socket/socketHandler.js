@@ -84,9 +84,6 @@ function initSocket(io) {
     });
 
     socket.on('call:invite', ({ appointmentId, mode, callerName, callerRole }) => {
-      console.log(`[CALL:INVITE] from ${callerRole} ${callerName} for appointment ${appointmentId}, mode=${mode}`);
-      const room = io.sockets.adapter.rooms.get(`appointment:${appointmentId}`);
-      console.log(`[CALL:INVITE] sockets in room appointment:${appointmentId}:`, room ? room.size : 0);
       if (callInviteTimers.has(appointmentId)) return;
       socket.broadcast.to(`appointment:${appointmentId}`).emit('call:incoming', {
         appointmentId, mode, callerName, callerRole

@@ -13,6 +13,7 @@
 .video-controls-bar { display: flex; justify-content: center; gap: 12px; padding: 20px; background: #161b22; }
 .vc-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: #21262d; font-size: 1.25rem; cursor: pointer; }
 .vc-btn.vc-end { background: var(--red); width: auto; padding: 0 24px; border-radius: 24px; color: #fff; }
+.vc-btn.vc-leave { background: #d97706; width: auto; padding: 0 24px; border-radius: 24px; color: #fff; }
 .post-call { text-align: center; padding: 80px 24px; max-width: 480px; margin: 0 auto; }
 
 .video-container {
