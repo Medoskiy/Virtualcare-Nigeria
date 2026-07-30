@@ -1,28 +1,4 @@
-const { RtcTokenBuilder, RtcRole } = require('agora-token');
-
-const APP_ID = process.env.AGORA_APP_ID;
-const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
-const TOKEN_EXPIRY_SECONDS = 7200; // 2 hours
-
-function generateAgoraToken(channelName, uid, role) {
-  if (!APP_ID || !APP_CERTIFICATE) {
-    console.warn('Agora credentials not set — returning demo token');
-    return null;
-  }
-  const expirationTime = Math.floor(Date.now() / 1000) + TOKEN_EXPIRY_SECONDS;
-  return RtcTokenBuilder.buildTokenWithUid(
-    APP_ID,
-    APP_CERTIFICATE,
-    channelName,
-    uid,
-    role,
-    expirationTime
-  );
-}
-
-function createChannelName(appointmentId) {
-  return `vc-ng-${appointmentId}`;
-}
+// Video service — Daily.co room provisioning for consultations.
 
 async function createVideoRoom(appointmentId) {
   const DAILY_API_KEY = process.env.DAILY_API_KEY;
@@ -70,17 +46,4 @@ async function createVideoRoom(appointmentId) {
   throw new Error('Failed to create video room');
 }
 
-async function generateTokenForUser(appointmentId, uid, isHost) {
-  const channelName = createChannelName(appointmentId);
-  const role = RtcRole.PUBLISHER;
-  const token = generateAgoraToken(channelName, uid, role);
-  return {
-    token,
-    channelName,
-    appId: APP_ID,
-    uid,
-    expiresAt: new Date(Date.now() + TOKEN_EXPIRY_SECONDS * 1000).toISOString()
-  };
-}
-
-module.exports = { createVideoRoom, generateTokenForUser, createChannelName };
+module.exports = { createVideoRoom };
