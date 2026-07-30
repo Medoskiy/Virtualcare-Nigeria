@@ -171,12 +171,13 @@ router.post('/:id/video-room', async (req, res) => {
     const appointment = await Appointment.findById(req.params.id);
     if (!appointment) return sendError(res, 'Not found', 404);
 
-    if (!appointment.videoRoomUrl) {
-      const room = await createVideoRoom(appointment._id);
-      appointment.videoRoomUrl = room.url;
+    // Always ensure a live room exists (Daily rooms are ephemeral and expire).
+    const room = await createVideoRoom(appointment._id);
+    appointment.videoRoomUrl = room.url;
+
+    if (appointment.status !== 'active') {
       appointment.status = 'active';
       appointment.sessionStartedAt = new Date();
-      await appointment.save();
 
       const doctor = await Doctor.findById(appointment.doctor);
       if (doctor) {
@@ -186,6 +187,7 @@ router.post('/:id/video-room', async (req, res) => {
         if (io) io.emit('doctor:status-update', { doctorId: doctor._id, status: 'red' });
       }
     }
+    await appointment.save();
 
     sendSuccess(res, { videoRoomUrl: appointment.videoRoomUrl });
   } catch (err) {

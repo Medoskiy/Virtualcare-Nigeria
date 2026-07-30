@@ -46,7 +46,7 @@ async function createVideoRoom(appointmentId) {
       name: roomName,
       privacy: 'public',
       properties: {
-        exp: Math.floor(Date.now() / 1000) + 3 * 60 * 60
+        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60
       }
     })
   });
