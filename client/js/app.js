@@ -216,7 +216,8 @@ async function router() {
   }
   if (path.startsWith('/video/')) {
     if (!requireAuth(['patient', 'doctor'])) return;
-    await initVideoCall(app, path.split('/video/')[1]);
+    const videoParts = path.split('/video/')[1].split('/');
+    await initVideoCall(app, videoParts[0], videoParts[1] || 'video');
     return;
   }
 

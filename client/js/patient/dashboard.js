@@ -36,7 +36,7 @@ if (!window.callAppointment) {
   window.callAppointment = (appointmentId, mode) => {
     const user = getUser();
     const callerName = user ? `${user.name || ''} ${user.surname || ''}`.trim() || 'Patient' : 'Patient';
-    setOutgoingCall(appointmentId);
+    setOutgoingCall(appointmentId, mode);
     inviteCall(appointmentId, mode, callerName, 'patient');
     toast('Calling\u2026 waiting for the doctor to accept', 'info');
   };

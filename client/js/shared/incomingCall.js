@@ -4,6 +4,7 @@ import { getUser } from './api.js';
 let bannerEl = null;
 let currentInvite = null;
 let outgoingCallId = null;
+let outgoingCallMode = 'video';
 let ringAudioCtx = null;
 let ringIntervalId = null;
 let vibrateIntervalId = null;
@@ -71,9 +72,10 @@ function ensureBanner() {
   bannerEl.querySelector('#incoming-call-accept').addEventListener('click', () => {
     if (!currentInvite) return;
     const apptId = currentInvite.appointmentId;
+    const apptMode = currentInvite.mode || 'video';
     acceptCall(apptId);
     hideBanner();
-    window.location.hash = `/video/${apptId}`;
+    window.location.hash = `/video/${apptId}/${apptMode}`;
     window.dispatchEvent(new HashChangeEvent('hashchange'));
   });
 
@@ -103,8 +105,9 @@ function hideBanner() {
 }
 
 // Called by the caller (patient or doctor) when they initiate an outgoing call
-export function setOutgoingCall(appointmentId) {
+export function setOutgoingCall(appointmentId, mode = 'video') {
   outgoingCallId = appointmentId;
+  outgoingCallMode = mode;
 }
 
 export function initIncomingCallListener() {
@@ -127,8 +130,9 @@ export function initIncomingCallListener() {
   // Caller side: when the other party accepts, navigate the caller into the call
   onCallAccepted(({ appointmentId }) => {
     if (outgoingCallId === appointmentId) {
+      const m = outgoingCallMode || 'video';
       outgoingCallId = null;
-      window.location.hash = `/video/${appointmentId}`;
+      window.location.hash = `/video/${appointmentId}/${m}`;
       window.dispatchEvent(new HashChangeEvent('hashchange'));
     }
   });

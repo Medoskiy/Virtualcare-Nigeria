@@ -11,7 +11,7 @@ const WARN_50 = 50;
 
 let activeVideoCallId = null;
 
-export async function initVideoCall(container, appointmentId) {
+export async function initVideoCall(container, appointmentId, mode = 'video') {
   if (activeVideoCallId === appointmentId) {
     console.warn('initVideoCall already active for this appointment — ignoring duplicate');
     return;
@@ -48,15 +48,16 @@ export async function initVideoCall(container, appointmentId) {
   const timerEl = container.querySelector('#live-timer');
   const warnEl = container.querySelector('#session-warn');
 
+  const TOTAL_SECONDS = 45 * 60;
   const timer = setInterval(() => {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
-    const s = String(elapsed % 60).padStart(2, '0');
+    const remaining = Math.max(0, TOTAL_SECONDS - elapsed);
+    const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+    const s = String(remaining % 60).padStart(2, '0');
     timerEl.textContent = `${m}:${s}`;
-    const mins = elapsed / 60;
-    if (mins >= WARN_45 && mins < WARN_45 + 0.1) showWarn('10 minutes remaining', 'warn-yellow');
-    if (mins >= WARN_50 && mins < WARN_50 + 0.1) showWarn('5 minutes remaining', 'warn-amber');
-    if (mins >= SESSION_END_MIN) endCall();
+    if (remaining === 600) showWarn('10 minutes remaining', 'warn-yellow');
+    if (remaining === 300) showWarn('5 minutes remaining', 'warn-amber');
+    if (remaining <= 0) endCall();
   }, 1000);
 
   function showWarn(msg, cls) {
@@ -107,7 +108,7 @@ export async function initVideoCall(container, appointmentId) {
     onSessionEnd(() => endCall());
 
     await forceCleanup();
-    const result = await joinCall(appointmentId, 'video');
+    const result = await joinCall(appointmentId, mode);
     if (!result.success) {
       container.querySelector('#remote-video').innerHTML = `<p style="color:#fff;padding:40px">${result.error}</p>`;
     }
