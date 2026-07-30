@@ -131,7 +131,9 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
       url: roomUrl,
       iframeStyle: { width: '100%', height: '100%', border: 'none' },
       showLeaveButton: false,
-      showFullscreenButton: false
+      showFullscreenButton: false,
+      activeSpeakerMode: false,
+      layoutConfig: { grid: { maxTilesPerPage: 2 } }
     });
     frame.on('joined-meeting', (e) => console.log('[daily] joined-meeting', e?.participants?.local?.session_id));
     frame.on('participant-joined', (e) => console.log('[daily] participant-joined', e?.participant?.user_name));

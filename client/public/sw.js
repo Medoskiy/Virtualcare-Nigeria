@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'virtualcare-ng-v40';
+const CACHE_VERSION = 'virtualcare-ng-v41';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 
