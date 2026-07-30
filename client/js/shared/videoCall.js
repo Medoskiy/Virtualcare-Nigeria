@@ -36,7 +36,10 @@ export async function joinCall(appointmentId, mode = 'video') {
     // Create local tracks
     let audioTrack, videoTrack;
     if (mode === 'video') {
-      [audioTrack, videoTrack] = await window.AgoraRTC.createMicrophoneAndCameraTracks();
+      [audioTrack, videoTrack] = await window.AgoraRTC.createMicrophoneAndCameraTracks(
+        { encoderConfig: 'speech_standard', AEC: true, ANS: true, AGC: true },
+        { encoderConfig: { width: 1280, height: 720, frameRate: 15, bitrateMin: 200, bitrateMax: 1500 } }
+      );
     } else {
       audioTrack = await window.AgoraRTC.createMicrophoneAudioTrack();
     }
@@ -60,7 +63,7 @@ export async function joinCall(appointmentId, mode = 'video') {
         user.videoTrack.play('remote-video');
       }
       if (mediaType === 'audio') {
-        user.audioTrack.setVolume(300);
+        user.audioTrack.setVolume(400);
         user.audioTrack.play();
       }
     });
