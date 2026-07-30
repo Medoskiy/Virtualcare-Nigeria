@@ -156,16 +156,11 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
       activeSpeakerMode: false,
       layoutConfig: { grid: { maxTilesPerPage: 2 } }
     });
-    frame.on('joined-meeting', (e) => console.log('[daily] joined-meeting', e?.participants?.local?.session_id));
-    frame.on('participant-joined', (e) => console.log('[daily] participant-joined', e?.participant?.user_name));
-    frame.on('participant-left', (e) => console.log('[daily] participant-left', e?.participant?.user_name));
     frame.on('error', (e) => console.error('[daily] error:', e?.errorMsg || JSON.stringify(e)));
     frame.on('left-meeting', () => {
-      console.log('[daily] left-meeting event');
       leaveCall();
     });
     await frame.join();
-    console.log('[daily] join() resolved');
     if (mode === 'audio') await frame.setLocalVideo(false);
   } catch (e) {
     console.error('Call init failed:', e.message);

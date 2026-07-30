@@ -167,10 +167,9 @@ function renderApptCard(a) {
     <a href="/patient/messages" data-link class="btn btn-secondary btn-sm">Message</a>
     ${a.status === 'active'
       ? `<a href="/video/${a._id}/video" data-link class="btn btn-sm" style="background:#dc2626;color:#fff;font-weight:600;">🔴 Session in progress — Rejoin</a>`
-      : (isCallEligible(a.status) ? renderCallButtons(a._id) : '')}
-    ${(a.status !== 'active' && isJoinable(a.scheduledAt) && a.status !== 'completed' && a.status !== 'cancelled')
-      ? `<a href="/video/${a._id}/video" data-link class="btn btn-sm btn-secondary" style="font-weight:600;">↩ Rejoin session</a>`
-      : ''}
+      : (isJoinable(a.scheduledAt) && a.status !== 'completed' && a.status !== 'cancelled'
+          ? renderCallButtons(a._id)
+          : (isCallEligible(a.status) ? renderCallButtons(a._id) : ''))}
   </div>`;
 }
 
