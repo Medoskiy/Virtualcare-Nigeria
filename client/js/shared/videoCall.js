@@ -58,21 +58,29 @@ export async function joinCall(appointmentId, mode = 'video') {
 
     // Handle remote users
     client.on('user-published', async (user, mediaType) => {
-      await client.subscribe(user, mediaType);
-      if (mediaType === 'video') {
-        user.videoTrack.play('remote-video');
-      }
-      if (mediaType === 'audio') {
-        user.audioTrack.setVolume(400);
-        user.audioTrack.play();
+      try {
+        await client.subscribe(user, mediaType);
+        if (mediaType === 'video') {
+          const el = document.getElementById('remote-video');
+          if (el) {
+            el.innerHTML = '';
+            user.videoTrack.play('remote-video', { fit: 'cover' });
+          }
+        }
+        if (mediaType === 'audio') {
+          user.audioTrack.setVolume(400);
+          user.audioTrack.play();
+        }
+      } catch (err) {
+        console.error('subscribe/play failed:', err.message);
       }
     });
 
-    agoraClient.on('user-unpublished', (user) => {
+    client.on('user-unpublished', (user, mediaType) => {
       console.log('Remote user unpublished:', user.uid);
     });
 
-    agoraClient.on('user-left', (user) => {
+    client.on('user-left', (user) => {
       console.log('Remote user left:', user.uid);
       document.getElementById('remote-video')?.replaceChildren();
     });
