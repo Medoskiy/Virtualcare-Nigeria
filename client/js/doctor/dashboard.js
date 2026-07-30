@@ -12,7 +12,7 @@ import { renderDoctorSettings } from './settings.js';
 import { renderDoctorReviews } from './reviews.js';
 import { setDoctorInSession, updateDoctorStatusUI } from './status.js';
 import { renderDoctorShell, bindShellEvents } from '../shared/layout.js';
-import { formatDate, formatCurrency, statusBadge, escapeHtml, formatDoctorName } from '../shared/utils.js';
+import { formatDate, formatCurrency, statusBadge, escapeHtml, formatDoctorName, isJoinable } from '../shared/utils.js';
 import { connectSocket, joinDoctor, emitDoctorStatus } from '../shared/socket.js';
 import { inviteCall } from '../shared/socket.js';
 import { setOutgoingCall } from '../shared/incomingCall.js';
@@ -83,7 +83,8 @@ function buildQueueItems(appointments) {
     condition: a.notes || 'General consultation',
     waitTime: index === 0 ? 'Next' : `${index}hr`,
     id: a._id,
-    status: a.status
+    status: a.status,
+    scheduledAt: a.scheduledAt
   }));
 
   const usedNames = new Set(items.map((i) => i.name));
@@ -103,7 +104,7 @@ function renderQueueItem(patient, index) {
   const isDemo = String(patient.id).startsWith('demo');
   const startBtn = isDemo
     ? `<button type="button" class="btn-queue-start" data-session-start data-demo>▶ Start</button>`
-    : (patient.status === 'active'
+    : ((patient.status === 'active' || (isJoinable(patient.scheduledAt) && patient.status !== 'completed' && patient.status !== 'cancelled'))
         ? `<a href="/video/${patient.id}/video" data-link class="btn-queue-start" style="background:#dc2626;">🔴 Rejoin</a>`
         : `<button type="button" class="btn-queue-start" onclick="window.callAppointment('${patient.id}', 'video')">▶ Start</button>`);
   const completeBtn = isDemo
