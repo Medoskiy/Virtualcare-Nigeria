@@ -128,8 +128,16 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
       showLeaveButton: false,
       showFullscreenButton: false
     });
-    frame.on('left-meeting', () => endCall());
+    frame.on('joined-meeting', (e) => console.log('[daily] joined-meeting', e?.participants?.local?.session_id));
+    frame.on('participant-joined', (e) => console.log('[daily] participant-joined', e?.participant?.user_name));
+    frame.on('participant-left', (e) => console.log('[daily] participant-left', e?.participant?.user_name));
+    frame.on('error', (e) => console.error('[daily] error:', e?.errorMsg || JSON.stringify(e)));
+    frame.on('left-meeting', () => {
+      console.log('[daily] left-meeting event');
+      endCall();
+    });
     await frame.join({ url: roomUrl });
+    console.log('[daily] join() resolved');
     if (mode === 'audio') await frame.setLocalVideo(false);
   } catch (e) {
     console.error('Call init failed:', e.message);
