@@ -60,7 +60,7 @@ export async function joinCall(appointmentId, mode = 'video') {
         user.videoTrack.play('remote-video');
       }
       if (mediaType === 'audio') {
-        user.audioTrack.setVolume(100);
+        user.audioTrack.setVolume(300);
         user.audioTrack.play();
       }
     });
