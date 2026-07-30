@@ -58,7 +58,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://js.paystack.co', 'https://fonts.googleapis.com', 'https://download.agora.io', 'https://www.googletagmanager.com', 'https://browser.sentry-cdn.com'],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://js.paystack.co', 'https://fonts.googleapis.com', 'https://download.agora.io', 'https://www.googletagmanager.com', 'https://browser.sentry-cdn.com', 'https://unpkg.com', 'https://*.daily.co'],
       scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
@@ -71,10 +71,12 @@ app.use(helmet({
         'wss://*.agora.io',
         'https://*.sd-rtn.com',
         'wss://*.sd-rtn.com',
+        'https://*.daily.co',
+        'wss://*.daily.co',
         'https://v3.api.termii.com',
         process.env.CLIENT_URL || 'http://localhost:3000'
       ],
-      frameSrc: ["'self'", 'https://checkout.paystack.com']
+      frameSrc: ["'self'", 'https://checkout.paystack.com', 'https://*.daily.co']
     }
   },
   crossOriginEmbedderPolicy: false

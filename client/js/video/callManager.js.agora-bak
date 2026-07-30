@@ -1,25 +1,15 @@
-import { appointmentsApi, getRole, getUser } from '../shared/api.js';
+import { appointmentsApi } from '../shared/api.js';
+import { getRole, getUser } from '../shared/api.js';
 import { joinAppointment, startSessionTimer, onSessionWarning, onSessionEnd, endSession } from '../shared/socket.js';
 import { toast } from '../shared/toast.js';
 import { formatDoctorName } from '../shared/utils.js';
 import { setDoctorInSession, setDoctorAvailableAfterSession } from '../doctor/status.js';
-
+import { joinCall, leaveCall, forceCleanup, toggleMute as agoraToggleMute, toggleVideo as agoraToggleVideo } from '../shared/videoCall.js';
 const SESSION_END_MIN = 55;
 const WARN_45 = 45;
 const WARN_50 = 50;
 
 let activeVideoCallId = null;
-
-function loadDailySDK() {
-  return new Promise((resolve, reject) => {
-    if (window.DailyIframe) return resolve();
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/@daily-co/daily-js';
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
 
 export async function initVideoCall(container, appointmentId, mode = 'video') {
   if (activeVideoCallId === appointmentId) {
@@ -33,17 +23,20 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
     <div class="video-fullscreen">
       <div class="video-top-bar">
         <span id="call-name">Connecting…</span>
-        <span class="live-timer" id="live-timer">45:00</span>
+        <span class="live-timer" id="live-timer">00:00</span>
         <span class="live-badge">🔴 Live · HD</span>
       </div>
       <div class="video-main" id="video-main">
         <div id="remote-video" class="video-area"></div>
+        <div id="local-video" class="self-preview" id="self-preview"></div>
         <div id="session-warn" class="session-warn hidden"></div>
       </div>
       <p class="session-note">Session time: 45–55 minutes</p>
       <div class="video-controls-bar">
         <button class="vc-btn" id="vc-mute">🎤</button>
         <button class="vc-btn" id="vc-cam">📹</button>
+        <button class="vc-btn" id="vc-share">🖥️</button>
+        <button class="vc-btn" id="vc-chat">💬</button>
         <button class="vc-btn vc-end" id="vc-end">📞 End</button>
       </div>
     </div>
@@ -51,8 +44,7 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
 
   let startTime = Date.now();
   let muted = false;
-  let camOn = mode === 'video';
-  let frame = null;
+  let camOn = true;
   const timerEl = container.querySelector('#live-timer');
   const warnEl = container.querySelector('#session-warn');
 
@@ -80,12 +72,10 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
     if (hasEnded) return;
     hasEnded = true;
     clearInterval(timer);
-    activeVideoCallId = null;
-    const role = getRole();
     const user = getUser();
-    try {
-      if (frame) { await frame.leave(); await frame.destroy(); }
-    } catch (e) { console.warn('frame cleanup error:', e.message); }
+    const role = getRole();
+    activeVideoCallId = null;
+    await leaveCall(appointmentId);
     endSession(appointmentId, role === 'doctor' ? user._id : undefined);
     if (role === 'doctor') setDoctorAvailableAfterSession();
     container.innerHTML = `<div class="post-call"><h2>Session Complete</h2><p>Thank you for using Virtualcare.</p>
@@ -117,33 +107,22 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
     onSessionWarning((p) => showWarn(p.message, 'warn-yellow'));
     onSessionEnd(() => endCall());
 
-    const roomRes = await appointmentsApi.videoRoom(appointmentId);
-    const roomUrl = roomRes.data.videoRoomUrl;
-    if (!roomUrl) throw new Error('No room URL returned');
-
-    if (!window.DailyIframe) await loadDailySDK();
-
-    frame = window.DailyIframe.createFrame(document.getElementById('remote-video'), {
-      iframeStyle: { width: '100%', height: '100%', border: 'none' },
-      showLeaveButton: false,
-      showFullscreenButton: false
-    });
-    frame.on('left-meeting', () => endCall());
-    await frame.join({ url: roomUrl });
-    if (mode === 'audio') await frame.setLocalVideo(false);
+    await forceCleanup();
+    const result = await joinCall(appointmentId, mode);
+    if (!result.success) {
+      container.querySelector('#remote-video').innerHTML = `<p style="color:#fff;padding:40px">${result.error}</p>`;
+    }
   } catch (e) {
-    console.error('Call init failed:', e.message);
-    document.getElementById('remote-video').innerHTML = `<p style="color:#fff;padding:40px">${e.message}</p>`;
+    container.querySelector('#remote-video').innerHTML = `<p style="color:#fff;padding:40px">${e.message}</p>`;
   }
 
   container.querySelector('#vc-mute').onclick = async () => {
-    muted = !muted;
-    if (frame) await frame.setLocalAudio(!muted);
+    muted = await agoraToggleMute();
     toast(muted ? 'Muted' : 'Unmuted', 'info');
   };
   container.querySelector('#vc-cam').onclick = async () => {
-    camOn = !camOn;
-    if (frame) await frame.setLocalVideo(camOn);
+    const disabled = await agoraToggleVideo();
+    camOn = !disabled;
     toast(camOn ? 'Camera on' : 'Camera off', 'info');
   };
   container.querySelector('#vc-end').onclick = endCall;
