@@ -165,7 +165,9 @@ function renderApptCard(a) {
     <div class="text-muted">${d.time} · ${a.sessionType}</div></div>
     ${statusBadge(a.status)}
     <a href="/patient/messages" data-link class="btn btn-secondary btn-sm">Message</a>
-    ${isCallEligible(a.status) ? renderCallButtons(a._id) : ''}
+    ${a.status === 'active'
+      ? `<a href="/video/${a._id}/video" data-link class="btn btn-sm" style="background:#dc2626;color:#fff;font-weight:600;">🔴 Session in progress — Rejoin</a>`
+      : (isCallEligible(a.status) ? renderCallButtons(a._id) : '')}
   </div>`;
 }
 
