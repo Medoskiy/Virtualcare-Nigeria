@@ -69,6 +69,8 @@ app.use(helmet({
         'https://api.anthropic.com',
         'https://*.agora.io',
         'wss://*.agora.io',
+        'https://*.sd-rtn.com',
+        'wss://*.sd-rtn.com',
         'https://v3.api.termii.com',
         process.env.CLIENT_URL || 'http://localhost:3000'
       ],
