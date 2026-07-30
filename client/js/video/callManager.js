@@ -123,7 +123,12 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
 
     if (!window.DailyIframe) await loadDailySDK();
 
+    try {
+      const existing = window.DailyIframe.getCallInstance && window.DailyIframe.getCallInstance();
+      if (existing) { await existing.leave().catch(() => {}); await existing.destroy().catch(() => {}); }
+    } catch (e) { console.warn('[daily] cleanup existing instance:', e.message); }
     frame = window.DailyIframe.createFrame(document.getElementById('remote-video'), {
+      url: roomUrl,
       iframeStyle: { width: '100%', height: '100%', border: 'none' },
       showLeaveButton: false,
       showFullscreenButton: false
@@ -136,7 +141,7 @@ export async function initVideoCall(container, appointmentId, mode = 'video') {
       console.log('[daily] left-meeting event');
       endCall();
     });
-    await frame.join({ url: roomUrl });
+    await frame.join();
     console.log('[daily] join() resolved');
     if (mode === 'audio') await frame.setLocalVideo(false);
   } catch (e) {
