@@ -66,7 +66,10 @@ export async function initVideoCall(container, appointmentId) {
     toast(msg, 'warning');
   }
 
+  let hasEnded = false;
   async function endCall() {
+    if (hasEnded) return;
+    hasEnded = true;
     clearInterval(timer);
     const user = getUser();
     const role = getRole();
