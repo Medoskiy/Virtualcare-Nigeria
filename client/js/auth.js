@@ -69,13 +69,13 @@ function getLoginHTML() {
         <h2 style="font-size:26px;font-weight:900;color:#0a2463;margin:0 0 6px">Welcome Back</h2>
         <p style="font-size:15px;color:#64748b;margin:0 0 24px">Sign in to your Virtualcare account</p>
         <div class="auth-role-selector" style="display:flex;background:#f1f5f9;border-radius:10px;padding:4px;margin-bottom:24px;border:1px solid #e2e8f0">
-          <button type="button" class="auth-role-btn ${currentAuthRole === 'patient' ? 'active' : ''}" data-auth-role="patient" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;${currentAuthRole === 'patient' ? 'background:#fff;color:#1d6aba;box-shadow:0 2px 8px rgba(0,0,0,0.1)' : 'background:transparent;color:#64748b'}"><span style="font-size:16px">👤</span><span>Patient</span></button>
-          <button type="button" class="auth-role-btn ${currentAuthRole === 'doctor' ? 'active' : ''}" data-auth-role="doctor" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;${currentAuthRole === 'doctor' ? 'background:#fff;color:#1d6aba;box-shadow:0 2px 8px rgba(0,0,0,0.1)' : 'background:transparent;color:#64748b'}"><span style="font-size:16px">👨‍⚕️</span><span>Doctor</span></button>
-          <button type="button" class="auth-role-btn ${currentAuthRole === 'admin' ? 'active' : ''}" data-auth-role="admin" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;${currentAuthRole === 'admin' ? 'background:#fff;color:#1d6aba;box-shadow:0 2px 8px rgba(0,0,0,0.1)' : 'background:transparent;color:#64748b'}"><span style="font-size:16px">⚙️</span><span>Admin</span></button>
+          <button type="button" class="auth-role-btn ${currentAuthRole === 'patient' ? 'active' : ''}" data-auth-role="patient" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;${currentAuthRole === 'patient' ? 'background:#1d6aba;color:#fff;box-shadow:0 2px 8px rgba(29,106,186,0.35)' : 'background:transparent;color:#64748b'}"><span style="font-size:16px">👤</span><span>Patient</span></button>
+          <button type="button" class="auth-role-btn ${currentAuthRole === 'doctor' ? 'active' : ''}" data-auth-role="doctor" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;${currentAuthRole === 'doctor' ? 'background:#1d6aba;color:#fff;box-shadow:0 2px 8px rgba(29,106,186,0.35)' : 'background:transparent;color:#64748b'}"><span style="font-size:16px">👨‍⚕️</span><span>Doctor</span></button>
+          <button type="button" class="auth-role-btn ${currentAuthRole === 'admin' ? 'active' : ''}" data-auth-role="admin" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;${currentAuthRole === 'admin' ? 'background:#1d6aba;color:#fff;box-shadow:0 2px 8px rgba(29,106,186,0.35)' : 'background:transparent;color:#64748b'}"><span style="font-size:16px">⚙️</span><span>Admin</span></button>
         </div>
         <div class="social-auth-section" id="socialAuthSection" style="${currentAuthRole === 'admin' ? 'display:none' : 'display:flex;flex-direction:column;gap:10px;margin-bottom:20px'}">
           <button type="button" class="btn-social-auth google-btn" data-action="google-signin" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;font-size:14px;font-weight:600;color:#0a2463;cursor:pointer">${GOOGLE_SVG} Continue with Google</button>
-          <button type="button" class="btn-social-auth facebook-btn" data-action="facebook-signin" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:none;border-radius:10px;background:#1877F2;font-size:14px;font-weight:600;color:#fff;cursor:pointer">${FACEBOOK_SVG} Continue with Facebook</button>
+
         </div>
         <div class="auth-divider" id="authDivider" style="${currentAuthRole === 'admin' ? 'display:none' : 'display:flex;align-items:center;gap:14px;margin-bottom:20px'}"><div style="flex:1;height:1px;background:#e2e8f0"></div><span style="font-size:13px;color:#94a3b8;white-space:nowrap">or sign in with email</span><div style="flex:1;height:1px;background:#e2e8f0"></div></div>
         <form class="auth-form" id="loginForm" style="display:flex;flex-direction:column;gap:0">
@@ -87,12 +87,12 @@ function getLoginHTML() {
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label for="loginPassword" style="font-size:13px;font-weight:600;color:#0a2463;margin:0">Password</label><button type="button" data-action="forgot-password" style="background:none;border:none;color:#1d6aba;font-size:12px;font-weight:600;cursor:pointer;padding:0">Forgot password?</button></div>
             <div style="display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;padding:0 12px;background:#f8fafc" class="auth-input-wrap"><span style="font-size:16px;margin-right:10px;flex-shrink:0;display:flex;align-items:center">🔒</span><input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password" style="flex:1;border:none;background:transparent;padding:12px 0;font-size:16px;font-family:inherit;outline:none;min-width:0;color:#0f172a" class="auth-input" /><button type="button" data-toggle-pw="loginPassword" aria-label="Toggle password" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px;flex-shrink:0;display:flex;align-items:center">👁️</button></div>
           </div>
-          <div style="margin-bottom:20px"><label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#64748b;cursor:pointer"><input type="checkbox" id="rememberMe" style="accent-color:#1d6aba;width:16px;height:16px" /><span>Remember me for 30 days</span></label></div>
+          <div style="margin-bottom:20px"><label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#64748b;cursor:pointer;white-space:nowrap"><input type="checkbox" id="rememberMe" style="accent-color:#1d6aba;width:16px;height:16px;flex-shrink:0;margin:0" /><span>Remember me for 30 days</span></label></div>
           <div class="auth-error-msg" id="loginError" style="display:none;background:#fef2f2;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px"></div>
           <button type="submit" class="btn-auth-submit" id="loginSubmitBtn" style="width:100%;padding:14px;background:linear-gradient(135deg,#1d6aba,#0a2463);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">Sign In</button>
         </form>
         <div style="text-align:center;margin-top:20px;font-size:14px;color:#64748b">Don't have an account? <a href="/register" data-link style="color:#1d6aba;font-weight:600;text-decoration:none">Register free →</a></div>
-        <div style="text-align:center;margin-top:10px"><a href="/" data-link style="font-size:13px;color:#94a3b8;text-decoration:none">← Back to Home</a></div>
+        <div style="text-align:center;margin-top:10px"><a href="/" data-link style="font-size:13px;color:#1d6aba;font-weight:700;text-decoration:none">← Back to Home</a></div>
       </div>
     </div>
   </div>
@@ -346,7 +346,7 @@ function getRegisterHTML() {
           Already have an account? <a href="/login" data-link style="color:#1d6aba;font-weight:600;text-decoration:none">Sign in →</a>
         </div>
         <div style="text-align:center;margin-top:10px">
-          <a href="/" data-link style="font-size:13px;color:#94a3b8;text-decoration:none">← Back to Home</a>
+          <a href="/" data-link style="font-size:13px;color:#1d6aba;font-weight:700;text-decoration:none">← Back to Home</a>
         </div>
       </div>
     </div>
