@@ -3,6 +3,7 @@ const Prescription = require('../models/Prescription');
 const { generatePrescriptionPDF } = require('../services/prescriptionPDF');
 const auth = require('../middleware/auth');
 const requireRole = require('../middleware/role');
+const { createInAppNotification } = require('../services/notificationService');
 
 const router = express.Router();
 
@@ -83,6 +84,32 @@ router.get('/:id/download', auth, async (req, res) => {
 router.post('/:id/refill-request', requireRole('patient'), async (req, res) => {
   const rx = await Prescription.findOne({ _id: req.params.id, patient: req.user._id });
   if (!rx) return res.status(404).json({ success: false, data: null, message: 'Prescription not found', errors: null });
+
+  // Build a readable patient name and medication summary
+  const patientName = [req.user.name, req.user.surname].filter(Boolean).join(' ') || 'A patient';
+  const medName = (rx.medications && rx.medications[0] && rx.medications[0].name) ? rx.medications[0].name : 'a medication';
+  const medMore = (rx.medications && rx.medications.length > 1) ? ` (+${rx.medications.length - 1} more)` : '';
+
+  // Notify the issuing doctor (the Doctor doc references a User account for notifications)
+  try {
+    const io = req.app.get('io');
+    await createInAppNotification({
+      user: rx.doctor,
+      userRole: 'doctor',
+      type: 'refill',
+      title: 'Refill Request',
+      body: `${patientName} requested a refill for ${medName}${medMore}.`,
+      link: '/doctor/prescriptions'
+    }, io);
+  } catch (err) {
+    console.error('Refill notification failed:', err.message);
+  }
+
+  // Mark the request on the prescription for tracking
+  rx.refillRequested = true;
+  rx.refillRequestedAt = new Date();
+  try { await rx.save(); } catch (e) { /* non-fatal */ }
+
   res.json({ success: true, data: { prescriptionId: rx._id }, message: 'Refill request submitted to your doctor', errors: null });
 });
 
