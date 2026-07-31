@@ -222,7 +222,7 @@ async function renderMessages(el) {
     <div class="chat-input">
       <input type="file" id="msg-file" accept=".pdf,.jpg,.jpeg,.png" hidden>
       <button class="btn btn-secondary btn-sm" id="msg-attach">📎</button>
-      <input id="messageInput" class="message-input chat-input" placeholder="Type a message...">
+      <input id="messageInput" class="message-input" placeholder="Type a message...">
       <button type="button" class="btn btn-primary btn-sm btn-send send-btn" id="sendBtn">Send</button>
     </div>
     <p class="chat-input-hint">Press Enter to send · Shift+Enter for new line</p></div>

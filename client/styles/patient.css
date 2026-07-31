@@ -81,15 +81,31 @@
 }
 .chat-input {
   display: flex;
+  align-items: center;
   gap: 8px;
-  padding: 16px;
+  padding: 12px;
   border-top: 1px solid var(--border);
 }
-.chat-input input {
-  flex: 1;
+.chat-input .message-input {
+  flex: 1 1 auto;
+  min-width: 0;
   padding: 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
+}
+.chat-input #msg-attach {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 50%;
+}
+.chat-input .send-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 .chat-input-hint {
   font-size: 11px;
