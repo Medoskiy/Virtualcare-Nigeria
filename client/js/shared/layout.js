@@ -1,4 +1,5 @@
 import { getUser, getRole } from './api.js';
+import { notificationsApi } from './api.js';
 import { logout, returnToHome } from '../auth.js';
 import { escapeHtml, initials, formatDoctorName } from './utils.js';
 
@@ -88,6 +89,7 @@ export function renderDoctorShell(path, contentHtml, doctor) {
         <div id="doctor-mobile-header" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#0a2463;color:#fff;position:sticky;top:0;z-index:100;gap:10px;min-height:52px">
           <button type="button" id="doctor-menu-btn" style="background:rgba(255,255,255,0.18);border:none;border-radius:8px;width:40px;height:40px;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;min-height:unset;min-width:unset;line-height:1">☰</button>
           <span style="font-size:15px;font-weight:700;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Dr. ${escapeHtml(doctor?.name || '')}</span>
+          <button type="button" id="doctor-notif-bell" style="position:relative;background:rgba(255,255,255,0.18);border:none;border-radius:8px;width:40px;height:40px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;min-height:unset;min-width:unset">🔔<span id="doctor-notif-badge" style="display:none;position:absolute;top:2px;right:2px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 3px"></span></button>
           <div style="display:flex;gap:4px;flex-shrink:0">
             <button data-mobile-st="green" style="background:${st === 'green' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer;min-height:unset;min-width:unset">🟢</button>
             <button data-mobile-st="amber" style="background:${st === 'amber' ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)'};border:none;border-radius:6px;padding:5px 8px;color:#fff;font-size:12px;cursor:pointer;min-height:unset;min-width:unset">🟡</button>
@@ -179,6 +181,9 @@ export function bindShellEvents(container, roleHandlers = {}) {
   container.querySelectorAll('.status-toggle-group button').forEach((btn) => {
     btn.addEventListener('click', () => roleHandlers.onStatus?.(btn.dataset.st));
   });
+
+  // NOTIFICATION BELL (doctor)
+  initNotificationBell(container);
 
   // DOCTOR MOBILE MENU
   const docSidebar   = container.querySelector('#doctor-sidebar');
@@ -313,4 +318,95 @@ export function bindShellEvents(container, roleHandlers = {}) {
       if (sidebarAvatar) sidebarAvatar.innerHTML = `<span style="font-size:36px;line-height:1">${emoji}</span>`;
     }
   } catch { /* ignore */ }
+}
+
+function timeAgo(dateStr) {
+  const d = new Date(dateStr);
+  const diff = Math.floor((Date.now() - d.getTime()) / 1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  return Math.floor(diff / 86400) + 'd ago';
+}
+
+export function initNotificationBell(container) {
+  const bell = container.querySelector('#doctor-notif-bell');
+  const badge = container.querySelector('#doctor-notif-badge');
+  if (!bell) return;
+
+  let dropdown = null;
+
+  async function refreshBadge() {
+    try {
+      const res = await notificationsApi.list();
+      const unread = res?.data?.unread || 0;
+      if (badge) {
+        if (unread > 0) {
+          badge.textContent = unread > 9 ? '9+' : String(unread);
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    } catch { /* ignore */ }
+  }
+
+  function closeDropdown() {
+    if (dropdown) { dropdown.remove(); dropdown = null; }
+    document.removeEventListener('click', outsideClick, true);
+  }
+
+  function outsideClick(e) {
+    if (dropdown && !dropdown.contains(e.target) && e.target !== bell) closeDropdown();
+  }
+
+  async function openDropdown() {
+    if (dropdown) { closeDropdown(); return; }
+    let items = [];
+    try {
+      const res = await notificationsApi.list();
+      items = res?.data?.notifications || [];
+    } catch { /* ignore */ }
+
+    dropdown = document.createElement('div');
+    dropdown.style.cssText = 'position:absolute;top:56px;right:12px;width:min(340px,92vw);max-height:70vh;overflow-y:auto;background:#fff;color:#0a2463;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.25);z-index:2000;border:1px solid #e2e8f0';
+
+    const header = '<div style="padding:14px 16px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center"><strong style="font-size:15px">Notifications</strong>' + (items.length ? '<button id="notif-readall" style="background:none;border:none;color:#1d6aba;font-size:12px;font-weight:600;cursor:pointer">Mark all read</button>' : '') + '</div>';
+
+    const list = items.length
+      ? items.map((n) => {
+          const unreadDot = !n.isRead ? '<span style="width:8px;height:8px;border-radius:50%;background:#1d6aba;flex-shrink:0;margin-top:6px"></span>' : '<span style="width:8px;flex-shrink:0"></span>';
+          return '<div class="notif-item" data-link="' + (n.link || '') + '" style="display:flex;gap:10px;padding:12px 16px;border-bottom:1px solid #f8fafc;cursor:pointer;background:' + (n.isRead ? '#fff' : '#f0f7ff') + '">' + unreadDot + '<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13.5px;margin-bottom:2px">' + escapeHtml(n.title || '') + '</div><div style="font-size:12.5px;color:#475569;line-height:1.4">' + escapeHtml(n.body || '') + '</div><div style="font-size:11px;color:#94a3b8;margin-top:4px">' + timeAgo(n.createdAt) + '</div></div></div>';
+        }).join('')
+      : '<div style="padding:32px 16px;text-align:center;color:#94a3b8;font-size:13px">No notifications yet</div>';
+
+    dropdown.innerHTML = header + list;
+    bell.parentElement.style.position = bell.parentElement.style.position || 'relative';
+    document.querySelector('#doctor-mobile-header')?.appendChild(dropdown);
+
+    dropdown.querySelector('#notif-readall')?.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      try { await notificationsApi.readAll(); } catch { /* ignore */ }
+      refreshBadge();
+      closeDropdown();
+    });
+
+    dropdown.querySelectorAll('.notif-item').forEach((item) => {
+      item.addEventListener('click', async () => {
+        const link = item.getAttribute('data-link');
+        try { await notificationsApi.readAll(); } catch { /* ignore */ }
+        closeDropdown();
+        if (link) {
+          window.location.hash = link;
+          window.dispatchEvent(new HashChangeEvent('hashchange'));
+        }
+        refreshBadge();
+      });
+    });
+
+    setTimeout(() => document.addEventListener('click', outsideClick, true), 0);
+  }
+
+  bell.addEventListener('click', (e) => { e.stopPropagation(); openDropdown(); });
+  refreshBadge();
 }
