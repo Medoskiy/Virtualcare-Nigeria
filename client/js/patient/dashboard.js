@@ -217,7 +217,7 @@ async function renderMessages(el) {
   el.innerHTML = `<h1>Messages</h1><div class="grid grid-2" style="gap:16px">
     <div>${appts.map((a) => `<div class="card thread-pick" data-id="${a._id}" style="margin-bottom:8px;cursor:pointer;padding:12px">
       <strong>${escapeHtml(formatDoctorName(a.doctor, { surnameOnly: true }))}</strong><div class="text-muted" style="font-size:0.8rem">${formatDate(a.scheduledAt)}</div></div>`).join('')}</div>
-    <div class="chat-container" style="height:480px"><div class="chat-messages" id="msgs"></div>
+    <div class="chat-container" style="height:min(70vh,560px)"><div class="chat-messages" id="msgs"></div>
     <div id="typing" class="typing-indicator-wrap"></div>
     <div class="chat-input">
       <input type="file" id="msg-file" accept=".pdf,.jpg,.jpeg,.png" hidden>
