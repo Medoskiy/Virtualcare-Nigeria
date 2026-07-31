@@ -51,3 +51,26 @@
   color: var(--muted);
   font-size: 0.9rem;
 }
+
+/* Auth role tabs — class-driven active highlight */
+.auth-role-btn {
+  background: transparent;
+  color: #64748b;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.auth-role-btn:hover {
+  color: #1d6aba;
+}
+.auth-role-btn.active {
+  background: #1d6aba !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(29,106,186,0.35);
+}
+.auth-role-btn.active:hover {
+  color: #fff;
+}
+
+/* Login page responsiveness */
+@media (min-width: 768px) {
+  .auth-role-selector { max-width: 480px; margin-left: auto; margin-right: auto; }
+}
