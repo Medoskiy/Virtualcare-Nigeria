@@ -236,8 +236,8 @@ export async function renderAiChat(container) {
   const hasHistory = virtualAIHistory.length > 0;
 
   container.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;margin-bottom:12px">
-      <h1 style="font-size:20px;font-weight:800;color:#0a2463;margin:0;white-space:nowrap">VirtualAI Health Assistant</h1>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;margin-bottom:12px;flex-wrap:wrap">
+      <h1 style="font-size:20px;font-weight:800;color:#0a2463;margin:0;flex:1 1 auto;min-width:0">VirtualAI Health Assistant</h1>
       <button type="button" id="ai-new-chat" style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(124,58,237,0.3)">✨ New Chat</button>
     </div>
     <div style="max-width:800px;margin:0 auto">
